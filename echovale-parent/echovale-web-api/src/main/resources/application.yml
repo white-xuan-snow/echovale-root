@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: echovale-web-api
+
+  profiles:
+    active: datasource
+
+
+server:
+  port: 8080
+  address: 0.0.0.0
+
+
+
+logging:
+  level:
+    org.springframework.jdbc: debug
+#    com.baomidou.dynamic: off
+

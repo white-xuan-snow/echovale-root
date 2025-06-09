@@ -1,0 +1,100 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.echovale</groupId>
+  <artifactId>echovale-parent</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <name>echovale-parent</name>
+  <url>http://maven.apache.org</url>
+
+
+  <modules>
+    <module>echovale-admin</module>
+    <module>echovale-client</module>
+    <module>echovale-common</module>
+    <module>echovale-domain</module>
+    <module>echovale-service</module>
+    <module>echovale-web-api</module>
+  </modules>
+
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>3.5.0</version>
+  </parent>
+
+
+  <properties>
+    <java.version>17</java.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <springboot.version>3.4.6</springboot.version>
+    <mybatis-plus.version>3.5.10.1</mybatis-plus.version>
+    <lombok.version>1.18.36</lombok.version>
+    <junit.version>3.8.1</junit.version>
+    <mysql.version>8.2.0</mysql.version>
+    <netease-music-api.version>release1.0</netease-music-api.version>
+  </properties>
+
+
+  <!-- 依赖管理 -->
+  <dependencyManagement>
+    <dependencies>
+
+      <!-- springboot -->
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-test</artifactId>
+        <version>${springboot.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+        <version>${springboot.version}</version>
+      </dependency>
+
+      <!-- mysql -->
+      <dependency>
+        <groupId>com.mysql</groupId>
+        <artifactId>mysql-connector-j</artifactId>
+        <version>${mysql.version}</version>
+      </dependency>
+
+      <!-- mybatis plus -->
+      <dependency>
+        <groupId>com.baomidou</groupId>
+        <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+        <version>${mybatis-plus.version}</version>
+      </dependency>
+
+      <!-- lombok -->
+      <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>${lombok.version}</version>
+      </dependency>
+
+      <!-- junit -->
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${junit.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+
+      <!-- netease-music-api -->
+<!--      <dependency>-->
+<!--        <groupId>com.netease.music.api.autoconfigure.starter</groupId>-->
+<!--        <artifactId>netease-music-api-spring-boot-starter</artifactId>-->
+<!--        <version>${netease-music-api.version}</version>-->
+<!--      </dependency>-->
+
+
+
+    </dependencies>
+  </dependencyManagement>
+</project>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="echovale-admin" />
+        <module name="echovale-client" />
+        <module name="echovale-web-api" />
+        <module name="echovale-common" />
+        <module name="echovale-service" />
+        <module name="echovale-domain" />
+      </profile>
+    </annotationProcessing>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="echovale-admin" options="-parameters" />
+      <module name="echovale-client" options="-parameters" />
+      <module name="echovale-common" options="-parameters" />
+      <module name="echovale-domain" options="-parameters" />
+      <module name="echovale-service" options="-parameters" />
+      <module name="echovale-web-api" options="-parameters" />
+    </option>
+  </component>
+</project>
