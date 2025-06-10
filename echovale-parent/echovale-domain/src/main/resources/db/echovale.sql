@@ -1,22 +1,17 @@
-
-
 create table album
 (
-    id               bigint unsigned auto_increment comment '专辑id'
+    id           bigint unsigned auto_increment comment '专辑id'
         primary key,
-    netease_id       bigint unsigned             null comment '网易云音乐id',
-    name             varchar(60) charset utf8mb3 null comment '专辑名称',
-    album_authors_id bigint unsigned             null comment '专辑作者关联表id',
-    description      text                        null comment '描述',
-    pic_url          text                        null comment '图片url',
-    publish_time     datetime                    null comment '发布时间',
-    type             tinyint                     null comment '专辑类型',
-    size             int                         null comment '专辑大小',
-    sub_type         int                         null comment '副类型'
-);
-
-create index album_album_authors_id_index
-    on album (album_authors_id);
+    netease_id   bigint unsigned             null comment '网易云音乐id',
+    name         varchar(60) charset utf8mb3 null comment '专辑名称',
+    description  text                        null comment '描述',
+    pic_url      text                        null comment '图片url',
+    publish_time datetime                    null comment '发布时间',
+    type         tinyint                     null comment '专辑类型',
+    size         int                         null comment '专辑大小',
+    sub_type     int                         null comment '副类型'
+)
+    comment '专辑';
 
 create index album_name_index
     on album (name);
@@ -92,29 +87,21 @@ create table lyric
 
 create table music
 (
-    id                     bigint unsigned auto_increment comment '音乐id'
+    id         bigint unsigned auto_increment comment '音乐id'
         primary key,
-    netease_id             bigint unsigned             null comment '网易云音乐id',
-    name                   varchar(60) charset utf8mb3 null comment '音乐名称',
-    lyric_id               bigint unsigned             null comment '歌词id',
-    album_id               bigint unsigned             null comment '专辑id',
-    fee                    tinyint                     null comment '付费等级 0免费无版权 1VIP歌曲 4购买专辑 8非会员可播放最低音质 ',
-    music_qualities_id     bigint unsigned             null comment '音乐品质关联表id',
-    cover_type             tinyint                     null comment '0未知 1原唱 2翻唱',
-    mv_id                  bigint unsigned             null comment 'mv的id 0表示没有id',
-    publish_time           datetime                    null comment '发布i时间',
-    no                     int                         null comment '专辑中排名',
-    chorus                 tinytext                    null comment '副歌时间',
-    bpm                    int                         null comment '曲速',
-    music_awards_id        bigint unsigned             null comment '音乐获奖关联表id',
-    music_entertainment_id bigint unsigned             null comment '音乐影视节目关联表id',
-    music_authors_id       bigint unsigned             null comment '音乐作者列表关联表id',
-    music_styles_id        bigint unsigned             null comment '音乐曲风关联表',
-    music_tags_id          bigint unsigned             null comment '音乐标签关联表',
-    music_languages_id     bigint unsigned             null comment '音乐语种关联表id',
-    music_sheets_id        bigint unsigned             null comment '音乐乐曲关联表id'
+    netease_id bigint unsigned             null comment '网易云音乐id',
+    name       varchar(60) charset utf8mb3 null comment '音乐名称',
+    album_id   bigint unsigned             null comment '专辑id',
+    fee        tinyint                     null comment '付费等级 0免费无版权 1VIP歌曲 4购买专辑 8非会员可播放最低音质 ',
+    cover_type tinyint                     null comment '0未知 1原唱 2翻唱',
+    mv_id      bigint unsigned             null comment 'mv的id 0表示没有id',
+    time       int unsigned                null comment '持续时间(单位：毫秒)',
+    chorus     tinytext                    null comment '副歌时间'
 )
     comment '音乐';
+
+create index music_album_id_index
+    on music (album_id);
 
 create index music_name_index
     on music (name(30));
@@ -122,15 +109,13 @@ create index music_name_index
 create index music_netease_id_index
     on music (netease_id);
 
-create index music_publish_time_index
-    on music (publish_time);
-
 create table music_authors
 (
     author_id bigint unsigned not null comment '作者id',
     music_id  bigint unsigned not null comment '音乐id',
     primary key (music_id, author_id)
-);
+)
+    comment '音乐作者关联表';
 
 create index music_authors_author_id_index
     on music_authors (author_id);
@@ -167,6 +152,16 @@ create index music_entertainment_content_index
 
 create index music_entertainment_music_id_index
     on music_entertainment (music_id);
+
+create table music_info_ext
+(
+    music_id     bigint unsigned not null comment '音乐id'
+        primary key,
+    publish_time datetime        null comment '发行时间',
+    no           int unsigned    null comment '专辑排序 0表示没有排序',
+    bpm          int unsigned    null comment '音乐bpm'
+)
+    comment '音乐信息扩展表';
 
 create table music_languages
 (
@@ -294,13 +289,13 @@ create table style
         primary key,
     name tinytext        null comment '曲风名称'
 )
-    comment '曲风标签';
+    comment '曲风';
 
 create table tag
 (
-    tag_id bigint unsigned not null comment '标签id'
+    id   bigint unsigned not null comment '标签id'
         primary key,
-    name   tinytext        null comment '标签名称'
+    name tinytext        null comment '标签名称'
 )
     comment '标签';
 
@@ -348,18 +343,69 @@ create index toplist_musics_toplist_id_index
 
 create table user
 (
-    id       bigint unsigned auto_increment comment '用户id'
+    id               bigint unsigned auto_increment comment '用户id'
         primary key,
-    username varchar(60) charset utf8mb3 null comment '用户名',
-    password varchar(128)                null comment '密码',
-    emai     varchar(60)                 null comment '邮箱',
-    phone    char(11)                    null comment '手机号',
-    status   tinyint(1)                  null comment '状态'
+    username         varchar(60) charset utf8mb3 null comment '用户名',
+    password         varchar(128)                null comment '密码',
+    emai             varchar(60)                 null comment '邮箱',
+    phone            char(11)                    null comment '手机号',
+    status           tinyint(1)                  null comment '状态',
+    user_meta_ext_id bigint unsigned             null comment '用户元数据扩展表id',
+    user_info_ext_id bigint unsigned             null comment '用户信息扩展表id'
 )
     comment '用户';
 
+create index user_user_info_ext_id_index
+    on user (user_info_ext_id);
+
+create index user_user_meta_ext_id_index
+    on user (user_meta_ext_id);
+
 create index user_username_index
     on user (username);
+
+create table user_info_ext
+(
+    id          bigint unsigned auto_increment comment '用户信息扩展表id'
+        primary key,
+    avatar_path tinytext    null comment '头像alist地址',
+    ip_addr     varchar(30) null comment 'ip登录地址(指定ip不加密, 其余ip加密)',
+    login_time  datetime    null comment '登录时间',
+    create_time datetime    null comment '创建时间',
+    is_online   tinyint(1)  null comment '是否在线'
+)
+    comment '用户信息扩展表';
+
+create table user_meta_ext
+(
+    id          bigint unsigned auto_increment comment '元数据扩展表id'
+        primary key,
+    settings_id bigint unsigned null comment '用户设置关联表id',
+    likelist_id bigint unsigned null comment '用户喜欢列表关联表id'
+)
+    comment '用户元数据扩展表';
+
+create index user_meta_ext_likelist_id_index
+    on user_meta_ext (likelist_id);
+
+create index user_meta_ext_settings_id_index
+    on user_meta_ext (settings_id);
+
+create table user_musics
+(
+    user_id   bigint unsigned not null comment '用户id',
+    music_id  bigint unsigned not null comment '音乐id',
+    play_time datetime        null comment '上一次播放时间',
+    times     int unsigned    null comment '播放次数',
+    primary key (music_id, user_id)
+)
+    comment '用户音乐关联表';
+
+create index user_musics_music_id_index
+    on user_musics (music_id);
+
+create index user_musics_user_id_index
+    on user_musics (user_id);
 
 create table user_playlists
 (

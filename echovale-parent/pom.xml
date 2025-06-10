@@ -33,6 +33,7 @@
 
     <springboot.version>3.4.6</springboot.version>
     <mybatis-plus.version>3.5.10.1</mybatis-plus.version>
+    <mybatis-plus-join.version>1.5.2</mybatis-plus-join.version>
     <lombok.version>1.18.36</lombok.version>
     <junit.version>3.8.1</junit.version>
     <mysql.version>8.2.0</mysql.version>
@@ -70,6 +71,13 @@
         <version>${mybatis-plus.version}</version>
       </dependency>
 
+      <!-- mybatis plus join -->
+      <dependency>
+        <groupId>com.github.yulichang</groupId>
+        <artifactId>mybatis-plus-join-boot-starter</artifactId>
+        <version>${mybatis-plus-join.version}</version>
+      </dependency>
+
       <!-- lombok -->
       <dependency>
         <groupId>org.projectlombok</groupId>
@@ -87,11 +95,11 @@
 
 
       <!-- netease-music-api -->
-<!--      <dependency>-->
-<!--        <groupId>com.netease.music.api.autoconfigure.starter</groupId>-->
-<!--        <artifactId>netease-music-api-spring-boot-starter</artifactId>-->
-<!--        <version>${netease-music-api.version}</version>-->
-<!--      </dependency>-->
+      <dependency>
+        <groupId>com.netease.music.api.autoconfigure.starter</groupId>
+        <artifactId>netease-music-api-spring-boot-starter</artifactId>
+        <version>${netease-music-api.version}</version>
+      </dependency>
 
 
 

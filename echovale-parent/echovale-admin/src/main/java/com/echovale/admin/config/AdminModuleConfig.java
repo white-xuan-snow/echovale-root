@@ -1,4 +1,4 @@
-package com.echovale.common.config;
+package com.echovale.admin.config;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -7,9 +7,9 @@ import org.springframework.context.annotation.Configuration;
  * @author 30531
  * @version 1.0
  * @description: TODO
- * @date 2025/6/9 12:03
+ * @date 2025/6/10 14:31
  */
 @Configuration
-@ComponentScan("com.echovale.common")
-public class CommonModuleConfig {
+@ComponentScan("com.echovale.admin")
+public class AdminModuleConfig {
 }

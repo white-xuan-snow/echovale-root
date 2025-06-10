@@ -1,7 +1,9 @@
 package com.echovale.domain.config;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+
 
 /**
  * @author 30531
@@ -10,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
  * @date 2025/6/9 10:23
  */
 @Configuration
-@ComponentScan("com.echovale")
+@ComponentScan("com.echovale.domain")
+@MapperScan("com.echovale.domain.mapper")
 public class DomainModuleConfig {
 }
