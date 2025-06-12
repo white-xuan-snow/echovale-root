@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/echovale-root.iml" filepath="$PROJECT_DIR$/echovale-root.iml" />
+      <module fileurl="file://$PROJECT_DIR$/echovale-parent/echovale-web-api/echovale-web-api.iml" filepath="$PROJECT_DIR$/echovale-parent/echovale-web-api/echovale-web-api.iml" />
     </modules>
   </component>
 </project>

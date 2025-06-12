@@ -13,7 +13,7 @@ import lombok.Data;
 @Data
 @Builder
 @TableName("style")
-public class stylePO {
+public class StylePO {
     private Long id;
     private String name;
 }

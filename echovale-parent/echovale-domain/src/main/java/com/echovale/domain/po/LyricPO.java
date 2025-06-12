@@ -14,7 +14,7 @@ import lombok.Data;
 @Builder
 @TableName("lyric")
 public class LyricPO {
-    private Long id;
+    private Long musicId;
     private String neteaseLrc;
     private String neteaseTlrc;
     private String neteaseYrc;

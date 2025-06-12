@@ -25,13 +25,16 @@ public class MusicController {
     MusicService musicService;
 
     @GetMapping("/url")
-    public Result getMusicUrl(@RequestParam List<String> ids, @RequestParam String level) throws Exception {
+    public Result elicitMusicUrl(@RequestParam List<Long> ids, @RequestParam String level) throws Exception {
+
+        // TODO level取值检测
+
 
         List<MusicUrlVO> res = musicService.elicitMusicUrl(ids, level);
 
-
         return Result.success();
     }
+
 
 
 }

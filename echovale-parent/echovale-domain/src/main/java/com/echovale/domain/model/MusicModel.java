@@ -48,4 +48,6 @@ public class MusicModel {
     private List<MusicStylesPO> styles;
     @TableField(exist = false)
     private List<MusicTagsPO> tags;
+    @TableField(exist = false)
+    private List<MusicSheetsPO> sheets;
 }

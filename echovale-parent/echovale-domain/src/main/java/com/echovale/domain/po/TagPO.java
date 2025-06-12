@@ -13,7 +13,7 @@ import lombok.Data;
 @Data
 @Builder
 @TableName("tag")
-public class tagPO {
+public class TagPO {
     private Long id;
     private String name;
 }

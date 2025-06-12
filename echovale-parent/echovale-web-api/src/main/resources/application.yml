@@ -5,6 +5,10 @@ spring:
   profiles:
     active: datasource
 
+  output:
+    ansi:
+      enabled: always
+
 
 server:
   port: 8080
@@ -16,4 +20,7 @@ logging:
   level:
     org.springframework.jdbc: debug
 #    com.baomidou.dynamic: off
+  pattern:
+    console: "%clr(%d{MM-dd HH:mm:ss}){faint} [%thread] %clr(%-5level){highlight} %clr(%36.36logger{36}){cyan}: %msg%n"
+
 

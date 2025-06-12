@@ -31,18 +31,20 @@ public class MusicServiceImpl implements MusicService {
     MusicMapper musicMapper;
 
     @Override
-    public List<MusicUrlVO> elicitMusicUrl(List<String> ids, String level) throws Exception {
+    public List<MusicUrlVO> elicitMusicUrl(List<Long> ids, String level) throws Exception {
+
+        // 从数据库中查询neteaseIds
+
+        List<String> neteaseIds = musicMapper.selectJoinList(String.class,
+                new MPJLambdaWrapper<MusicPO>()
+                        .select(MusicPO::getNeteaseId)
+                        .in(MusicPO::getId, ids)
+        );
 
         // 音乐直链需要通过api获取
-        List<MusicUrlDTO> musicUrlDTOList = musicApi.getMusicV1Url(ids, level);
+        List<MusicUrlDTO> musicUrlDTOList = musicApi.getMusicV1Url(neteaseIds, level);
 
 
-
-
-        // 查询数据是否有该歌信息
-
-
-        // 没有就再次通过api获取歌曲信息
 
         // 返回结果
 
@@ -66,6 +68,21 @@ public class MusicServiceImpl implements MusicService {
     }
 
     private MPJLambdaWrapper<MusicPO> getEntireWrapper() {
-        return getBaseWrapper();
+        return getBaseWrapper()
+                .leftJoin(MusicInfoExtendPO.class, MusicInfoExtendPO::getMusicId, MusicPO::getId)
+                .leftJoin(MusicSheetsPO.class, MusicSheetsPO::getMusicId, MusicPO::getId)
+                .leftJoin(LyricPO.class, LyricPO::getMusicId, MusicPO::getId)
+                .leftJoin(MusicStylesPO.class, MusicStylesPO::getMusicId, MusicPO::getId)
+                .leftJoin(MusicTagsPO.class, MusicTagsPO::getMusicId, MusicPO::getId)
+                .leftJoin(MusicLanguages.class, MusicLanguages::getMusicId, MusicPO::getId)
+                .leftJoin(StylePO.class, StylePO::getId, MusicStylesPO::getStyleId)
+                .leftJoin(TagPO.class, TagPO::getId, MusicTagsPO::getTagId)
+                .leftJoin(Language.class, Language::getId, MusicLanguages::getLanguageId)
+                .selectAssociation(LyricPO.class, MusicModel::getLyric)
+                .selectAssociation(MusicInfoExtendPO.class, MusicModel::getInfo)
+                .selectCollection(StylePO.class, MusicModel::getStyles)
+                .selectCollection(TagPO.class, MusicModel::getTags)
+                .selectCollection(Language.class, MusicModel::getLanguages)
+                .selectCollection(MusicSheetsPO.class, MusicModel::getSheets);
     }
 }
