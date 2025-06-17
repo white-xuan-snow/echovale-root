@@ -11,6 +11,7 @@ import com.netease.music.api.autoconfigure.configuration.pojo.dto.MusicUrlDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -41,6 +42,9 @@ public class MusicServiceImpl implements MusicService {
                         .in(MusicPO::getId, ids)
         );
 
+        System.currentTimeMillis();
+
+
         // 音乐直链需要通过api获取
         List<MusicUrlDTO> musicUrlDTOList = musicApi.getMusicV1Url(neteaseIds, level);
 
@@ -51,10 +55,14 @@ public class MusicServiceImpl implements MusicService {
         return List.of();
     }
 
+    @Override
+    public List<MusicModel> elicitMusic(List<Long> ids) throws Exception {
+
+        // 查询
 
 
-
-
+        return List.of();
+    }
 
 
 }

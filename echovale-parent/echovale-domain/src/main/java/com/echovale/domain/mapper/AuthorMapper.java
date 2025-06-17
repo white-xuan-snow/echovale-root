@@ -9,5 +9,6 @@ import com.github.yulichang.base.MPJBaseMapper;
  * @description: TODO
  * @date 2025/6/10 23:21
  */
+
 public interface AuthorMapper extends MPJBaseMapper<AuthorPO> {
 }

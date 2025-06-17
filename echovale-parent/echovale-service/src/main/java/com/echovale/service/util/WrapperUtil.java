@@ -3,7 +3,11 @@ package com.echovale.service.util;
 import com.echovale.domain.model.MusicModel;
 import com.echovale.domain.po.*;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
+import org.bouncycastle.util.Times;
 import org.springframework.stereotype.Component;
+
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 /**
  * @author 30531
@@ -14,7 +18,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class WrapperUtil {
-    private MPJLambdaWrapper<MusicPO> getMusicBaseWrapper() {
+    public MPJLambdaWrapper<MusicPO> getMusicBaseWrapper() {
         return new MPJLambdaWrapper<MusicPO>()
                 .selectAll(MusicPO.class)
                 .leftJoin(AlbumPO.class, AlbumPO::getId, MusicPO::getAlbumId)
@@ -28,7 +32,7 @@ public class WrapperUtil {
                 .selectCollection(MusicEntertainmentPO.class, MusicModel::getEntertainments);
     }
 
-    private MPJLambdaWrapper<MusicPO> getMusicEntireWrapper() {
+    public MPJLambdaWrapper<MusicPO> getMusicEntireWrapper() {
         return getMusicBaseWrapper()
                 .leftJoin(MusicInfoExtendPO.class, MusicInfoExtendPO::getMusicId, MusicPO::getId)
                 .leftJoin(MusicSheetsPO.class, MusicSheetsPO::getMusicId, MusicPO::getId)
@@ -46,6 +50,13 @@ public class WrapperUtil {
                 .selectCollection(Language.class, MusicModel::getLanguages)
                 .selectCollection(MusicSheetsPO.class, MusicModel::getSheets);
     }
+
+    public MPJLambdaWrapper<PlaylistPO> getPlaylistWrapper(Boolean isUser) {
+        return new MPJLambdaWrapper<PlaylistPO>()
+                .selectAll(PlaylistPO.class)
+                .eq(PlaylistPO::getIsUser, isUser);
+    }
+
 
 
 

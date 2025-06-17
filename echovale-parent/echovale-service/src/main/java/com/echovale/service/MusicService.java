@@ -10,4 +10,5 @@ import java.util.List;
 @Service
 public interface MusicService {
     List<MusicUrlVO> elicitMusicUrl(List<Long> ids, String level) throws Exception;
+    List<MusicModel> elicitMusic(List<Long> ids) throws Exception;
 }
