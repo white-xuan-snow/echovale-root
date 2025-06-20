@@ -1,13 +1,16 @@
 package com.echovale.service.impl;
 
 import com.echovale.domain.mapper.PlaylistMapper;
+import com.echovale.domain.model.MusicModel;
 import com.echovale.domain.po.PlaylistPO;
+import com.echovale.service.MusicUpdateOrchestrator;
 import com.echovale.service.PlaylistService;
 import com.echovale.service.util.WrapperUtil;
 import com.echovale.service.vo.PlaylistVO;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.netease.music.api.autoconfigure.configuration.api.MusicApi;
 import com.netease.music.api.autoconfigure.configuration.pojo.dto.PlaylistDTO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +22,8 @@ import java.util.List;
  * @description: TODO
  * @date 2025/6/12 15:26
  */
+
+@Slf4j
 @Service
 public class PlaylistServiceImpl implements PlaylistService {
 
@@ -29,6 +34,8 @@ public class PlaylistServiceImpl implements PlaylistService {
     WrapperUtil wrapperUtil;
     @Autowired
     PlaylistMapper playlistMapper;
+    @Autowired
+    MusicUpdateOrchestrator musicUpdateOrchestrator;
 
 
     @Override
@@ -51,12 +58,14 @@ public class PlaylistServiceImpl implements PlaylistService {
                     .tags(playlist.getTags().toString())
                     .description(playlist.getDescription())
                     .isUser(false)
-                    .neteaseId(Long.parseLong(playlist.getId()))
+                    .neteaseId(playlist.getId())
                     .build();
 
             // 插入歌单
             playlistMapper.insert(playlistPO);
 
+            // 更新歌曲相关信息
+            List<MusicModel> musicModelList = musicUpdateOrchestrator.updateMusics(playlist.getTracks());
 
         }
 

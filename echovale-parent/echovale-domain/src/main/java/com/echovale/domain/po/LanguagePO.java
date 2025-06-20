@@ -8,12 +8,12 @@ import lombok.Data;
  * @author 30531
  * @version 1.0
  * @description: TODO
- * @date 2025/6/11 0:16
+ * @date 2025/6/11 0:10
  */
 @Data
 @Builder
-@TableName("music_authors")
-public class MusicAuthors {
-    private Long authorId;
-    private Long musicId;
+@TableName("language")
+public class LanguagePO {
+    private Integer id;
+    private String name;
 }

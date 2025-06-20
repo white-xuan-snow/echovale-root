@@ -43,7 +43,7 @@ public class MusicModel {
     @TableField(exist = false)
     private List<MusicEntertainmentPO> entertainments;
     @TableField(exist = false)
-    private List<Language> languages;
+    private List<LanguagePO> languagePOS;
     @TableField(exist = false)
     private List<MusicStylesPO> styles;
     @TableField(exist = false)

@@ -8,12 +8,12 @@ import lombok.Data;
  * @author 30531
  * @version 1.0
  * @description: TODO
- * @date 2025/6/11 0:10
+ * @date 2025/6/11 0:18
  */
 @Data
 @Builder
-@TableName("language")
-public class Language {
-    private Integer id;
-    private String name;
+@TableName("music_languages")
+public class MusicLanguagesPO {
+    private Long musicId;
+    private Long languageId;
 }

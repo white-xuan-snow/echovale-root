@@ -3,11 +3,7 @@ package com.echovale.service.util;
 import com.echovale.domain.model.MusicModel;
 import com.echovale.domain.po.*;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
-import org.bouncycastle.util.Times;
 import org.springframework.stereotype.Component;
-
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 
 /**
  * @author 30531
@@ -22,8 +18,8 @@ public class WrapperUtil {
         return new MPJLambdaWrapper<MusicPO>()
                 .selectAll(MusicPO.class)
                 .leftJoin(AlbumPO.class, AlbumPO::getId, MusicPO::getAlbumId)
-                .leftJoin(MusicAuthors.class, MusicAuthors::getMusicId, MusicPO::getId)
-                .leftJoin(AuthorPO.class, AuthorPO::getId, MusicAuthors::getAuthorId)
+                .leftJoin(MusicAuthorsPO.class, MusicAuthorsPO::getMusicId, MusicPO::getId)
+                .leftJoin(AuthorPO.class, AuthorPO::getId, MusicAuthorsPO::getAuthorId)
                 .leftJoin(MusicAwardsPO.class, MusicAwardsPO::getMusicId, MusicPO::getId)
                 .leftJoin(MusicEntertainmentPO.class, MusicEntertainmentPO::getMusicId, MusicPO::getId)
                 .selectAssociation(AlbumPO.class, MusicModel::getAlbum)
@@ -39,15 +35,15 @@ public class WrapperUtil {
                 .leftJoin(LyricPO.class, LyricPO::getMusicId, MusicPO::getId)
                 .leftJoin(MusicStylesPO.class, MusicStylesPO::getMusicId, MusicPO::getId)
                 .leftJoin(MusicTagsPO.class, MusicTagsPO::getMusicId, MusicPO::getId)
-                .leftJoin(MusicLanguages.class, MusicLanguages::getMusicId, MusicPO::getId)
+                .leftJoin(MusicLanguagesPO.class, MusicLanguagesPO::getMusicId, MusicPO::getId)
                 .leftJoin(StylePO.class, StylePO::getId, MusicStylesPO::getStyleId)
                 .leftJoin(TagPO.class, TagPO::getId, MusicTagsPO::getTagId)
-                .leftJoin(Language.class, Language::getId, MusicLanguages::getLanguageId)
+                .leftJoin(LanguagePO.class, LanguagePO::getId, MusicLanguagesPO::getLanguageId)
                 .selectAssociation(LyricPO.class, MusicModel::getLyric)
                 .selectAssociation(MusicInfoExtendPO.class, MusicModel::getInfo)
                 .selectCollection(StylePO.class, MusicModel::getStyles)
                 .selectCollection(TagPO.class, MusicModel::getTags)
-                .selectCollection(Language.class, MusicModel::getLanguages)
+                .selectCollection(LanguagePO.class, MusicModel::getLanguagePOS)
                 .selectCollection(MusicSheetsPO.class, MusicModel::getSheets);
     }
 
