@@ -1,6 +1,8 @@
 package com.echovale.domain.po;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.github.jeffreyning.mybatisplus.anno.MppMultiId;
 import lombok.Builder;
 import lombok.Data;
 
@@ -14,6 +16,8 @@ import lombok.Data;
 @Builder
 @TableName("album_authors")
 public class AlbumAuthorsPO {
+    @MppMultiId
     private Long albumId;
+    @MppMultiId
     private Long authorId;
 }

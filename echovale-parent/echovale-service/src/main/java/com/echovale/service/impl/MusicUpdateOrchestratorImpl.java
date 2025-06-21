@@ -1,10 +1,12 @@
 package com.echovale.service.impl;
 
 import com.echovale.domain.model.MusicModel;
+import com.echovale.domain.po.MusicPO;
 import com.echovale.service.AlbumService;
 import com.echovale.service.AuthorService;
 import com.echovale.service.MusicService;
 import com.echovale.service.MusicUpdateOrchestrator;
+import com.netease.music.api.autoconfigure.configuration.api.MusicApi;
 import com.netease.music.api.autoconfigure.configuration.pojo.dto.*;
 import com.netease.music.api.autoconfigure.configuration.pojo.entity.Album;
 import com.netease.music.api.autoconfigure.configuration.pojo.entity.Author;
@@ -14,6 +16,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -34,21 +37,26 @@ public class MusicUpdateOrchestratorImpl implements MusicUpdateOrchestrator {
     AlbumService albumService;
     @Autowired
     AuthorService authorService;
+    @Autowired
+    private MusicApi music;
 
 
     @Override
     public List<MusicModel> updateMusics(List<MusicDetailDTO> tracks) throws Exception {
+        // 先过滤存在的id
+        // 再插入基本信息
+        // 避免后续漏掉id详细信息的更新
+
         /*
         音乐部分
         */
-
-        // 过滤已存在的歌曲
 
         // 提取网易云音乐id
         List<Long> neteaseMusicIds = tracks.stream()
                 .map(MusicDetailDTO::getId)
                 .toList();
 
+        // 过滤已存在的歌曲id
         List<Long> nonentityNeteaseMusicIds = musicService.nonentityNeteaseIds(neteaseMusicIds);
 
         // 副歌api (批处理api)
@@ -82,9 +90,21 @@ public class MusicUpdateOrchestratorImpl implements MusicUpdateOrchestrator {
         List<Long> nonentityNeteaseAlbumIds = albumService.nonentityNeteaseIds(neteaseAuthorIds);
 
 
-        // 先过滤存在的id
-        // 再插入基本信息
-        // 避免后续漏掉id详细信息的更新
+        // 异步更新部分
+        updateMusicAsync(nonentityNeteaseMusicIds, nonentityNeteaseAuthorIds, nonentityNeteaseAlbumIds);
+
+        // 即刻更新部分
+
+        HashSet<Long> nonentityNeteaseMusicIdSet = new HashSet<>(nonentityNeteaseMusicIds);
+
+        List<MusicDetailDTO> nonentityTracks = tracks.stream()
+                .map(o -> nonentityNeteaseMusicIdSet.contains(o.getId()) ? o : null)
+                .toList();
+
+//        musicService.insertMusics();
+//
+//        musicService.insertMusicsInfoExt();
+
 
         return List.of();
     }
@@ -135,6 +155,7 @@ public class MusicUpdateOrchestratorImpl implements MusicUpdateOrchestrator {
         /*
         汇总
         */
+
         List<LyricsDTO> lyricsDTOList = new ArrayList<>();
         for (CompletableFuture<LyricsDTO> future : lyricsFutureList) {
             lyricsDTOList.add(future.join());

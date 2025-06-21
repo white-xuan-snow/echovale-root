@@ -4,3 +4,8 @@ spring:
     password: 248812
     url: jdbc:mysql://localhost:3306/echovale
     driver-class-name: com.mysql.cj.jdbc.Driver
+
+mybatis-plus:
+  global-config:
+    db-config:
+      id-type: assign_id

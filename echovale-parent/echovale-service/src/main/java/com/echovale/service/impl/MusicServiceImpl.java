@@ -1,7 +1,6 @@
 package com.echovale.service.impl;
 
-import com.echovale.domain.mapper.LyricMapper;
-import com.echovale.domain.mapper.MusicMapper;
+import com.echovale.domain.mapper.*;
 import com.echovale.domain.model.MusicModel;
 import com.echovale.domain.po.*;
 import com.echovale.service.MusicService;
@@ -32,14 +31,35 @@ import java.util.concurrent.CompletableFuture;
 @Service
 public class MusicServiceImpl implements MusicService {
 
-
     @Autowired
     MusicApi musicApi;
-
+    @Autowired
+    TagMapper tagMapper;
     @Autowired
     MusicMapper musicMapper;
     @Autowired
     LyricMapper lyricMapper;
+    @Autowired
+    StyleMapper styleMapper;
+    @Autowired
+    LanguageMapper languageMapper;
+    @Autowired
+    MusicTagsMapper musicTagsMapper;
+    @Autowired
+    MusicStylesMapper musicStylesMapper;
+    @Autowired
+    MusicAwardsMapper musicAwardsMapper;
+    @Autowired
+    MusicSheetsMapper musicSheetsMapper;
+    @Autowired
+    MusicInfoExtMapper musicInfoExtMapper;
+    @Autowired
+    MusicLanguagesMapper musicLanguagesMapper;
+    @Autowired
+    MusicQualitiesMapper musicQualitiesMapper;
+    @Autowired
+    MusicEntertainmentMapper musicEntertainmentMapper;
+
 
     @Override
     public List<MusicUrlVO> elicitMusicUrl(List<Long> ids, String level) throws Exception {
@@ -52,13 +72,8 @@ public class MusicServiceImpl implements MusicService {
                         .in(MusicPO::getId, ids)
         );
 
-        System.currentTimeMillis();
-
-
         // 音乐直链需要通过api获取
         List<MusicUrlDTO> musicUrlDTOList = musicApi.getMusicV1Url(neteaseIds, level);
-
-
 
         // 返回结果
 
@@ -140,9 +155,81 @@ public class MusicServiceImpl implements MusicService {
 
     @Override
     public void insertSummary(List<MusicSummaryDTO> summaryDTOList) {
-        for (MusicSummaryDTO summaryDTO : summaryDTOList) {
 
-        }
+        List<MusicAwardsPO> musicAwardsPOList = summaryDTOList.stream()
+                        .flatMap(o1 -> o1.getAwards().stream()
+                                    .map(o2 -> MusicAwardsPO.builder()
+                                            .musicId(o1.getId())
+                                            .content(o2)
+                                            .build()
+                                    )
+                        )
+                        .toList();
+
+        musicAwardsMapper.insertOrUpdate(musicAwardsPOList);
+
+        List<MusicEntertainmentPO> musicEntertainmentPOList = summaryDTOList.stream()
+                        .flatMap(o1 -> o1.getEntertainment().stream()
+                                .map(o2 -> MusicEntertainmentPO.builder()
+                                        .musicId(o1.getId())
+                                        .content(o2)
+                                        .build()
+                                )
+                        )
+                        .toList();
+
+        musicEntertainmentMapper.insertOrUpdate(musicEntertainmentPOList);
+
+        List<StylePO> stylePOList = summaryDTOList.stream()
+                .flatMap(o1 -> o1.getStyles().stream()
+                        .map(o2 -> StylePO.builder()
+                                .id(Long.parseLong(o2.getTagId()))
+                                .name(o2.getTagName())
+                                .build()
+                        )
+                )
+                .toList();
+
+        styleMapper.insertOrUpdate(stylePOList);
+
+        List<TagPO> tagPOList = summaryDTOList.stream()
+                .flatMap(o1 -> o1.getTags().stream()
+                        .map(o2 -> TagPO.builder()
+                                .id(Long.parseLong(o2.getTagId()))
+                                .name(o2.getTagName())
+                                .build()
+                        )
+                )
+                .toList();
+
+        tagMapper.insertOrUpdate(tagPOList);
+
+        List<MusicSheetsPO> musicSheetsPOList = summaryDTOList.stream()
+                .flatMap(o1 -> o1.getSheets().stream()
+                        .map(o2 -> MusicSheetsPO.builder()
+                                .musicId(o1.getId())
+                                .url(o2.getImageUrl())
+                                .name(o2.getTitle())
+                                .build()
+                        )
+                )
+                .toList();
+
+        musicSheetsMapper.insertOrUpdate(musicSheetsPOList);
+
+        List<LanguagePO> languagePOList = summaryDTOList.stream()
+                .flatMap(o1 -> o1.getLanguages().stream()
+                        .map(o2 -> LanguagePO.builder()
+                                .name(o2)
+                                .build()
+                        )
+                )
+                .toList();
+
+        languageMapper.insertOrUpdate(languagePOList);
+        // TODO 联表插入
+
+
     }
 
 

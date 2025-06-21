@@ -4,6 +4,7 @@ import com.echovale.domain.config.DomainModuleConfig;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * @author 30531
@@ -16,5 +17,6 @@ import org.springframework.context.annotation.Import;
 @Import({
         DomainModuleConfig.class,
 })
+@EnableTransactionManagement
 public class ServiceModuleConfig {
 }

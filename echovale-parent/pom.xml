@@ -33,6 +33,7 @@
 
     <springboot.version>3.4.6</springboot.version>
     <mybatis-plus.version>3.5.10.1</mybatis-plus.version>
+    <mybatisplus-plus.version>1.7.4-RELEASE</mybatisplus-plus.version>
     <mybatis-plus-join.version>1.5.2</mybatis-plus-join.version>
     <lombok.version>1.18.36</lombok.version>
     <junit.version>3.8.1</junit.version>
@@ -76,6 +77,13 @@
         <groupId>com.github.yulichang</groupId>
         <artifactId>mybatis-plus-join-boot-starter</artifactId>
         <version>${mybatis-plus-join.version}</version>
+      </dependency>
+
+      <!-- mybatisplus plus -->
+      <dependency>
+        <groupId>com.github.jeffreyning</groupId>
+        <artifactId>mybatisplus-plus</artifactId>
+        <version>${mybatisplus-plus.version}</version>
       </dependency>
 
       <!-- lombok -->

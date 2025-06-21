@@ -1,5 +1,6 @@
 package com.echovale.domain.po;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Builder;
 import lombok.Data;
@@ -14,6 +15,7 @@ import lombok.Data;
 @Builder
 @TableName("lyric")
 public class LyricPO {
+    @TableId
     private Long musicId;
     private String neteaseLrc;
     private String neteaseTlrc;
