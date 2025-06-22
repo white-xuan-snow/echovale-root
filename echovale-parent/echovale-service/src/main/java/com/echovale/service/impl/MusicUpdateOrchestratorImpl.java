@@ -101,9 +101,11 @@ public class MusicUpdateOrchestratorImpl implements MusicUpdateOrchestrator {
                 .map(o -> nonentityNeteaseMusicIdSet.contains(o.getId()) ? o : null)
                 .toList();
 
-//        musicService.insertMusics();
-//
-//        musicService.insertMusicsInfoExt();
+        List<MusicPO> musicPOList = new ArrayList<>();
+
+
+
+
 
 
         return List.of();

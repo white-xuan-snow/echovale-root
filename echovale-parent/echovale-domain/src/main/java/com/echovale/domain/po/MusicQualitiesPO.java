@@ -21,4 +21,5 @@ public class MusicQualitiesPO {
     private Integer level;
     private Integer br;
     private Integer sr;
+    private Integer size;
 }

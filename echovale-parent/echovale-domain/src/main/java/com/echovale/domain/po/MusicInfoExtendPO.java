@@ -18,7 +18,7 @@ import lombok.Data;
 public class MusicInfoExtendPO {
     @TableId
     private Long musicId;
-    private String publishTime;
+    private Long publishTime;
     private Integer no;
     private Integer bpm;
 }
