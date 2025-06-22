@@ -19,12 +19,12 @@ import java.util.List;
  * @description: TODO
  * @date 2025/6/22 22:50
  */
-//@Slf4j
+@Slf4j
 @SpringBootTest
 public class MappingTest {
 
-//    @Resource
-//    private MusicDetailDTO2ModelMapping musicDetailDTO2ModelMapping;
+    @Autowired
+    private MusicDetailDTO2ModelMapping musicDetailDTO2ModelMapping;
 
 
     @Test
@@ -35,7 +35,7 @@ public class MappingTest {
                 .no(123123)
                 .fee(123)
                 .name("123")
-                .h(MusicQuality.builder()
+                .m(MusicQuality.builder()
                         .br(111)
                         .size(333)
                         .sr(222)
@@ -53,7 +53,7 @@ public class MappingTest {
                 .mv("97123")
                 .build();
 
-//        MusicModel model = musicDetailDTO2ModelMapping.toModel(dto);
-//        log.info("[MappingTest].[MusicModelMapping] model: {}", model);
+        MusicModel model = musicDetailDTO2ModelMapping.toModel(dto);
+        log.info("[MappingTest].[MusicModelMapping] model: {}", model);
     }
 }

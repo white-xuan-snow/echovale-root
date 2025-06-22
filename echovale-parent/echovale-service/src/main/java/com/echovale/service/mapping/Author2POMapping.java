@@ -8,14 +8,10 @@ import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 @Mapper(config = MappingConfig.class,
-        componentModel = "spring"
-)
-public interface Author2POMapping {
-
-    Author2POMapping INSTANCE = Mappers.getMapper(Author2POMapping.class);
+        componentModel = "spring")
+public abstract class Author2POMapping {
 
     @Mapping(source = "author.id", target = "neteaseId")
     @Mapping(target = "id", ignore = true)
-    AuthorPO toPO(Author author);
-
+    public abstract AuthorPO toPO(Author author);
 }

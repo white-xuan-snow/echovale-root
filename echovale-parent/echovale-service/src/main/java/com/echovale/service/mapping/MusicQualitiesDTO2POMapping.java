@@ -5,12 +5,12 @@ import com.echovale.service.config.MappingConfig;
 import com.netease.music.api.autoconfigure.configuration.pojo.entity.MusicQuality;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
+import org.springframework.stereotype.Component;
 
 @Mapper(config = MappingConfig.class,
         componentModel = "spring")
-public interface MusicQualitiesDTO2POMapping {
+@Component
+public abstract class MusicQualitiesDTO2POMapping {
 
-    MusicQualitiesDTO2POMapping INSTANCE = Mappers.getMapper(MusicQualitiesDTO2POMapping.class);
-
-    MusicQualitiesPO toPO(MusicQuality musicQuality);
+    public abstract MusicQualitiesPO toPO(MusicQuality musicQuality);
 }
