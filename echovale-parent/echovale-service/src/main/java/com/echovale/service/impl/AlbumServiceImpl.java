@@ -32,14 +32,14 @@ public class AlbumServiceImpl implements AlbumService {
 
 
     @Override
-    public List<Long> nonentityNeteaseIds(List<Long> neteaseAuthorIds) {
+    public List<Long> nonentityNeteaseIds(List<Long> neteaseAlbumIds) {
         List<Long> existIds = albumMapper.selectObjs(new MPJLambdaWrapper<>(AlbumPO.class)
                 .select(AlbumPO::getNeteaseId)
-                .in(AlbumPO::getNeteaseId, neteaseAuthorIds)
+                .in(AlbumPO::getNeteaseId, neteaseAlbumIds)
         );
         HashSet<Long> existIdsSet = new HashSet<>(existIds);
-        return neteaseAuthorIds.stream()
-                .filter(existIdsSet::contains)
+        return neteaseAlbumIds.stream()
+                .filter(o -> !existIdsSet.contains(o))
                 .toList();
     }
 
@@ -53,5 +53,10 @@ public class AlbumServiceImpl implements AlbumService {
                 throw new RuntimeException(e);
             }
         });
+    }
+
+    @Override
+    public void insertAlbums(List<AlbumPO> albumPOList) {
+        albumMapper.insertOrUpdate(albumPOList);
     }
 }

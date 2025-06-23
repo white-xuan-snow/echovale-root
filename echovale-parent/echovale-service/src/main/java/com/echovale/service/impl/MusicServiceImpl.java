@@ -4,6 +4,8 @@ import com.echovale.domain.mapper.*;
 import com.echovale.domain.model.MusicModel;
 import com.echovale.domain.po.*;
 import com.echovale.service.MusicService;
+import com.echovale.service.mapping.MusicModelMapping;
+import com.echovale.service.mapping.MusicPOMapping;
 import com.echovale.service.vo.MusicUrlVO;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.netease.music.api.autoconfigure.configuration.api.MusicApi;
@@ -60,6 +62,11 @@ public class MusicServiceImpl implements MusicService {
     @Autowired
     MusicEntertainmentMapper musicEntertainmentMapper;
 
+    @Autowired
+    MusicPOMapping musicPOMapping;
+    @Autowired
+    MusicModelMapping musicModelMapping;
+
 
     @Override
     public List<MusicUrlVO> elicitMusicUrl(List<Long> ids, String level) throws Exception {
@@ -99,11 +106,9 @@ public class MusicServiceImpl implements MusicService {
         // 转为HashSet(线程安全)
         HashSet<Long> nonentityNeteaseIdsSet = new HashSet<>(existIds);
 
-
-
         // 使用filter(HashSet::contains)过滤已存在的id
         return neteaseIds.stream()
-                .filter(nonentityNeteaseIdsSet::contains)
+                .filter(o -> !nonentityNeteaseIdsSet.contains(o))
                 .toList();
     }
 
@@ -123,7 +128,6 @@ public class MusicServiceImpl implements MusicService {
             }
         });
     }
-
 
     @Async("ServiceNoneCore")
     @Override
@@ -230,6 +234,11 @@ public class MusicServiceImpl implements MusicService {
         // TODO 联表插入
 
 
+    }
+
+    @Override
+    public void insertMusics(List<MusicPO> musicPOList) {
+        musicMapper.insertOrUpdate(musicPOList);
     }
 
 

@@ -1,5 +1,6 @@
 package com.echovale.service;
 
+import com.echovale.domain.po.AlbumPO;
 import com.netease.music.api.autoconfigure.configuration.pojo.dto.AlbumListDTO;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -13,4 +14,6 @@ public interface AlbumService {
 
     @Async("ServiceNoneCore")
     CompletableFuture<AlbumListDTO> elicitAlbum(Long id);
+
+    void insertAlbums(List<AlbumPO> albumPOList);
 }

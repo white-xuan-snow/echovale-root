@@ -1,7 +1,9 @@
 package com.echovale.service.impl;
 
 import com.echovale.domain.mapper.AuthorMapper;
+import com.echovale.domain.mapper.MusicAuthorsMapper;
 import com.echovale.domain.po.AuthorPO;
+import com.echovale.domain.po.MusicAuthorsPO;
 import com.echovale.service.AuthorService;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.netease.music.api.autoconfigure.configuration.api.AuthorApi;
@@ -28,6 +30,8 @@ public class AuthorServiceImpl implements AuthorService {
     @Autowired
     AuthorMapper authorMapper;
     @Autowired
+    MusicAuthorsMapper musicAuthorsMapper;
+    @Autowired
     AuthorApi authorApi;
 
 
@@ -41,7 +45,7 @@ public class AuthorServiceImpl implements AuthorService {
         // 映射为HashSet
         HashSet<Long> existIdsSet = new HashSet<>(existIds);
         return neteaseAuthorIds.stream()
-                .filter(existIdsSet::contains) // 使用filter过滤已存在的id
+                .filter(o -> !existIdsSet.contains(o)) // 使用filter过滤已存在的id
                 .toList();
     }
 
@@ -55,5 +59,15 @@ public class AuthorServiceImpl implements AuthorService {
                throw new RuntimeException(e);
            }
         });
+    }
+
+    @Override
+    public void insertAuthors(List<AuthorPO> authorPOList) {
+        authorMapper.insertOrUpdate(authorPOList);
+    }
+
+    @Override
+    public void insertMusicAuthors(List<MusicAuthorsPO> musicAuthorsPOList) {
+        musicAuthorsMapper.insertOrUpdate(musicAuthorsPOList);
     }
 }

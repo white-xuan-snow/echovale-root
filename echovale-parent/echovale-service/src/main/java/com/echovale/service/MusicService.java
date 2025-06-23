@@ -2,6 +2,7 @@ package com.echovale.service;
 
 
 import com.echovale.domain.model.MusicModel;
+import com.echovale.domain.po.MusicPO;
 import com.echovale.service.vo.MusicUrlVO;
 import com.netease.music.api.autoconfigure.configuration.pojo.dto.ChorusDTO;
 import com.netease.music.api.autoconfigure.configuration.pojo.dto.LyricsDTO;
@@ -30,4 +31,6 @@ public interface MusicService {
     void insertLyrics(List<LyricsDTO> lyricsDTOList);
 
     void insertSummary(List<MusicSummaryDTO> summaryDTOList);
+
+    void insertMusics(List<MusicPO> musicPOList);
 }

@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -43,18 +44,21 @@ public class PlaylistServiceImpl implements PlaylistService {
 
         // 先从数据库中查询是否有列表
         PlaylistPO playlistPO = playlistMapper.selectJoinOne(wrapperUtil.getPlaylistWrapper(false)
-                .eq(PlaylistPO::getId, id)
+                .eq(PlaylistPO::getNeteaseId, id)
         );
 
         // 没有就从api获取并保存到数据库
         if (playlistPO == null) {
             PlaylistDTO playlist = musicApi.playlist(id.toString());
 
+            Timestamp createTime = new Timestamp(playlist.getCreateTime());
+            Timestamp updateTime = new Timestamp(playlist.getUpdateTime());
+
             playlistPO = PlaylistPO.builder()
                     .name(playlist.getName())
                     .coverUrl(playlist.getCoverImgUrl())
-                    .createTime(playlist.getCreateTime())
-                    .updateTime(playlist.getUpdateTime())
+                    .createTime(createTime.getTime())
+                    .updateTime(updateTime.getTime())
                     .tags(playlist.getTags().toString())
                     .description(playlist.getDescription())
                     .isUser(false)
@@ -66,6 +70,7 @@ public class PlaylistServiceImpl implements PlaylistService {
 
             // 更新歌曲相关信息
             List<MusicModel> musicModelList = musicUpdateOrchestrator.updateMusics(playlist.getTracks());
+
 
         }
 

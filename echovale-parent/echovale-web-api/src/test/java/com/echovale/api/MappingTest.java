@@ -1,11 +1,11 @@
 package com.echovale.api;
 
 import com.echovale.domain.model.MusicModel;
-import com.echovale.service.mapping.MusicDetailDTO2ModelMapping;
+import com.echovale.service.mapping.MusicModelMapping;
+import com.netease.music.api.autoconfigure.configuration.pojo.dto.ChorusDTO;
 import com.netease.music.api.autoconfigure.configuration.pojo.dto.MusicDetailDTO;
 import com.netease.music.api.autoconfigure.configuration.pojo.entity.Author;
 import com.netease.music.api.autoconfigure.configuration.pojo.entity.MusicQuality;
-import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ import java.util.List;
 public class MappingTest {
 
     @Autowired
-    private MusicDetailDTO2ModelMapping musicDetailDTO2ModelMapping;
+    private MusicModelMapping musicModelMapping;
 
 
     @Test
@@ -53,7 +53,14 @@ public class MappingTest {
                 .mv("97123")
                 .build();
 
-        MusicModel model = musicDetailDTO2ModelMapping.toModel(dto);
+        ChorusDTO chorusDTO = ChorusDTO.builder()
+                .startTime(123)
+                .endTime(456)
+                .build();
+
+        MusicModel model = musicModelMapping.detailToModel(dto);
+        musicModelMapping.chorusToModel(chorusDTO, model);
+
         log.info("[MappingTest].[MusicModelMapping] model: {}", model);
     }
 }

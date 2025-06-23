@@ -16,6 +16,7 @@ import lombok.Data;
 @Builder
 @TableName("music_authors")
 public class MusicAuthorsPO {
+    @TableId
     @MppMultiId
     private Long authorId;
     @MppMultiId

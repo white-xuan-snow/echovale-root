@@ -1,5 +1,7 @@
 package com.echovale.service;
 
+import com.echovale.domain.po.AuthorPO;
+import com.echovale.domain.po.MusicAuthorsPO;
 import com.netease.music.api.autoconfigure.configuration.pojo.dto.AuthorDetailDTO;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -14,4 +16,8 @@ public interface AuthorService {
 
     @Async("ServiceNoneCore")
     CompletableFuture<AuthorDetailDTO> elicitDetails(Long nonentityNeteaseAuthorId);
+
+    void insertAuthors(List<AuthorPO> authorPOList);
+
+    void insertMusicAuthors(List<MusicAuthorsPO> musicAuthorsPOList);
 }

@@ -1,11 +1,12 @@
 package com.echovale.service.mapping;
 
 import com.echovale.domain.model.MusicModel;
+import com.echovale.domain.po.AlbumPO;
 import com.echovale.domain.po.MusicInfoExtendPO;
+import com.echovale.domain.po.MusicPO;
 import com.echovale.domain.po.MusicQualitiesPO;
+import com.netease.music.api.autoconfigure.configuration.pojo.dto.ChorusDTO;
 import com.netease.music.api.autoconfigure.configuration.pojo.dto.MusicDetailDTO;
-import com.netease.music.api.autoconfigure.configuration.pojo.entity.MusicQuality;
-import jakarta.annotation.Resource;
 import org.mapstruct.*;
 import com.echovale.service.config.MappingConfig;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,43 +16,56 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+@Component
 @Mapper(config = MappingConfig.class,
         componentModel = "spring",
-
         uses = {MusicQualitiesDTO2POMapping.class,
                 Author2POMapping.class,
                 Album2POMapping.class,})
-@Component
-public abstract class MusicDetailDTO2ModelMapping {
-
+public abstract class MusicModelMapping {
 
     @Autowired
     MusicQualitiesDTO2POMapping musicQualitiesDTO2POMapping;
 
 
-    // 自动映射
+    /*
+    MusicDetailDTO转MusicModel
+    */
+    // 自动匹配映射
     @Mapping(target = "id", ignore = true)
     @Mapping(source = "dto.al", target = "album")
     @Mapping(source = "dto.ar", target = "authors")
-    abstract void autoMapping(MusicDetailDTO dto, @MappingTarget MusicModel model);
+    abstract void detailAutoMapping(MusicDetailDTO dto, @MappingTarget MusicModel model);
 
-    public MusicModel toModel(MusicDetailDTO dto) {
-        MusicModel model = MusicModel.builder()
-                .neteaseId(dto.getId())
-                .qualities(combineQualities(dto))
-                .coverType(dto.getOriginCoverType())
-                .mvId(Long.parseLong(dto.getMv()))
-                .info(mapExtendInfo(dto))
-                .build();
+    public MusicModel detailToModel(MusicDetailDTO dto) {
+        return detailCore(dto, new MusicModel());
+    }
+    public MusicModel detailToModel(MusicDetailDTO dto, MusicModel model) {
+        return detailCore(dto, model);
+    }
 
-        autoMapping(dto, model);
+    public abstract void poToModel(MusicPO po, @MappingTarget MusicModel model);
+
+    @Mapping(source = "po.id", target = "album.id")
+    public abstract void albumToModel(AlbumPO po, @MappingTarget MusicModel model);
+
+    private MusicModel detailCore(MusicDetailDTO dto, MusicModel model) {
+
+        model.setNeteaseId(dto.getId());
+        model.setQualities(detailQualities(dto));
+        model.setCoverType(dto.getOriginCoverType());
+        model.setMvId(Long.parseLong(dto.getMv()));
+        model.setInfo(detailExtendInfo(dto));
+
+        detailAutoMapping(dto, model);
 
         return model;
     }
 
 
+
     // 音乐扩展信息
-    private MusicInfoExtendPO mapExtendInfo(MusicDetailDTO dto) {
+    private MusicInfoExtendPO detailExtendInfo(MusicDetailDTO dto) {
         return MusicInfoExtendPO.builder()
                 .musicId(dto.getId())
                 .no(dto.getNo())
@@ -60,10 +74,8 @@ public abstract class MusicDetailDTO2ModelMapping {
     }
 
     // 音质转换
-    private List<MusicQualitiesPO> combineQualities(MusicDetailDTO dto) {
+    private List<MusicQualitiesPO> detailQualities(MusicDetailDTO dto) {
         List<MusicQualitiesPO> res = new ArrayList<>();
-
-
 
         // 低品质
         MusicQualitiesPO l = musicQualitiesDTO2POMapping.toPO(dto.getL());
@@ -72,15 +84,12 @@ public abstract class MusicDetailDTO2ModelMapping {
             res.add(l);
         }
 
-
-
         // 中品质
         MusicQualitiesPO m = musicQualitiesDTO2POMapping.toPO(dto.getM());
         if (m != null) {
             m.setId(dto.getId());
             res.add(m);
         }
-
 
         // 高品质
         MusicQualitiesPO h = musicQualitiesDTO2POMapping.toPO(dto.getH());
@@ -96,7 +105,6 @@ public abstract class MusicDetailDTO2ModelMapping {
             res.add(sq);
         }
 
-
         // Hires
         MusicQualitiesPO hr = musicQualitiesDTO2POMapping.toPO(dto.getHr());
         if (hr != null) {
@@ -105,6 +113,27 @@ public abstract class MusicDetailDTO2ModelMapping {
         }
 
         return res;
+    }
+
+    /*
+    ChorusDTO转MusicModel
+    */
+
+    public MusicModel chorusToModel(ChorusDTO dto) {
+        return chorusCore(dto, new MusicModel());
+    }
+    public MusicModel chorusToModel(ChorusDTO dto, MusicModel model) {
+        return chorusCore(dto, model);
+    }
+
+    private MusicModel chorusCore(ChorusDTO dto, MusicModel model) {
+
+        model.setChorus(List.of(
+                dto.getStartTime(),
+                dto.getEndTime()
+        ).toString());
+
+        return model;
     }
 }
 

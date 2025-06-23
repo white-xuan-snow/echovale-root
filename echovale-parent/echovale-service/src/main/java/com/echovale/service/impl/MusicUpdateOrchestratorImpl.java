@@ -1,24 +1,27 @@
 package com.echovale.service.impl;
 
 import com.echovale.domain.model.MusicModel;
+import com.echovale.domain.po.AlbumPO;
+import com.echovale.domain.po.AuthorPO;
+import com.echovale.domain.po.MusicAuthorsPO;
 import com.echovale.domain.po.MusicPO;
 import com.echovale.service.AlbumService;
 import com.echovale.service.AuthorService;
 import com.echovale.service.MusicService;
 import com.echovale.service.MusicUpdateOrchestrator;
+import com.echovale.service.mapping.MusicModelMapping;
+import com.echovale.service.mapping.MusicPOMapping;
 import com.netease.music.api.autoconfigure.configuration.api.MusicApi;
 import com.netease.music.api.autoconfigure.configuration.pojo.dto.*;
-import com.netease.music.api.autoconfigure.configuration.pojo.entity.Album;
 import com.netease.music.api.autoconfigure.configuration.pojo.entity.Author;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 /**
  * @author 30531
@@ -38,7 +41,13 @@ public class MusicUpdateOrchestratorImpl implements MusicUpdateOrchestrator {
     @Autowired
     AuthorService authorService;
     @Autowired
-    private MusicApi music;
+    MusicApi music;
+
+    @Autowired
+    MusicModelMapping musicModelMapping;
+    @Autowired
+    MusicPOMapping musicPOMapping;
+
 
 
     @Override
@@ -87,11 +96,11 @@ public class MusicUpdateOrchestratorImpl implements MusicUpdateOrchestrator {
                 .toList();
 
         // 过滤已存在的id
-        List<Long> nonentityNeteaseAlbumIds = albumService.nonentityNeteaseIds(neteaseAuthorIds);
+        List<Long> nonentityNeteaseAlbumIds = albumService.nonentityNeteaseIds(neteaseAlbumIds);
 
 
         // 异步更新部分
-        updateMusicAsync(nonentityNeteaseMusicIds, nonentityNeteaseAuthorIds, nonentityNeteaseAlbumIds);
+//        updateMusicAsync(nonentityNeteaseMusicIds, nonentityNeteaseAuthorIds, nonentityNeteaseAlbumIds);
 
         // 即刻更新部分
 
@@ -101,14 +110,64 @@ public class MusicUpdateOrchestratorImpl implements MusicUpdateOrchestrator {
                 .map(o -> nonentityNeteaseMusicIdSet.contains(o.getId()) ? o : null)
                 .toList();
 
-        List<MusicPO> musicPOList = new ArrayList<>();
+
+        // 建立Map 方便后续匹配两个对象
+        Map<Long, ChorusDTO> chorusMap = chorusDTOList.stream()
+                .collect(Collectors.toMap(ChorusDTO::getId, chorusDTO -> chorusDTO));
 
 
+        List<MusicModel> musicModelList = nonentityTracks.stream()
+                .map(o1 -> {
+                    MusicModel musicModel = musicModelMapping.detailToModel(o1);
+                    musicModelMapping.chorusToModel(chorusMap.get(o1.getId()), musicModel);
+                    return musicModel;
+                })
+                .toList();
 
 
+        // 插入专辑
+        List<AlbumPO> albumPOList = musicModelList.stream()
+                .map(MusicModel::getAlbum)
+                .toList();
+
+        albumService.insertAlbums(albumPOList);
 
 
-        return List.of();
+        for (int i = 0; i < musicModelList.size(); i++) {
+            musicModelMapping.albumToModel(albumPOList.get(i), musicModelList.get(i));
+        }
+
+        // 插入音乐
+        List<MusicPO> musicPOList = musicModelList.stream()
+                .map(o -> musicPOMapping.modelToPO(o))
+                .toList();
+
+        musicService.insertMusics(musicPOList);
+
+        // 将id更新到model中
+        for (int i = 0; i < musicModelList.size(); i++) {
+            musicModelMapping.poToModel(musicPOList.get(i), musicModelList.get(i));
+        }
+
+
+        // 作者
+        List<AuthorPO> authorPOList = musicModelList.stream()
+                .flatMap(o1 -> o1.getAuthors().stream())
+                .toList();
+
+        authorService.insertAuthors(authorPOList);
+
+        List<MusicAuthorsPO> musicAuthorsPOList = musicModelList.stream()
+                .flatMap(o1 -> o1.getAuthors().stream()
+                        .map(o2 -> MusicAuthorsPO.builder()
+                                .musicId(o1.getId()) // 前面先插入music获取id再返回
+                                .authorId(o2.getId())
+                                .build()))
+                .toList();
+
+        authorService.insertMusicAuthors(musicAuthorsPOList);
+
+        return musicModelList;
     }
 
 

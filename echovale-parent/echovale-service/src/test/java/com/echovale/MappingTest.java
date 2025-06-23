@@ -1,17 +1,8 @@
 package com.echovale;
 
-import com.echovale.domain.model.MusicModel;
-import com.echovale.service.MusicService;
-import com.echovale.service.mapping.MusicDetailDTO2ModelMapping;
-import com.netease.music.api.autoconfigure.configuration.pojo.dto.MusicDetailDTO;
-import com.netease.music.api.autoconfigure.configuration.pojo.entity.Author;
-import com.netease.music.api.autoconfigure.configuration.pojo.entity.MusicQuality;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.List;
 
 /**
  * @description: TODO 
