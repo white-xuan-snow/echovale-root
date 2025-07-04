@@ -77,6 +77,12 @@
         </dependency>
 
 
+        <dependency>
+            <groupId>com.netease.music.api.autoconfigure.starter</groupId>
+            <artifactId>netease-music-api-spring-boot-starter</artifactId>
+        </dependency>
+
+
 
     </dependencies>
 

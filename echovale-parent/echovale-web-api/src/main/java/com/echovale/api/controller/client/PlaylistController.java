@@ -1,11 +1,10 @@
 package com.echovale.api.controller.client;
 
-import com.echovale.domain.model.Result;
+import com.echovale.service.dto.Result;
 import com.echovale.service.PlaylistService;
 import com.echovale.service.vo.PlaylistVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author 30531
@@ -28,7 +27,7 @@ public class PlaylistController {
         PlaylistVO res = playlistService.elicitPlaylist(id);
 
         // TODO 结果处理
-
+ 
         return Result.success();
     }
 

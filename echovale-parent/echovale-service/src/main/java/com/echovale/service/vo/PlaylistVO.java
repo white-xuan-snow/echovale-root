@@ -1,6 +1,6 @@
 package com.echovale.service.vo;
 
-import com.echovale.domain.model.MusicModel;
+import com.echovale.service.dto.MusicDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,5 +27,5 @@ public class PlaylistVO {
     private String updateTime;
     private String createTime;
     private List<String> tags;
-    private List<MusicModel> musics;
+    private List<MusicDTO> musics;
 }

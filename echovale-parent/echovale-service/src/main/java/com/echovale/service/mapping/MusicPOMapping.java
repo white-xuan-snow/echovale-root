@@ -1,6 +1,6 @@
 package com.echovale.service.mapping;
 
-import com.echovale.domain.model.MusicModel;
+import com.echovale.service.dto.MusicDTO;
 import com.echovale.domain.po.MusicPO;
 import com.echovale.service.config.MappingConfig;
 import org.mapstruct.Mapper;
@@ -22,10 +22,10 @@ import org.springframework.stereotype.Component;
 public abstract class MusicPOMapping {
 
     @Mapping(source = "model.album.id", target = "albumId")
-    public abstract MusicPO modelToPO(MusicModel model);
+    public abstract MusicPO modelToPO(MusicDTO model);
 
     @Mapping(source = "model.album.id", target = "albumId")
-    public abstract MusicPO modelToPO(MusicModel model, @MappingTarget MusicPO po);
+    public abstract MusicPO modelToPO(MusicDTO model, @MappingTarget MusicPO po);
 
 
 

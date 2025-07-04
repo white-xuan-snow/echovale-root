@@ -1,7 +1,7 @@
 package com.echovale.service.impl;
 
 import com.echovale.domain.mapper.*;
-import com.echovale.domain.model.MusicModel;
+import com.echovale.service.dto.MusicDTO;
 import com.echovale.domain.po.*;
 import com.echovale.service.MusicService;
 import com.echovale.service.mapping.MusicModelMapping;
@@ -9,10 +9,10 @@ import com.echovale.service.mapping.MusicPOMapping;
 import com.echovale.service.vo.MusicUrlVO;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.netease.music.api.autoconfigure.configuration.api.MusicApi;
-import com.netease.music.api.autoconfigure.configuration.pojo.dto.ChorusDTO;
-import com.netease.music.api.autoconfigure.configuration.pojo.dto.LyricsDTO;
-import com.netease.music.api.autoconfigure.configuration.pojo.dto.MusicSummaryDTO;
-import com.netease.music.api.autoconfigure.configuration.pojo.dto.MusicUrlDTO;
+import com.netease.music.api.autoconfigure.configuration.pojo.result.ChorusResult;
+import com.netease.music.api.autoconfigure.configuration.pojo.result.LyricsResult;
+import com.netease.music.api.autoconfigure.configuration.pojo.result.MusicSummaryResult;
+import com.netease.music.api.autoconfigure.configuration.pojo.result.MusicUrlResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -80,7 +80,7 @@ public class MusicServiceImpl implements MusicService {
         );
 
         // 音乐直链需要通过api获取
-        List<MusicUrlDTO> musicUrlDTOList = musicApi.getMusicV1Url(neteaseIds, level);
+        List<MusicUrlResult> musicUrlDTOList = musicApi.getMusicV1Url(neteaseIds, level);
 
         // 返回结果
 
@@ -88,7 +88,7 @@ public class MusicServiceImpl implements MusicService {
     }
 
     @Override
-    public List<MusicModel> elicitMusic(List<Long> ids) throws Exception {
+    public List<MusicDTO> elicitMusic(List<Long> ids) throws Exception {
 
         // 查询
 
@@ -113,16 +113,17 @@ public class MusicServiceImpl implements MusicService {
     }
 
     @Override
-    public List<ChorusDTO> elicitChorus(List<Long> nonentityNeteaseIds) throws Exception {
+    public List<ChorusResult> elicitChorus(List<Long> nonentityNeteaseIds) throws Exception {
         return musicApi.getChorus(nonentityNeteaseIds.stream().map(Object::toString).toList());
     }
 
     @Async("ServiceNoneCore")
     @Override
-    public CompletableFuture<LyricsDTO> elicitLyrics(Long nonentityNeteaseId) throws Exception {
+    public CompletableFuture<LyricsResult> elicitLyrics(Long nonentityNeteaseId) throws Exception {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 return musicApi.getLyrics(nonentityNeteaseId.toString());
+                // TODO AMLL github ttml歌词
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -131,7 +132,7 @@ public class MusicServiceImpl implements MusicService {
 
     @Async("ServiceNoneCore")
     @Override
-    public CompletableFuture<MusicSummaryDTO> elicitSummary(Long nonentityNeteaseId) {
+    public CompletableFuture<MusicSummaryResult> elicitSummary(Long nonentityNeteaseId) {
         return CompletableFuture.supplyAsync(() -> {
             try{
                 return musicApi.summary(nonentityNeteaseId.toString());
@@ -142,23 +143,23 @@ public class MusicServiceImpl implements MusicService {
     }
 
     @Override
-    public void insertLyrics(List<LyricsDTO> lyricsDTOList) {
-        for (LyricsDTO lyricsDTO : lyricsDTOList) {
+    public void insertLyrics(List<LyricsResult> lyricsDTOList) {
+        for (LyricsResult res : lyricsDTOList) {
             // TODO GitHub AMLL ttml歌词获取
             LyricPO lyricPO = LyricPO.builder()
-                    .neteaseLrc(lyricsDTO.getLrc())
-                    .neteaseTlrc(lyricsDTO.getTlyric())
-                    .neteaseYrc(lyricsDTO.getYrc())
-                    .neteaseRomalyc(lyricsDTO.getRomalrc())
-                    .neteaseKlrc(lyricsDTO.getKlyric())
-                    .musicId(lyricsDTO.getId())
+                    .neteaseLrc(res.getLrc())
+                    .neteaseTlrc(res.getTlyric())
+                    .neteaseYrc(res.getYrc())
+                    .neteaseRomalyc(res.getRomalrc())
+                    .neteaseKlrc(res.getKlyric())
+                    .musicId(res.getId())
                     .build();
             lyricMapper.insert(lyricPO);
         }
     }
 
     @Override
-    public void insertSummary(List<MusicSummaryDTO> summaryDTOList) {
+    public void insertSummary(List<MusicSummaryResult> summaryDTOList) {
 
         List<MusicAwardsPO> musicAwardsPOList = summaryDTOList.stream()
                         .flatMap(o1 -> o1.getAwards().stream()
@@ -239,6 +240,14 @@ public class MusicServiceImpl implements MusicService {
     @Override
     public void insertMusics(List<MusicPO> musicPOList) {
         musicMapper.insertOrUpdate(musicPOList);
+    }
+
+    @Override
+    public void insertInfosExtend(List<MusicInfoExtendPO> musicInfoExtendPOList) {
+
+        musicInfoExtMapper.insertOrUpdate(musicInfoExtendPOList);
+
+
     }
 
 

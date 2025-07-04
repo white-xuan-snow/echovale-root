@@ -1,6 +1,6 @@
 package com.echovale.api.controller.client;
 
-import com.echovale.domain.model.Result;
+import com.echovale.service.dto.Result;
 import com.echovale.service.MusicService;
 import com.echovale.service.vo.MusicUrlVO;
 import org.springframework.beans.factory.annotation.Autowired;

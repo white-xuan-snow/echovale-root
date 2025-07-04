@@ -5,7 +5,7 @@ import com.echovale.domain.po.AlbumPO;
 import com.echovale.service.AlbumService;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.netease.music.api.autoconfigure.configuration.api.AlbumApi;
-import com.netease.music.api.autoconfigure.configuration.pojo.dto.AlbumListDTO;
+import com.netease.music.api.autoconfigure.configuration.pojo.result.AlbumListResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -45,7 +45,7 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Async("ServiceNoneCore")
     @Override
-    public CompletableFuture<AlbumListDTO> elicitAlbum(Long id) {
+    public CompletableFuture<AlbumListResult> elicitAlbum(Long id) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 return albumApi.album(id.toString());

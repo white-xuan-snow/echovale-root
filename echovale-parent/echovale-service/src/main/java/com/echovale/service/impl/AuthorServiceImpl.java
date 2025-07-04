@@ -7,7 +7,7 @@ import com.echovale.domain.po.MusicAuthorsPO;
 import com.echovale.service.AuthorService;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.netease.music.api.autoconfigure.configuration.api.AuthorApi;
-import com.netease.music.api.autoconfigure.configuration.pojo.dto.AuthorDetailDTO;
+import com.netease.music.api.autoconfigure.configuration.pojo.result.AuthorDetailResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -51,7 +51,7 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Async("ServiceNoneCore")
     @Override
-    public CompletableFuture<AuthorDetailDTO> elicitDetails(Long nonentityNeteaseAuthorId) {
+    public CompletableFuture<AuthorDetailResult> elicitDetails(Long nonentityNeteaseAuthorId) {
         return CompletableFuture.supplyAsync(() -> {
            try {
                return authorApi.authorDetail(nonentityNeteaseAuthorId.toString());

@@ -1,12 +1,12 @@
 package com.echovale.service.mapping;
 
-import com.echovale.domain.model.MusicModel;
+import com.echovale.service.dto.MusicDTO;
 import com.echovale.domain.po.AlbumPO;
 import com.echovale.domain.po.MusicInfoExtendPO;
 import com.echovale.domain.po.MusicPO;
 import com.echovale.domain.po.MusicQualitiesPO;
-import com.netease.music.api.autoconfigure.configuration.pojo.dto.ChorusDTO;
-import com.netease.music.api.autoconfigure.configuration.pojo.dto.MusicDetailDTO;
+import com.netease.music.api.autoconfigure.configuration.pojo.result.ChorusResult;
+import com.netease.music.api.autoconfigure.configuration.pojo.result.MusicDetailResult;
 import org.mapstruct.*;
 import com.echovale.service.config.MappingConfig;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,31 +33,31 @@ public abstract class MusicModelMapping {
     */
     // 自动匹配映射
     @Mapping(target = "id", ignore = true)
-    @Mapping(source = "dto.al", target = "album")
-    @Mapping(source = "dto.ar", target = "authors")
-    abstract void detailAutoMapping(MusicDetailDTO dto, @MappingTarget MusicModel model);
+    @Mapping(source = "res.al", target = "album")
+    @Mapping(source = "res.ar", target = "authors")
+    abstract void detailAutoMapping(MusicDetailResult res, @MappingTarget MusicDTO model);
 
-    public MusicModel detailToModel(MusicDetailDTO dto) {
-        return detailCore(dto, new MusicModel());
+    public MusicDTO detailToModel(MusicDetailResult res) {
+        return detailCore(res, new MusicDTO());
     }
-    public MusicModel detailToModel(MusicDetailDTO dto, MusicModel model) {
-        return detailCore(dto, model);
+    public MusicDTO detailToModel(MusicDetailResult res, MusicDTO model) {
+        return detailCore(res, model);
     }
 
-    public abstract void poToModel(MusicPO po, @MappingTarget MusicModel model);
+    public abstract void poToModel(MusicPO po, @MappingTarget MusicDTO model);
 
     @Mapping(source = "po.id", target = "album.id")
-    public abstract void albumToModel(AlbumPO po, @MappingTarget MusicModel model);
+    public abstract void albumToModel(AlbumPO po, @MappingTarget MusicDTO model);
 
-    private MusicModel detailCore(MusicDetailDTO dto, MusicModel model) {
+    private MusicDTO detailCore(MusicDetailResult res, MusicDTO model) {
 
-        model.setNeteaseId(dto.getId());
-        model.setQualities(detailQualities(dto));
-        model.setCoverType(dto.getOriginCoverType());
-        model.setMvId(Long.parseLong(dto.getMv()));
-        model.setInfo(detailExtendInfo(dto));
+        model.setNeteaseId(res.getId());
+        model.setQualities(detailQualities(res));
+        model.setCoverType(res.getOriginCoverType());
+        model.setMvId(Long.parseLong(res.getMv()));
+        model.setInfo(detailExtendInfo(res));
 
-        detailAutoMapping(dto, model);
+        detailAutoMapping(res, model);
 
         return model;
     }
@@ -65,72 +65,71 @@ public abstract class MusicModelMapping {
 
 
     // 音乐扩展信息
-    private MusicInfoExtendPO detailExtendInfo(MusicDetailDTO dto) {
+    private MusicInfoExtendPO detailExtendInfo(MusicDetailResult res) {
         return MusicInfoExtendPO.builder()
-                .musicId(dto.getId())
-                .no(dto.getNo())
-                .publishTime(dto.getPublishTime())
+                .no(res.getNo())
+                .publishTime(res.getPublishTime())
                 .build();
     }
 
     // 音质转换
-    private List<MusicQualitiesPO> detailQualities(MusicDetailDTO dto) {
-        List<MusicQualitiesPO> res = new ArrayList<>();
+    private List<MusicQualitiesPO> detailQualities(MusicDetailResult res) {
+        List<MusicQualitiesPO> list = new ArrayList<>();
 
         // 低品质
-        MusicQualitiesPO l = musicQualitiesDTO2POMapping.toPO(dto.getL());
+        MusicQualitiesPO l = musicQualitiesDTO2POMapping.toPO(res.getL());
         if (l != null) {
-            l.setId(dto.getId());
-            res.add(l);
+            l.setId(res.getId());
+            list.add(l);
         }
 
         // 中品质
-        MusicQualitiesPO m = musicQualitiesDTO2POMapping.toPO(dto.getM());
+        MusicQualitiesPO m = musicQualitiesDTO2POMapping.toPO(res.getM());
         if (m != null) {
-            m.setId(dto.getId());
-            res.add(m);
+            m.setId(res.getId());
+            list.add(m);
         }
 
         // 高品质
-        MusicQualitiesPO h = musicQualitiesDTO2POMapping.toPO(dto.getH());
+        MusicQualitiesPO h = musicQualitiesDTO2POMapping.toPO(res.getH());
         if (h != null) {
-            h.setId(dto.getId());
-            res.add(h);
+            h.setId(res.getId());
+            list.add(h);
         }
 
         // 无损
-        MusicQualitiesPO sq = musicQualitiesDTO2POMapping.toPO(dto.getSq());
+        MusicQualitiesPO sq = musicQualitiesDTO2POMapping.toPO(res.getSq());
         if (sq != null) {
-            sq.setId(dto.getId());
-            res.add(sq);
+            sq.setId(res.getId());
+            list.add(sq);
         }
 
         // Hires
-        MusicQualitiesPO hr = musicQualitiesDTO2POMapping.toPO(dto.getHr());
+        MusicQualitiesPO hr = musicQualitiesDTO2POMapping.toPO(res.getHr());
         if (hr != null) {
-            hr.setId(dto.getId());
-            res.add(hr);
+            hr.setId(res.getId());
+            list.add(hr);
         }
 
-        return res;
+        return list;
     }
 
     /*
     ChorusDTO转MusicModel
     */
 
-    public MusicModel chorusToModel(ChorusDTO dto) {
-        return chorusCore(dto, new MusicModel());
+    public MusicDTO chorusToModel(ChorusResult res) {
+        return chorusCore(res, new MusicDTO());
     }
-    public MusicModel chorusToModel(ChorusDTO dto, MusicModel model) {
-        return chorusCore(dto, model);
+    public MusicDTO chorusToModel(ChorusResult res, MusicDTO model) {
+        return chorusCore(res, model);
     }
 
-    private MusicModel chorusCore(ChorusDTO dto, MusicModel model) {
+    private MusicDTO chorusCore(ChorusResult res, MusicDTO model) {
 
         model.setChorus(List.of(
-                dto.getStartTime(),
-                dto.getEndTime()
+                res.getStartTime(),
+                res.getEndTime()
         ).toString());
 
         return model;

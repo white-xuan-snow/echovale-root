@@ -1,4 +1,4 @@
-package com.echovale.domain.model;
+package com.echovale.service.dto;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.echovale.domain.po.*;
@@ -19,7 +19,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class MusicModel {
+public class MusicDTO {
     private Long id;
     private Long neteaseId;
     private String name;

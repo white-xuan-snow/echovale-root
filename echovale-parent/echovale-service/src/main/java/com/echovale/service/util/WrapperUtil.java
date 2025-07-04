@@ -1,6 +1,6 @@
 package com.echovale.service.util;
 
-import com.echovale.domain.model.MusicModel;
+import com.echovale.service.dto.MusicDTO;
 import com.echovale.domain.po.*;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import org.springframework.stereotype.Component;
@@ -22,10 +22,10 @@ public class WrapperUtil {
                 .leftJoin(AuthorPO.class, AuthorPO::getId, MusicAuthorsPO::getAuthorId)
                 .leftJoin(MusicAwardsPO.class, MusicAwardsPO::getMusicId, MusicPO::getId)
                 .leftJoin(MusicEntertainmentPO.class, MusicEntertainmentPO::getMusicId, MusicPO::getId)
-                .selectAssociation(AlbumPO.class, MusicModel::getAlbum)
-                .selectCollection(AuthorPO.class, MusicModel::getAuthors)
-                .selectCollection(MusicAwardsPO.class, MusicModel::getAwards)
-                .selectCollection(MusicEntertainmentPO.class, MusicModel::getEntertainments);
+                .selectAssociation(AlbumPO.class, MusicDTO::getAlbum)
+                .selectCollection(AuthorPO.class, MusicDTO::getAuthors)
+                .selectCollection(MusicAwardsPO.class, MusicDTO::getAwards)
+                .selectCollection(MusicEntertainmentPO.class, MusicDTO::getEntertainments);
     }
 
     public MPJLambdaWrapper<MusicPO> getMusicEntireWrapper() {
@@ -39,12 +39,12 @@ public class WrapperUtil {
                 .leftJoin(StylePO.class, StylePO::getId, MusicStylesPO::getStyleId)
                 .leftJoin(TagPO.class, TagPO::getId, MusicTagsPO::getTagId)
                 .leftJoin(LanguagePO.class, LanguagePO::getId, MusicLanguagesPO::getLanguageId)
-                .selectAssociation(LyricPO.class, MusicModel::getLyric)
-                .selectAssociation(MusicInfoExtendPO.class, MusicModel::getInfo)
-                .selectCollection(StylePO.class, MusicModel::getStyles)
-                .selectCollection(TagPO.class, MusicModel::getTags)
-                .selectCollection(LanguagePO.class, MusicModel::getLanguagePOS)
-                .selectCollection(MusicSheetsPO.class, MusicModel::getSheets);
+                .selectAssociation(LyricPO.class, MusicDTO::getLyric)
+                .selectAssociation(MusicInfoExtendPO.class, MusicDTO::getInfo)
+                .selectCollection(StylePO.class, MusicDTO::getStyles)
+                .selectCollection(TagPO.class, MusicDTO::getTags)
+                .selectCollection(LanguagePO.class, MusicDTO::getLanguagePOS)
+                .selectCollection(MusicSheetsPO.class, MusicDTO::getSheets);
     }
 
     public MPJLambdaWrapper<PlaylistPO> getPlaylistWrapper(Boolean isUser) {

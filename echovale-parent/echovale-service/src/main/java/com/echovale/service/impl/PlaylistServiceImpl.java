@@ -1,15 +1,14 @@
 package com.echovale.service.impl;
 
 import com.echovale.domain.mapper.PlaylistMapper;
-import com.echovale.domain.model.MusicModel;
+import com.echovale.service.dto.MusicDTO;
 import com.echovale.domain.po.PlaylistPO;
 import com.echovale.service.MusicUpdateOrchestrator;
 import com.echovale.service.PlaylistService;
 import com.echovale.service.util.WrapperUtil;
 import com.echovale.service.vo.PlaylistVO;
-import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.netease.music.api.autoconfigure.configuration.api.MusicApi;
-import com.netease.music.api.autoconfigure.configuration.pojo.dto.PlaylistDTO;
+import com.netease.music.api.autoconfigure.configuration.pojo.result.PlaylistResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -49,7 +48,7 @@ public class PlaylistServiceImpl implements PlaylistService {
 
         // 没有就从api获取并保存到数据库
         if (playlistPO == null) {
-            PlaylistDTO playlist = musicApi.playlist(id.toString());
+            PlaylistResult playlist = musicApi.playlist(id.toString());
 
             Timestamp createTime = new Timestamp(playlist.getCreateTime());
             Timestamp updateTime = new Timestamp(playlist.getUpdateTime());
@@ -69,7 +68,7 @@ public class PlaylistServiceImpl implements PlaylistService {
             playlistMapper.insert(playlistPO);
 
             // 更新歌曲相关信息
-            List<MusicModel> musicModelList = musicUpdateOrchestrator.updateMusics(playlist.getTracks());
+            List<MusicDTO> musicDTOList = musicUpdateOrchestrator.updateMusics(playlist.getTracks());
 
 
         }

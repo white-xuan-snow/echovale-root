@@ -43,7 +43,7 @@ public class MappingTest {
 //                .mv("97123")
 //                .build();
 //
-//        MusicModel model = MusicDetailDTO2ModelMapping.INSTANCE.toModel(dto);
+//        MusicDTO model = MusicDetailDTO2ModelMapping.INSTANCE.toModel(dto);
 //        log.info("[MappingTest].[MusicModelMapping] model: {}", model);
     }
 

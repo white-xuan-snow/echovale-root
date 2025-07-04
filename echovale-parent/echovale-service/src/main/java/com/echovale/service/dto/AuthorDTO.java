@@ -1,4 +1,4 @@
-package com.echovale.domain.model;
+package com.echovale.service.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthorModel {
+public class AuthorDTO {
     private Long id;
     private String name;
     private Long neteaseId;

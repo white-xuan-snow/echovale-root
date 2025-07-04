@@ -1,4 +1,4 @@
-package com.echovale.domain.model;
+package com.echovale.service.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
