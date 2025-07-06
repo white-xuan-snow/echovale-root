@@ -1,6 +1,8 @@
 package com.echovale.service.impl;
 
+import com.echovale.domain.mapper.AlbumAuthorsMapper;
 import com.echovale.domain.mapper.AlbumMapper;
+import com.echovale.domain.po.AlbumAuthorsPO;
 import com.echovale.domain.po.AlbumPO;
 import com.echovale.service.AlbumService;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
@@ -29,6 +31,8 @@ public class AlbumServiceImpl implements AlbumService {
     AlbumMapper albumMapper;
     @Autowired
     AlbumApi albumApi;
+    @Autowired
+    AlbumAuthorsMapper albumAuthorsMapper;
 
 
     @Override
@@ -58,5 +62,10 @@ public class AlbumServiceImpl implements AlbumService {
     @Override
     public void insertAlbums(List<AlbumPO> albumPOList) {
         albumMapper.insertOrUpdate(albumPOList);
+    }
+
+    @Override
+    public void insertAlbumAuthors(List<AlbumAuthorsPO> albumAuthorsPOList) {
+        albumAuthorsMapper.insertOrUpdate(albumAuthorsPOList);
     }
 }

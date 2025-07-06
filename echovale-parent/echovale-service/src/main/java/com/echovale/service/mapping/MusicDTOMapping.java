@@ -20,9 +20,9 @@ import java.util.List;
 @Mapper(config = MappingConfig.class,
         componentModel = "spring",
         uses = {MusicQualitiesDTO2POMapping.class,
-                Author2POMapping.class,
-                Album2POMapping.class,})
-public abstract class MusicModelMapping {
+                AuthorPOMapping.class,
+                AlbumPOMapping.class,})
+public abstract class MusicDTOMapping {
 
     @Autowired
     MusicQualitiesDTO2POMapping musicQualitiesDTO2POMapping;

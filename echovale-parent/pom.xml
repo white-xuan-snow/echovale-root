@@ -43,7 +43,7 @@
     <mapstruct.version>1.5.5.Final</mapstruct.version>
     <junit.version>3.8.1</junit.version>
     <mysql.version>8.2.0</mysql.version>
-    <netease-music-api.version>release1.1</netease-music-api.version>
+    <netease-music-api.version>release1.2</netease-music-api.version>
   </properties>
 
 

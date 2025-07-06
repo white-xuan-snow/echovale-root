@@ -1,14 +1,13 @@
 package com.echovale.service.impl;
 
 import com.echovale.domain.po.*;
+import com.echovale.service.dto.AlbumDTO;
 import com.echovale.service.dto.MusicDTO;
 import com.echovale.service.AlbumService;
 import com.echovale.service.AuthorService;
 import com.echovale.service.MusicService;
 import com.echovale.service.MusicUpdateOrchestrator;
-import com.echovale.service.mapping.MusicModelMapping;
-import com.echovale.service.mapping.MusicPOMapping;
-import com.netease.music.api.autoconfigure.configuration.api.MusicApi;
+import com.echovale.service.mapping.*;
 import com.netease.music.api.autoconfigure.configuration.pojo.entity.Author;
 import com.netease.music.api.autoconfigure.configuration.pojo.result.*;
 import lombok.extern.slf4j.Slf4j;
@@ -37,13 +36,17 @@ public class MusicUpdateOrchestratorImpl implements MusicUpdateOrchestrator {
     AlbumService albumService;
     @Autowired
     AuthorService authorService;
-    @Autowired
-    MusicApi music;
 
     @Autowired
-    MusicModelMapping musicModelMapping;
+    MusicDTOMapping musicDTOMapping;
     @Autowired
     MusicPOMapping musicPOMapping;
+    @Autowired
+    LyricPOMapping lyricPOMapping;
+    @Autowired
+    AuthorPOMapping authorPOMapping;
+    @Autowired
+    AlbumDTOMapping albumDTOMapping;
 
 
 
@@ -95,16 +98,11 @@ public class MusicUpdateOrchestratorImpl implements MusicUpdateOrchestrator {
         // 过滤已存在的id
         List<Long> nonentityNeteaseAlbumIds = albumService.nonentityNeteaseIds(neteaseAlbumIds);
 
-
-        // 异步更新部分
-        updateMusicAsync(nonentityNeteaseMusicIds, nonentityNeteaseAuthorIds, nonentityNeteaseAlbumIds);
-
         // 即刻更新部分
-
         HashSet<Long> nonentityNeteaseMusicIdSet = new HashSet<>(nonentityNeteaseMusicIds);
 
         List<MusicDetailResult> nonentityTracks = tracks.stream()
-                .map(o -> nonentityNeteaseMusicIdSet.contains(o.getId()) ? o : null)
+                .filter(o -> nonentityNeteaseMusicIdSet.contains(o.getId()))
                 .toList();
 
 
@@ -115,8 +113,8 @@ public class MusicUpdateOrchestratorImpl implements MusicUpdateOrchestrator {
 
         List<MusicDTO> musicDTOList = nonentityTracks.stream()
                 .map(o1 -> {
-                    MusicDTO musicDTO = musicModelMapping.detailToModel(o1);
-                    musicModelMapping.chorusToModel(chorusMap.get(o1.getId()), musicDTO);
+                    MusicDTO musicDTO = musicDTOMapping.detailToModel(o1);
+                    musicDTOMapping.chorusToModel(chorusMap.get(o1.getId()), musicDTO);
                     return musicDTO;
                 })
                 .toList();
@@ -131,7 +129,7 @@ public class MusicUpdateOrchestratorImpl implements MusicUpdateOrchestrator {
 
 
         for (int i = 0; i < musicDTOList.size(); i++) {
-            musicModelMapping.albumToModel(albumPOList.get(i), musicDTOList.get(i));
+            musicDTOMapping.albumToModel(albumPOList.get(i), musicDTOList.get(i));
         }
 
         // 插入音乐
@@ -143,7 +141,7 @@ public class MusicUpdateOrchestratorImpl implements MusicUpdateOrchestrator {
 
         // 将id更新到model中
         for (int i = 0; i < musicDTOList.size(); i++) {
-            musicModelMapping.poToModel(musicPOList.get(i), musicDTOList.get(i));
+            musicDTOMapping.poToModel(musicPOList.get(i), musicDTOList.get(i));
         }
 
         // 插入音乐信息扩展表
@@ -173,6 +171,14 @@ public class MusicUpdateOrchestratorImpl implements MusicUpdateOrchestrator {
                 .toList();
 
         authorService.insertMusicAuthors(musicAuthorsPOList);
+
+
+
+        // 异步更新部分
+        updateMusicAsync(nonentityNeteaseMusicIds, nonentityNeteaseAuthorIds, nonentityNeteaseAlbumIds);
+
+
+
 
         return musicDTOList;
     }
@@ -222,9 +228,9 @@ public class MusicUpdateOrchestratorImpl implements MusicUpdateOrchestrator {
         汇总
         */
 
-        List<LyricsResult> lyricsDTOList = new ArrayList<>();
+        List<LyricsResult> lyricsResList = new ArrayList<>();
         for (CompletableFuture<LyricsResult> future : lyricsFutureList) {
-            lyricsDTOList.add(future.join());
+            lyricsResList.add(future.join());
         }
         List<MusicSummaryResult> summaryDTOList = new ArrayList<>();
         for (CompletableFuture<MusicSummaryResult> future : summaryFutureList) {
@@ -234,23 +240,72 @@ public class MusicUpdateOrchestratorImpl implements MusicUpdateOrchestrator {
         for (CompletableFuture<AuthorDetailResult> future : authorFutureList) {
             authorDetailDTOList.add(future.join());
         }
-        List<AlbumListResult> albumListDTOList = new ArrayList<>();
+        List<AlbumListResult> albumListResList = new ArrayList<>();
         for (CompletableFuture<AlbumListResult> future : albumFutureList) {
-            albumListDTOList.add(future.join());
+            albumListResList.add(future.join());
         }
+
+        /*
+        获取music id list
+        */
+
+        List<Long> musicIds = musicService.NeteaseToMusicIds(nonentityNeteaseMusicIds);
+
 
         /*
         更新
         */
 
         // 歌词
-        musicService.insertLyrics(lyricsDTOList);
 
-        // summary
-        musicService.insertSummary(summaryDTOList);
+        List<LyricPO> lyricPOList = new ArrayList<>();
+        for (int i = 0; i < musicIds.size(); i++) {
+            LyricPO po = lyricPOMapping.byResult(lyricsResList.get(i), musicIds.get(i));
+            lyricPOList.add(po);
+        }
+
+        musicService.insertLyrics(lyricPOList);
+
+
+        // summary // TODO
+//        musicService.insertSummary(summaryDTOList);
 
         // 更新author
+        List<AuthorPO> authorPOList = authorDetailDTOList.stream()
+                .map(o -> authorPOMapping.byDetailRes(o))
+                .toList();
 
+        authorService.insertAuthors(authorPOList);
+
+
+        // 更新album
+
+        List<AlbumDTO> albumDTOList = albumListResList.stream()
+                .map(o -> albumDTOMapping.byResult(o.getAlbum()))
+                .toList();
+
+        List<AlbumPO> albumPOList = albumDTOList.stream()
+                .map(AlbumDTO::getAlbum)
+                .toList();
+
+        albumService.insertAlbums(albumPOList);
+
+        // 专辑作者关联表
+
+        List<AlbumAuthorsPO> albumAuthorsPOList = new ArrayList<>();
+
+        for (int i = 0; i < albumPOList.size(); i++) {
+            Long albumId = albumPOList.get(i).getId();
+            List<AlbumAuthorsPO> poList = albumDTOList.get(i).getAuthors().stream()
+                    .map(o -> AlbumAuthorsPO.builder()
+                            .albumId(albumId)
+                            .authorId(o.getId())
+                            .build())
+                    .toList();
+            albumAuthorsPOList.addAll(poList);
+        }
+
+        albumService.insertAlbumAuthors(albumAuthorsPOList);
 
     }
 

@@ -4,7 +4,7 @@ import com.echovale.domain.mapper.*;
 import com.echovale.service.dto.MusicDTO;
 import com.echovale.domain.po.*;
 import com.echovale.service.MusicService;
-import com.echovale.service.mapping.MusicModelMapping;
+import com.echovale.service.mapping.MusicDTOMapping;
 import com.echovale.service.mapping.MusicPOMapping;
 import com.echovale.service.vo.MusicUrlVO;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
@@ -65,7 +65,7 @@ public class MusicServiceImpl implements MusicService {
     @Autowired
     MusicPOMapping musicPOMapping;
     @Autowired
-    MusicModelMapping musicModelMapping;
+    MusicDTOMapping musicDTOMapping;
 
 
     @Override
@@ -101,7 +101,7 @@ public class MusicServiceImpl implements MusicService {
         // 已存在的id
         List<Long> existIds = musicMapper.selectObjs(new MPJLambdaWrapper<>(MusicPO.class)
                 .select(MusicPO::getNeteaseId)
-                .in(MusicPO::getId, neteaseIds)
+                .in(MusicPO::getNeteaseId, neteaseIds)
         );
         // 转为HashSet(线程安全)
         HashSet<Long> nonentityNeteaseIdsSet = new HashSet<>(existIds);
@@ -143,18 +143,13 @@ public class MusicServiceImpl implements MusicService {
     }
 
     @Override
-    public void insertLyrics(List<LyricsResult> lyricsDTOList) {
-        for (LyricsResult res : lyricsDTOList) {
+    public void insertLyrics(List<LyricPO> lyricPOList) {
+        for (LyricPO po : lyricPOList) {
             // TODO GitHub AMLL ttml歌词获取
-            LyricPO lyricPO = LyricPO.builder()
-                    .neteaseLrc(res.getLrc())
-                    .neteaseTlrc(res.getTlyric())
-                    .neteaseYrc(res.getYrc())
-                    .neteaseRomalyc(res.getRomalrc())
-                    .neteaseKlrc(res.getKlyric())
-                    .musicId(res.getId())
-                    .build();
-            lyricMapper.insert(lyricPO);
+
+
+
+            lyricMapper.insertOrUpdate(po);
         }
     }
 
@@ -248,6 +243,13 @@ public class MusicServiceImpl implements MusicService {
         musicInfoExtMapper.insertOrUpdate(musicInfoExtendPOList);
 
 
+    }
+
+    @Override
+    public List<Long> NeteaseToMusicIds(List<Long> nonentityNeteaseMusicIds) {
+        return musicMapper.selectObjs(new MPJLambdaWrapper<MusicPO>()
+                .select(MusicPO::getId)
+                .in(MusicPO::getNeteaseId, nonentityNeteaseMusicIds));
     }
 
 

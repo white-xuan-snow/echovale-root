@@ -1,6 +1,7 @@
 package com.echovale.service;
 
 
+import com.echovale.domain.po.LyricPO;
 import com.echovale.domain.po.MusicInfoExtendPO;
 import com.echovale.service.dto.MusicDTO;
 import com.echovale.domain.po.MusicPO;
@@ -29,11 +30,13 @@ public interface MusicService {
     @Async("ServiceNoneCore")
     CompletableFuture<MusicSummaryResult> elicitSummary(Long nonentityNeteaseId);
 
-    void insertLyrics(List<LyricsResult> lyricsDTOList);
+    void insertLyrics(List<LyricPO> lyricPOList);
 
     void insertSummary(List<MusicSummaryResult> summaryDTOList);
 
     void insertMusics(List<MusicPO> musicPOList);
 
     void insertInfosExtend(List<MusicInfoExtendPO> musicInfoExtendPOList);
+
+    List<Long> NeteaseToMusicIds(List<Long> nonentityNeteaseMusicIds);
 }

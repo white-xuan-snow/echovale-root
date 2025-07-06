@@ -65,7 +65,7 @@ public class PlaylistServiceImpl implements PlaylistService {
                     .build();
 
             // 插入歌单
-            playlistMapper.insert(playlistPO);
+            playlistMapper.insertOrUpdate(playlistPO);
 
             // 更新歌曲相关信息
             List<MusicDTO> musicDTOList = musicUpdateOrchestrator.updateMusics(playlist.getTracks());

@@ -44,7 +44,7 @@ public class MappingTest {
 //                .build();
 //
 //        MusicDTO model = MusicDetailDTO2ModelMapping.INSTANCE.toModel(dto);
-//        log.info("[MappingTest].[MusicModelMapping] model: {}", model);
+//        log.info("[MappingTest].[MusicDTOMapping] model: {}", model);
     }
 
 

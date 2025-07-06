@@ -21,7 +21,7 @@ public class AlbumPO {
     private Long neteaseId;
     private String description;
     private String picUrl;
-    private String publishTime;
+    private Long publishTime;
     private Integer type;
     private Integer size;
     private Integer subType;
