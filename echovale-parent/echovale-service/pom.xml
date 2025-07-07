@@ -46,6 +46,13 @@
             <scope>compile</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.echovale</groupId>
+            <artifactId>echovale-common</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+
 
         <dependency>
             <groupId>com.netease.music.api.autoconfigure.starter</groupId>

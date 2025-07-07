@@ -5,5 +5,5 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface PlaylistService {
-    PlaylistVO elicitPlaylist(Long id) throws Exception;
+    PlaylistVO elicitPlaylist(Long id, Long neteaseId) throws Exception;
 }

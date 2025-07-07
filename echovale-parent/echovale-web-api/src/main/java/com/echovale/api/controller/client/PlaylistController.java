@@ -21,14 +21,14 @@ public class PlaylistController {
     @Autowired
     PlaylistService playlistService;
 
-    @PostMapping()
-    public Result getPlaylist(@RequestParam("id") Long id) throws Exception {
+    @GetMapping()
+    public Result getPlaylist(@RequestParam("id") Long id, @RequestParam("neteaseId") Long neteaseId) throws Exception {
 
-        PlaylistVO res = playlistService.elicitPlaylist(id);
+        PlaylistVO res = playlistService.elicitPlaylist(id, neteaseId);
 
         // TODO 结果处理
  
-        return Result.success();
+        return Result.success(res);
     }
 
 

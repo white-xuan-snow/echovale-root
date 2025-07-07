@@ -53,6 +53,12 @@ public class WrapperUtil {
                 .eq(PlaylistPO::getIsUser, isUser);
     }
 
+    public MPJLambdaWrapper<PlaylistMusicsPO> getPlaylistMusicsWrapper(Long playlistId) {
+        return new MPJLambdaWrapper<PlaylistMusicsPO>()
+                .selectAll(PlaylistMusicsPO.class)
+                .eq(PlaylistMusicsPO::getPlaylistId, playlistId);
+    }
+
 
 
 

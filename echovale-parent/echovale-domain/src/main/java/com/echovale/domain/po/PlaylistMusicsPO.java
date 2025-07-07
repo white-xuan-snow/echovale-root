@@ -10,15 +10,15 @@ import lombok.Data;
  * @author 30531
  * @version 1.0
  * @description: TODO
- * @date 2025/6/11 0:16
+ * @date 2025/7/7 23:35
  */
 @Data
 @Builder
-@TableName("album_authors")
-public class AlbumAuthorsPO {
+@TableName("playlist_musics")
+public class PlaylistMusicsPO {
     @TableId
     @MppMultiId
-    private Long albumId;
+    private Long playlistId;
     @MppMultiId
-    private Long authorId;
+    private Long musicId;
 }

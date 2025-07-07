@@ -3,7 +3,9 @@ package com.echovale.service.mapping;
 import com.echovale.domain.po.AuthorPO;
 import com.echovale.service.config.MappingConfig;
 import com.netease.music.api.autoconfigure.configuration.pojo.entity.Author;
+import com.netease.music.api.autoconfigure.configuration.pojo.result.AlbumResult;
 import com.netease.music.api.autoconfigure.configuration.pojo.result.AuthorDetailResult;
+import com.netease.music.api.autoconfigure.configuration.pojo.result.AuthorResult;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -40,6 +42,27 @@ public abstract class AuthorPOMapping {
         po.setAvatarUrl(res.getAvatar());
         // 简介
         po.setDescription(res.getBriefDesc());
+        return po;
+    }
+
+    // TODO 只做了id映射，因为业务不需要其它字段
+    @Mapping(target = "id", ignore = true)
+    @Mapping(source = "res.id", target = "neteaseId")
+    @Mapping(target = "alias", ignore = true)
+    abstract AuthorPO autoResultMapping(AuthorResult res, @MappingTarget AuthorPO po);
+
+    public AuthorPO byResult(AuthorResult res) {
+        return coreResult(res, AuthorPO.builder().build());
+    }
+
+    public AuthorPO byResult(AuthorResult res, AuthorPO po) {
+        return coreResult(res, po);
+    }
+
+    private AuthorPO coreResult(AuthorResult res, AuthorPO po) {
+        autoResultMapping(res, po);
+        po.setMusicSize(null);
+        po.setAlbumSize(null);
         return po;
     }
 

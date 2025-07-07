@@ -22,7 +22,7 @@ public class AlbumPO {
     private String description;
     private String picUrl;
     private Long publishTime;
-    private Integer type;
+    private String type;
     private Integer size;
-    private Integer subType;
+    private String subType;
 }

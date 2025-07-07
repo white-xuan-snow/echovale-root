@@ -6,7 +6,6 @@ import com.echovale.service.config.MappingConfig;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-import org.springframework.stereotype.Component;
 
 /**
  * @author 30531
@@ -15,18 +14,14 @@ import org.springframework.stereotype.Component;
  * @date 2025/6/23 20:33
  */
 
-@Component
+
 @Mapper(config = MappingConfig.class,
-        componentModel = "spring"
-)
+        componentModel = "spring")
 public abstract class MusicPOMapping {
 
-    @Mapping(source = "model.album.id", target = "albumId")
-    public abstract MusicPO modelToPO(MusicDTO model);
+    @Mapping(source = "dto.album.id", target = "albumId")
+    public abstract MusicPO byDTO(MusicDTO dto);
 
-    @Mapping(source = "model.album.id", target = "albumId")
-    public abstract MusicPO modelToPO(MusicDTO model, @MappingTarget MusicPO po);
-
-
-
+    @Mapping(source = "dto.album.id", target = "albumId")
+    public abstract MusicPO byDTO(MusicDTO dto, @MappingTarget MusicPO po);
 }

@@ -7,7 +7,7 @@ import com.netease.music.api.autoconfigure.configuration.pojo.result.LyricsResul
 import org.mapstruct.Mapper;
 
 @Mapper(config = MappingConfig.class,
-    componentModel = "spring"
+        componentModel = "spring"
 )
 public abstract class LyricPOMapping {
 

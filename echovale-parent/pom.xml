@@ -33,7 +33,7 @@
 <!--    <maven.compiler.target>17</maven.compiler.target>-->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-
+    <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
     <echovale.version>1.0.0</echovale.version>
     <springboot.version>3.4.6</springboot.version>
     <mybatis-plus.version>3.5.10.1</mybatis-plus.version>
@@ -144,7 +144,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.14.0</version>
+        <version>${maven-compiler-plugin.version}</version>
         <configuration>
           <compilerArgs>
             <arg>-Amapstruct.suppressGeneratorVersion</arg>

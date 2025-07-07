@@ -13,11 +13,13 @@ import com.netease.music.api.autoconfigure.configuration.pojo.result.ChorusResul
 import com.netease.music.api.autoconfigure.configuration.pojo.result.LyricsResult;
 import com.netease.music.api.autoconfigure.configuration.pojo.result.MusicSummaryResult;
 import com.netease.music.api.autoconfigure.configuration.pojo.result.MusicUrlResult;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;

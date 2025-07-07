@@ -19,13 +19,13 @@ import java.util.List;
 @Component
 @Mapper(config = MappingConfig.class,
         componentModel = "spring",
-        uses = {MusicQualitiesDTO2POMapping.class,
+        uses = {MusicQualitiesPOMapping.class,
                 AuthorPOMapping.class,
                 AlbumPOMapping.class,})
 public abstract class MusicDTOMapping {
 
     @Autowired
-    MusicQualitiesDTO2POMapping musicQualitiesDTO2POMapping;
+    MusicQualitiesPOMapping musicQualitiesPOMapping;
 
 
     /*
@@ -77,35 +77,35 @@ public abstract class MusicDTOMapping {
         List<MusicQualitiesPO> list = new ArrayList<>();
 
         // 低品质
-        MusicQualitiesPO l = musicQualitiesDTO2POMapping.toPO(res.getL());
+        MusicQualitiesPO l = musicQualitiesPOMapping.byResult(res.getL());
         if (l != null) {
             l.setId(res.getId());
             list.add(l);
         }
 
         // 中品质
-        MusicQualitiesPO m = musicQualitiesDTO2POMapping.toPO(res.getM());
+        MusicQualitiesPO m = musicQualitiesPOMapping.byResult(res.getM());
         if (m != null) {
             m.setId(res.getId());
             list.add(m);
         }
 
         // 高品质
-        MusicQualitiesPO h = musicQualitiesDTO2POMapping.toPO(res.getH());
+        MusicQualitiesPO h = musicQualitiesPOMapping.byResult(res.getH());
         if (h != null) {
             h.setId(res.getId());
             list.add(h);
         }
 
         // 无损
-        MusicQualitiesPO sq = musicQualitiesDTO2POMapping.toPO(res.getSq());
+        MusicQualitiesPO sq = musicQualitiesPOMapping.byResult(res.getSq());
         if (sq != null) {
             sq.setId(res.getId());
             list.add(sq);
         }
 
         // Hires
-        MusicQualitiesPO hr = musicQualitiesDTO2POMapping.toPO(res.getHr());
+        MusicQualitiesPO hr = musicQualitiesPOMapping.byResult(res.getHr());
         if (hr != null) {
             hr.setId(res.getId());
             list.add(hr);
