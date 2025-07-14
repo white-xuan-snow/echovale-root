@@ -6,6 +6,7 @@ import com.echovale.domain.po.*;
 import com.echovale.service.MusicService;
 import com.echovale.service.mapping.MusicDTOMapping;
 import com.echovale.service.mapping.MusicPOMapping;
+import com.echovale.service.util.WrapperUtil;
 import com.echovale.service.vo.MusicUrlVO;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.netease.music.api.autoconfigure.configuration.api.MusicApi;
@@ -13,13 +14,12 @@ import com.netease.music.api.autoconfigure.configuration.pojo.result.ChorusResul
 import com.netease.music.api.autoconfigure.configuration.pojo.result.LyricsResult;
 import com.netease.music.api.autoconfigure.configuration.pojo.result.MusicSummaryResult;
 import com.netease.music.api.autoconfigure.configuration.pojo.result.MusicUrlResult;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -69,24 +69,33 @@ public class MusicServiceImpl implements MusicService {
     @Autowired
     MusicDTOMapping musicDTOMapping;
 
+    @Autowired
+    WrapperUtil wrapperUtil;
+
 
     @Override
-    public List<MusicUrlVO> elicitMusicUrl(List<Long> ids, String level) throws Exception {
+    public List<String> elicitMusicUrl(List<Long> ids, List<String> neteaseIds, String level) throws Exception {
+        // TODO 异常处理
+
 
         // 从数据库中查询neteaseIds
-
-        List<String> neteaseIds = musicMapper.selectJoinList(String.class,
-                new MPJLambdaWrapper<MusicPO>()
-                        .select(MusicPO::getNeteaseId)
-                        .in(MusicPO::getId, ids)
-        );
+        if (neteaseIds.isEmpty()) {
+            neteaseIds = musicMapper.selectJoinList(String.class,
+                    new MPJLambdaWrapper<MusicPO>()
+                            .select(MusicPO::getNeteaseId)
+                            .in(MusicPO::getId, ids)
+            );
+        }
 
         // 音乐直链需要通过api获取
         List<MusicUrlResult> musicUrlDTOList = musicApi.getMusicV1Url(neteaseIds, level);
 
         // 返回结果
 
-        return List.of();
+
+        return musicUrlDTOList.stream()
+                .map(MusicUrlResult::getUrl)
+                .toList();
     }
 
     @Override
@@ -94,8 +103,11 @@ public class MusicServiceImpl implements MusicService {
 
         // 查询
 
+        List<MusicDTO> musicDTOList = musicMapper.selectJoinList(MusicDTO.class, wrapperUtil.getMusicBaseWrapper()
+                .in(MusicPO::getId, ids));
 
-        return List.of();
+
+        return musicDTOList;
     }
 
     @Override
@@ -145,6 +157,7 @@ public class MusicServiceImpl implements MusicService {
     }
 
     @Override
+    @Transactional
     public void insertLyrics(List<LyricPO> lyricPOList) {
         for (LyricPO po : lyricPOList) {
             // TODO GitHub AMLL ttml歌词获取
@@ -156,6 +169,7 @@ public class MusicServiceImpl implements MusicService {
     }
 
     @Override
+    @Transactional
     public void insertSummary(List<MusicSummaryResult> summaryDTOList) {
 
         List<MusicAwardsPO> musicAwardsPOList = summaryDTOList.stream()
@@ -235,11 +249,13 @@ public class MusicServiceImpl implements MusicService {
     }
 
     @Override
+    @Transactional
     public void insertMusics(List<MusicPO> musicPOList) {
         musicMapper.insertOrUpdate(musicPOList);
     }
 
     @Override
+    @Transactional
     public void insertInfosExtend(List<MusicInfoExtendPO> musicInfoExtendPOList) {
 
         musicInfoExtMapper.insertOrUpdate(musicInfoExtendPOList);

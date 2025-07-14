@@ -17,7 +17,7 @@ import java.util.concurrent.CompletableFuture;
 
 @Service
 public interface MusicService {
-    List<MusicUrlVO> elicitMusicUrl(List<Long> ids, String level) throws Exception;
+    List<String> elicitMusicUrl(List<Long> ids, List<String> neteaseIds, String level) throws Exception;
     List<MusicDTO> elicitMusic(List<Long> ids) throws Exception;
 
     List<Long> nonentityNeteaseIds(List<Long> neteaseIds);

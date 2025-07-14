@@ -25,14 +25,15 @@ public class MusicController {
     MusicService musicService;
 
     @GetMapping("/url")
-    public Result elicitMusicUrl(@RequestParam List<Long> ids, @RequestParam String level) throws Exception {
+    public Result elicitMusicUrl(@RequestParam(value = "ids", required = false) List<Long> ids,
+                                 @RequestParam(value = "neteaseIds", required = false) List<String> neteaseIds,
+                                 @RequestParam String level) throws Exception {
 
         // TODO level取值检测
 
+        List<String> res = musicService.elicitMusicUrl(ids, neteaseIds, level);
 
-        List<MusicUrlVO> res = musicService.elicitMusicUrl(ids, level);
-
-        return Result.success();
+        return Result.success(res);
     }
 
 

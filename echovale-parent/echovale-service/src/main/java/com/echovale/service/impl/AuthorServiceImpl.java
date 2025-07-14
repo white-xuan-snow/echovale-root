@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
@@ -62,12 +63,14 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
+    @Transactional
     public void insertAuthors(List<AuthorPO> authorPOList) {
         authorMapper.insertOrUpdate(authorPOList);
     }
 
     @Override
+    @Transactional
     public void insertMusicAuthors(List<MusicAuthorsPO> musicAuthorsPOList) {
-        musicAuthorsMapper.insertOrUpdate(musicAuthorsPOList);
+        musicAuthorsMapper.insert(musicAuthorsPOList);
     }
 }

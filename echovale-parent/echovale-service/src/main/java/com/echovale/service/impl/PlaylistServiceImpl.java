@@ -1,10 +1,10 @@
 package com.echovale.service.impl;
 
+import com.echovale.common.utils.TimeUtils;
 import com.echovale.domain.mapper.PlaylistMapper;
 import com.echovale.domain.mapper.PlaylistMusicsMapper;
 import com.echovale.domain.po.PlaylistMusicsPO;
 import com.echovale.service.MusicOrchestrator;
-import com.echovale.service.MusicService;
 import com.echovale.service.dto.MusicDTO;
 import com.echovale.domain.po.PlaylistPO;
 import com.echovale.service.PlaylistService;
@@ -15,10 +15,10 @@ import com.netease.music.api.autoconfigure.configuration.api.MusicApi;
 import com.netease.music.api.autoconfigure.configuration.pojo.result.PlaylistResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,17 +45,21 @@ public class PlaylistServiceImpl implements PlaylistService {
     @Autowired
     MusicOrchestrator musicOrchestrator;
 
+    @Autowired
+    TimeUtils timeUtils;
+
 
     @Autowired
     PlaylistVOMapping playlistVOMapping;
 
 
     @Override
+    @Transactional
     public PlaylistVO elicitPlaylist(Long id, Long neteaseId) throws Exception {
 
 
         // 优先从数据库查找歌单
-        if (id != 0) {
+        if (id != null) {
             return elicitPlaylistById(id);
         } else {
             return elicitPlaylistByNeteaseId(neteaseId);
@@ -78,14 +82,15 @@ public class PlaylistServiceImpl implements PlaylistService {
         if (playlistPO == null) {
             PlaylistResult playlist = musicApi.playlist(neteaseId.toString());
 
-            Timestamp createTime = new Timestamp(playlist.getCreateTime());
-            Timestamp updateTime = new Timestamp(playlist.getUpdateTime());
+
+            LocalDateTime createTime = timeUtils.long2LocalDateTime(System.currentTimeMillis());
+            LocalDateTime updateTime = timeUtils.long2LocalDateTime(System.currentTimeMillis());
 
             playlistPO = PlaylistPO.builder()
                     .name(playlist.getName())
                     .coverUrl(playlist.getCoverImgUrl())
-                    .createTime(createTime.getTime())
-                    .updateTime(updateTime.getTime())
+                    .createTime(createTime)
+                    .updateTime(updateTime)
                     .tags(playlist.getTags().toString())
                     .description(playlist.getDescription())
                     .isUser(false)
@@ -108,6 +113,9 @@ public class PlaylistServiceImpl implements PlaylistService {
         PlaylistVO playlistVO = playlistVOMapping.byPO(playlistPO);
         playlistVOMapping.addMusicDTOList(musicDTOList, playlistVO);
 
+        // 更新歌单音乐关联表
+        updatePlaylistMusicsByDTO(playlistPO.getId(), musicDTOList);
+
         return playlistVO;
     }
 
@@ -116,16 +124,20 @@ public class PlaylistServiceImpl implements PlaylistService {
         PlaylistPO playlistPO = playlistMapper.selectJoinOne(wrapperUtil.getPlaylistWrapper(false)
                 .eq(PlaylistPO::getId, id));
 
+        // 查询音乐信息
         List<MusicDTO> musicDTOList = elicitMusicDTOListByPlaylistId(playlistPO.getId());
 
         PlaylistVO playlistVO = playlistVOMapping.byPO(playlistPO);
         playlistVOMapping.addMusicDTOList(musicDTOList, playlistVO);
 
+        // 通过id获取的playlist不需要更新歌单音乐关联表
+//        updatePlaylistMusicsByDTO(playlistPO.getId(), musicDTOList);
+
         return playlistVO;
     }
 
     // 调用MusicOrchestrator获取音乐信息
-    private List<MusicDTO> elicitMusicDTOListByPlaylistId(Long playlistId) {
+    private List<MusicDTO> elicitMusicDTOListByPlaylistId(Long playlistId) throws Exception {
 
         // 获取音乐id List
         List<PlaylistMusicsPO> playlistMusicsPOList = playlistMusicsMapper.selectList(wrapperUtil.getPlaylistMusicsWrapper(playlistId));
@@ -135,6 +147,29 @@ public class PlaylistServiceImpl implements PlaylistService {
                 .toList();
 
         return musicOrchestrator.elicitMusicDTOList(musicIdList);
+    }
+
+    private void updatePlaylistMusicsByDTO(Long playlistId, List<MusicDTO> musicDTOList) {
+        List<Long> musicIdList = musicDTOList.stream()
+                .map(MusicDTO::getId)
+                .toList();
+        updatePlaylistMusicsById(playlistId, musicIdList);
+    }
+
+    private void updatePlaylistMusicsById(Long playlistId, List<Long> musicIdList) {
+
+        List<PlaylistMusicsPO> playlistMusicsPOList = musicIdList.stream()
+                .map(o -> PlaylistMusicsPO.builder()
+                        .playlistId(playlistId)
+                        .musicId(o)
+                        .build())
+                .toList();
+        insertPlaylistMusicsByPO(playlistMusicsPOList);
+    }
+
+
+    private void insertPlaylistMusicsByPO(List<PlaylistMusicsPO> playlistMusicsPOList) {
+        playlistMusicsMapper.insert(playlistMusicsPOList);
     }
 
 

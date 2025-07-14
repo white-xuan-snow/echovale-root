@@ -1,9 +1,16 @@
 package com.echovale.domain.po;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 /**
  * @author 30531
@@ -14,11 +21,13 @@ import lombok.Data;
 
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @TableName("music_info_ext")
 public class MusicInfoExtendPO {
     @TableId
     private Long musicId;
-    private Long publishTime;
+    private LocalDateTime publishTime;
     private Integer no;
     private Integer bpm;
 }

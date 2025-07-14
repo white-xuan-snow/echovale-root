@@ -16,6 +16,8 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @TableName("music")
 public class MusicPO {
     @TableId

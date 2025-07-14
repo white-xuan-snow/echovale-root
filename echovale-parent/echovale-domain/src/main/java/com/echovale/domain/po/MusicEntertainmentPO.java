@@ -1,8 +1,10 @@
 package com.echovale.domain.po;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author 30531
@@ -12,6 +14,8 @@ import lombok.Data;
  */
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @TableName("music_entertainment")
 public class MusicEntertainmentPO {
     private Long id;

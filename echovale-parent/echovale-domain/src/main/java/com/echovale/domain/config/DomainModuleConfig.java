@@ -1,5 +1,6 @@
 package com.echovale.domain.config;
 
+import com.github.jeffreyning.mybatisplus.conf.EnableMPP;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
  * @date 2025/6/9 10:23
  */
 @Configuration
+@EnableMPP
 @ComponentScan("com.echovale.domain")
 @MapperScan("com.echovale.domain.mapper")
 public class DomainModuleConfig {

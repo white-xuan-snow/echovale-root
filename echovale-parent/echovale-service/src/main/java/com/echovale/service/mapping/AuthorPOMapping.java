@@ -29,11 +29,12 @@ public abstract class AuthorPOMapping {
     @Mapping(target = "id", ignore = true)
     @Mapping(source = "res.id", target = "neteaseId")
     @Mapping(target = "alias", ignore = true)
+    @Mapping(target = "transNames", ignore = true)
     abstract AuthorPO autoDetailResMapping(AuthorDetailResult res, @MappingTarget AuthorPO po);
 
     private AuthorPO coreDetailRes(AuthorDetailResult res, AuthorPO po) {
         // 翻译名
-        po.setTransName(res.toString());
+        po.setTransNames(res.toString());
         // 别名
         po.setAlias(res.getAlias().toString());
         // 封面url

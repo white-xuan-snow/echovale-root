@@ -10,5 +10,5 @@ import java.util.List;
 public interface MusicOrchestrator {
     List<MusicDTO> updateMusics(List<MusicDetailResult> tracks) throws Exception;
 
-    List<MusicDTO> elicitMusicDTOList(List<Long> musicIdList);
+    List<MusicDTO> elicitMusicDTOList(List<Long> musicIdList) throws Exception;
 }

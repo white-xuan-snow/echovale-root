@@ -1,5 +1,6 @@
 package com.echovale.service.mapping;
 
+import com.echovale.common.utils.TimeUtils;
 import com.echovale.service.dto.MusicDTO;
 import com.echovale.domain.po.AlbumPO;
 import com.echovale.domain.po.MusicInfoExtendPO;
@@ -12,6 +13,8 @@ import com.echovale.service.config.MappingConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +29,8 @@ public abstract class MusicDTOMapping {
 
     @Autowired
     MusicQualitiesPOMapping musicQualitiesPOMapping;
+    @Autowired
+    TimeUtils timeUtils;
 
 
     /*
@@ -44,7 +49,7 @@ public abstract class MusicDTOMapping {
         return detailCore(res, model);
     }
 
-    public abstract void poToModel(MusicPO po, @MappingTarget MusicDTO model);
+    public abstract void byPO(MusicPO po, @MappingTarget MusicDTO model);
 
     @Mapping(source = "po.id", target = "album.id")
     public abstract void albumToModel(AlbumPO po, @MappingTarget MusicDTO model);
@@ -68,7 +73,7 @@ public abstract class MusicDTOMapping {
     private MusicInfoExtendPO detailExtendInfo(MusicDetailResult res) {
         return MusicInfoExtendPO.builder()
                 .no(res.getNo())
-                .publishTime(res.getPublishTime())
+                .publishTime(timeUtils.long2LocalDateTime(res.getPublishTime()))
                 .build();
     }
 

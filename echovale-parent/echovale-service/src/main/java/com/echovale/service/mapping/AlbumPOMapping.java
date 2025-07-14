@@ -1,6 +1,7 @@
 package com.echovale.service.mapping;
 
 
+import com.echovale.common.utils.TimeUtils;
 import com.echovale.domain.po.AlbumPO;
 import com.echovale.service.config.MappingConfig;
 import com.netease.music.api.autoconfigure.configuration.pojo.entity.Album;
@@ -8,11 +9,15 @@ import com.netease.music.api.autoconfigure.configuration.pojo.result.AlbumResult
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Mapper(config = MappingConfig.class,
         componentModel = "spring"
 )
 public abstract class AlbumPOMapping {
+
+    @Autowired
+    TimeUtils timeUtils;
 
 
     @Mapping(source = "album.id", target = "neteaseId")
@@ -27,10 +32,12 @@ public abstract class AlbumPOMapping {
     }
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "publishTime", ignore = true)
     @Mapping(source = "res.id", target = "neteaseId")
     abstract AlbumPO autoResultMapping(AlbumResult res, @MappingTarget AlbumPO po);
 
     private AlbumPO coreResult(AlbumResult res, AlbumPO po) {
+        po.setPublishTime(timeUtils.long2LocalDateTime(res.getPublishTime()));
         return autoResultMapping(res, po);
     }
 }

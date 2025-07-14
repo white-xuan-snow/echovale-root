@@ -22,7 +22,8 @@ public class PlaylistController {
     PlaylistService playlistService;
 
     @GetMapping()
-    public Result getPlaylist(@RequestParam("id") Long id, @RequestParam("neteaseId") Long neteaseId) throws Exception {
+    public Result getPlaylist(@RequestParam(value = "id", required = false) Long id,
+                              @RequestParam(value = "neteaseId", required = false) Long neteaseId) throws Exception {
 
         PlaylistVO res = playlistService.elicitPlaylist(id, neteaseId);
 

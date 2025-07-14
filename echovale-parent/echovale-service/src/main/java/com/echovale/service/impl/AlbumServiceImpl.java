@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
@@ -60,11 +61,13 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
+    @Transactional
     public void insertAlbums(List<AlbumPO> albumPOList) {
         albumMapper.insertOrUpdate(albumPOList);
     }
 
     @Override
+    @Transactional
     public void insertAlbumAuthors(List<AlbumAuthorsPO> albumAuthorsPOList) {
         albumAuthorsMapper.insertOrUpdate(albumAuthorsPOList);
     }

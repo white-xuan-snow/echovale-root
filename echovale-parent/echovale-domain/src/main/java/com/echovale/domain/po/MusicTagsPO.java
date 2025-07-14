@@ -3,8 +3,10 @@ package com.echovale.domain.po;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.github.jeffreyning.mybatisplus.anno.MppMultiId;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author 30531
@@ -14,9 +16,10 @@ import lombok.Data;
  */
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @TableName("music_tags")
 public class MusicTagsPO {
-    @TableId
     @MppMultiId
     private Long musicId;
     @MppMultiId

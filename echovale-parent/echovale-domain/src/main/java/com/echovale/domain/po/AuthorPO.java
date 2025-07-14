@@ -2,8 +2,10 @@ package com.echovale.domain.po;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author 30531
@@ -13,13 +15,15 @@ import lombok.Data;
  */
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @TableName("author")
 public class AuthorPO {
     @TableId
     private Long id;
     private String name;
     private Long neteaseId;
-    private String transName;
+    private String transNames;
     private String alias;
     private Integer musicSize;
     private Integer albumSize;

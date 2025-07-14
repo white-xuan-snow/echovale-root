@@ -1,9 +1,16 @@
 package com.echovale.domain.po;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 /**
  * @author 30531
@@ -13,6 +20,8 @@ import lombok.Data;
  */
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @TableName("album")
 public class AlbumPO {
     @TableId
@@ -21,7 +30,8 @@ public class AlbumPO {
     private Long neteaseId;
     private String description;
     private String picUrl;
-    private Long publishTime;
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private LocalDateTime publishTime;
     private String type;
     private Integer size;
     private String subType;
