@@ -9,6 +9,8 @@ spring:
     ansi:
       enabled: always
 
+  jackson:
+    default-property-inclusion: non_empty
 
 server:
   port: 8080

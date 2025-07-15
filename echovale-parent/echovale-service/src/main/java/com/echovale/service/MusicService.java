@@ -5,6 +5,7 @@ import com.echovale.domain.po.LyricPO;
 import com.echovale.domain.po.MusicInfoExtendPO;
 import com.echovale.service.dto.MusicDTO;
 import com.echovale.domain.po.MusicPO;
+import com.echovale.service.vo.LyricVO;
 import com.echovale.service.vo.MusicUrlVO;
 import com.netease.music.api.autoconfigure.configuration.pojo.result.ChorusResult;
 import com.netease.music.api.autoconfigure.configuration.pojo.result.LyricsResult;
@@ -25,7 +26,9 @@ public interface MusicService {
     List<ChorusResult> elicitChorus(List<Long> nonentityNeteaseIds) throws Exception;
 
     @Async("ServiceNoneCore")
-    CompletableFuture<LyricsResult> elicitLyrics(Long nonentityNeteaseId) throws Exception;
+    CompletableFuture<LyricsResult> elicitLyricsAsync(Long nonentityNeteaseId) throws Exception;
+
+    LyricVO elicitLyrics(Long id, String neteaseId, List<String> types) throws Exception;
 
     @Async("ServiceNoneCore")
     CompletableFuture<MusicSummaryResult> elicitSummary(Long nonentityNeteaseId);
@@ -39,4 +42,6 @@ public interface MusicService {
     void insertInfosExtend(List<MusicInfoExtendPO> musicInfoExtendPOList);
 
     List<Long> NeteaseToMusicIds(List<Long> nonentityNeteaseMusicIds);
+
+    List<MusicUrlVO> elicitMusicUrlDetail(List<Long> ids, List<String> neteaseIds, String level) throws Exception;
 }

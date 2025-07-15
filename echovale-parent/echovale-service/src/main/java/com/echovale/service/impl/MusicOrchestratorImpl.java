@@ -282,7 +282,7 @@ public class MusicOrchestratorImpl implements MusicOrchestrator {
         for (Long id : nonentityNeteaseMusicIds) {
             log.info("[MusicOrchestrator].[updateMusicAsync] 发起lyric请求API。。。");
             Thread.sleep(1000);
-            lyricsFutureList.add(musicService.elicitLyrics(id));
+            lyricsFutureList.add(musicService.elicitLyricsAsync(id));
         }
 
         // summary api (逐次api)

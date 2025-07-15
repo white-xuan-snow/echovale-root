@@ -4,9 +4,12 @@ import com.echovale.domain.mapper.*;
 import com.echovale.service.dto.MusicDTO;
 import com.echovale.domain.po.*;
 import com.echovale.service.MusicService;
+import com.echovale.service.mapping.LyricPOMapping;
+import com.echovale.service.mapping.LyricVOMapping;
 import com.echovale.service.mapping.MusicDTOMapping;
 import com.echovale.service.mapping.MusicPOMapping;
 import com.echovale.service.util.WrapperUtil;
+import com.echovale.service.vo.LyricVO;
 import com.echovale.service.vo.MusicUrlVO;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.netease.music.api.autoconfigure.configuration.api.MusicApi;
@@ -68,6 +71,10 @@ public class MusicServiceImpl implements MusicService {
     MusicPOMapping musicPOMapping;
     @Autowired
     MusicDTOMapping musicDTOMapping;
+    @Autowired
+    LyricPOMapping lyricPOMapping;
+    @Autowired
+    LyricVOMapping lyricVOMapping;
 
     @Autowired
     WrapperUtil wrapperUtil;
@@ -97,6 +104,32 @@ public class MusicServiceImpl implements MusicService {
                 .map(MusicUrlResult::getUrl)
                 .toList();
     }
+
+
+
+    @Override
+    public List<MusicUrlVO> elicitMusicUrlDetail(List<Long> ids, List<String> neteaseIds, String level) throws Exception {
+
+
+        // 从数据库中查询neteaseIds
+        if (neteaseIds.isEmpty()) {
+            neteaseIds = musicMapper.selectJoinList(String.class,
+                    new MPJLambdaWrapper<MusicPO>()
+                            .select(MusicPO::getNeteaseId)
+                            .in(MusicPO::getId, ids)
+            );
+        }
+
+        // 音乐直链需要通过api获取
+        List<MusicUrlResult> musicUrlDTOList = musicApi.getMusicV1Url(neteaseIds, level);
+
+
+
+
+
+        return List.of();
+    }
+
 
     @Override
     public List<MusicDTO> elicitMusic(List<Long> ids) throws Exception {
@@ -133,7 +166,7 @@ public class MusicServiceImpl implements MusicService {
 
     @Async("ServiceNoneCore")
     @Override
-    public CompletableFuture<LyricsResult> elicitLyrics(Long nonentityNeteaseId) throws Exception {
+    public CompletableFuture<LyricsResult> elicitLyricsAsync(Long nonentityNeteaseId) throws Exception {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 return musicApi.getLyrics(nonentityNeteaseId.toString());
@@ -142,6 +175,42 @@ public class MusicServiceImpl implements MusicService {
                 throw new RuntimeException(e);
             }
         });
+    }
+
+    @Transactional
+    @Override
+    public LyricVO elicitLyrics(Long id, String neteaseId, List<String> types) throws Exception {
+
+
+        // 补全另一个id
+        if (id == null) {
+            id = musicMapper.selectJoinOne(Long.class, new MPJLambdaWrapper<>(MusicPO.class)
+                    .select(MusicPO::getId)
+                    .eq(MusicPO::getNeteaseId, neteaseId));
+        } else {
+            neteaseId = musicMapper.selectJoinOne(String.class, new MPJLambdaWrapper<>(MusicPO.class)
+                    .select(MusicPO::getNeteaseId)
+                    .eq(MusicPO::getId, id));
+        }
+
+        LyricPO lyricPO = lyricMapper.selectOne(new MPJLambdaWrapper<>(LyricPO.class).eq(LyricPO::getMusicId, id));
+
+        if (lyricPO == null) {
+            // 从API获取歌词Result
+            LyricsResult lyricsResult = musicApi.getLyrics(neteaseId);
+            // 转换为PO实体
+            lyricPO = LyricPO.builder()
+                    .musicId(id)
+                    .build();
+            lyricPOMapping.byResult(lyricsResult, lyricPO);
+
+            lyricMapper.insert(lyricPO);
+        }
+
+        HashSet<String> typesSet = new HashSet<>(types);
+
+        // 转换为VO实体
+        return lyricVOMapping.byPO(lyricPO, typesSet);
     }
 
     @Async("ServiceNoneCore")
@@ -269,6 +338,7 @@ public class MusicServiceImpl implements MusicService {
                 .select(MusicPO::getId)
                 .in(MusicPO::getNeteaseId, nonentityNeteaseMusicIds));
     }
+
 
 
 }

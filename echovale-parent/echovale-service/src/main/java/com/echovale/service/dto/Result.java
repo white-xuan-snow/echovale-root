@@ -28,6 +28,7 @@ public class Result {
     public static Result error() {
         return new Result(500, "undefined exception", null);
     }
+    public static Result fail(Integer code, String msg) { return new Result(code, msg, null); }
     public static Result serverError(String msg) {
         return new Result(500, msg, null);
     }
