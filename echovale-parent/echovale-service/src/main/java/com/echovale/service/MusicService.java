@@ -21,7 +21,7 @@ public interface MusicService {
     List<String> elicitMusicUrl(List<Long> ids, List<String> neteaseIds, String level) throws Exception;
     List<MusicDTO> elicitMusic(List<Long> ids) throws Exception;
 
-    List<Long> nonentityNeteaseIds(List<Long> neteaseIds);
+    List<Long> nonentityNeteaseIds(List<Long> neteaseIds) ;
 
     List<ChorusResult> elicitChorus(List<Long> nonentityNeteaseIds) throws Exception;
 
@@ -44,4 +44,6 @@ public interface MusicService {
     List<Long> NeteaseToMusicIds(List<Long> nonentityNeteaseMusicIds);
 
     List<MusicUrlVO> elicitMusicUrlDetail(List<Long> ids, List<String> neteaseIds, String level) throws Exception;
+
+    MusicDTO incrementMusic(String neteaseId) throws Exception;
 }

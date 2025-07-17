@@ -12,7 +12,7 @@ public class ErrorMessage {
     public static final String ForbiddenMessage           = "权限不足";
     public static final String NotFoundMessage            = "数据不存在";
     public static final String MethodNotAllowedMessage    = "请求方法错误";
-    public static final String ConflictMessage            = "用户已存在";
+    public static final String ConflictMessage            = "已存在";
     public static final String GoneMessages               = "资源已被删除";
     public static final String UnprocessableMessage       = "条件不足";
     public static final String InternalServerErrorMessage = "服务器内部发生意外错误";

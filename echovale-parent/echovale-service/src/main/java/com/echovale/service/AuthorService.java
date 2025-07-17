@@ -15,9 +15,11 @@ public interface AuthorService {
 
 
     @Async("ServiceNoneCore")
-    CompletableFuture<AuthorDetailResult> elicitDetails(Long nonentityNeteaseAuthorId);
+    CompletableFuture<AuthorDetailResult> elicitDetailsAsync(Long nonentityNeteaseAuthorId);
 
     void insertAuthors(List<AuthorPO> authorPOList);
 
     void insertMusicAuthors(List<MusicAuthorsPO> musicAuthorsPOList);
+
+    AuthorPO elicitAuthorDesc(Long id, String neteaseId);
 }

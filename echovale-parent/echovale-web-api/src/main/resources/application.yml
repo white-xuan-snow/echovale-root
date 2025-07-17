@@ -3,7 +3,7 @@ spring:
     name: echovale-web-api
 
   profiles:
-    active: datasource
+    active: datasource, service
 
   output:
     ansi:

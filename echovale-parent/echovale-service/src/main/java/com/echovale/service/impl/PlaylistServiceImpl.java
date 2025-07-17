@@ -53,6 +53,14 @@ public class PlaylistServiceImpl implements PlaylistService {
     PlaylistVOMapping playlistVOMapping;
 
 
+    /** 
+     * @description: 解析歌单 
+     * @param: id
+neteaseId 
+     * @return: com.echovale.service.vo.PlaylistVO 
+     * @author 30531
+     * @date: 2025/7/16 16:04
+     */ 
     @Override
     @Transactional
     public PlaylistVO elicitPlaylist(Long id, Long neteaseId) throws Exception {
@@ -67,7 +75,13 @@ public class PlaylistServiceImpl implements PlaylistService {
     }
 
 
-
+    /** 
+     * @description: 通过网易云歌单id解析歌单 
+     * @param: neteaseId 
+     * @return: com.echovale.service.vo.PlaylistVO 
+     * @author 30531
+     * @date: 2025/7/16 16:04
+     */ 
     private PlaylistVO elicitPlaylistByNeteaseId(Long neteaseId) throws Exception {
         // 先从数据库中查询是否有列表
 
@@ -119,7 +133,13 @@ public class PlaylistServiceImpl implements PlaylistService {
         return playlistVO;
     }
 
-
+    /** 
+     * @description:  通过歌单id解析歌单
+     * @param: id 
+     * @return: com.echovale.service.vo.PlaylistVO 
+     * @author 30531
+     * @date: 2025/7/16 16:04
+     */ 
     private PlaylistVO elicitPlaylistById(Long id) throws Exception {
         PlaylistPO playlistPO = playlistMapper.selectJoinOne(wrapperUtil.getPlaylistWrapper(false)
                 .eq(PlaylistPO::getId, id));
@@ -136,7 +156,13 @@ public class PlaylistServiceImpl implements PlaylistService {
         return playlistVO;
     }
 
-    // 调用MusicOrchestrator获取音乐信息
+    /** 
+     * @description:  调用MusicOrchestrator获取音乐信息
+     * @param: playlistId 
+     * @return: java.util.List<com.echovale.service.dto.MusicDTO> 
+     * @author 30531
+     * @date: 2025/7/16 16:05
+     */ 
     private List<MusicDTO> elicitMusicDTOListByPlaylistId(Long playlistId) throws Exception {
 
         // 获取音乐id List
@@ -149,6 +175,14 @@ public class PlaylistServiceImpl implements PlaylistService {
         return musicOrchestrator.elicitMusicDTOList(musicIdList);
     }
 
+    /** 
+     * @description: 使用List<MusicDTO>更新歌单歌曲关联表
+     * @param: playlistId
+musicDTOList 
+     * @return: void 
+     * @author 30531
+     * @date: 2025/7/16 16:06
+     */ 
     private void updatePlaylistMusicsByDTO(Long playlistId, List<MusicDTO> musicDTOList) {
         List<Long> musicIdList = musicDTOList.stream()
                 .map(MusicDTO::getId)
@@ -156,6 +190,14 @@ public class PlaylistServiceImpl implements PlaylistService {
         updatePlaylistMusicsById(playlistId, musicIdList);
     }
 
+    /** 
+     * @description: 使用List<歌曲id>更新歌单歌曲关联表
+     * @param: playlistId
+    musicIdList 
+     * @return: void 
+     * @author 30531
+     * @date: 2025/7/16 16:06
+     */ 
     private void updatePlaylistMusicsById(Long playlistId, List<Long> musicIdList) {
 
         List<PlaylistMusicsPO> playlistMusicsPOList = musicIdList.stream()
@@ -164,10 +206,17 @@ public class PlaylistServiceImpl implements PlaylistService {
                         .musicId(o)
                         .build())
                 .toList();
+        
         insertPlaylistMusicsByPO(playlistMusicsPOList);
     }
 
-
+    /** 
+     * @description: 使用List<MusicPO>更新歌单歌曲关联表
+     * @param: playlistMusicsPOList 
+     * @return: void 
+     * @author 30531
+     * @date: 2025/7/16 19:44
+     */ 
     private void insertPlaylistMusicsByPO(List<PlaylistMusicsPO> playlistMusicsPOList) {
         playlistMusicsMapper.insert(playlistMusicsPOList);
     }

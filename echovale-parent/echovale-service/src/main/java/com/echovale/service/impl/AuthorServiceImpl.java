@@ -52,7 +52,7 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Async("ServiceNoneCore")
     @Override
-    public CompletableFuture<AuthorDetailResult> elicitDetails(Long nonentityNeteaseAuthorId) {
+    public CompletableFuture<AuthorDetailResult> elicitDetailsAsync(Long nonentityNeteaseAuthorId) {
         return CompletableFuture.supplyAsync(() -> {
            try {
                return authorApi.authorDetail(nonentityNeteaseAuthorId.toString());
@@ -72,5 +72,16 @@ public class AuthorServiceImpl implements AuthorService {
     @Transactional
     public void insertMusicAuthors(List<MusicAuthorsPO> musicAuthorsPOList) {
         musicAuthorsMapper.insert(musicAuthorsPOList);
+    }
+
+    @Override
+    public AuthorPO elicitAuthorDesc(Long id, String neteaseId) {
+
+        if (id == null) {
+
+        }
+
+
+        return null;
     }
 }

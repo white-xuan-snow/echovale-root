@@ -1,7 +1,11 @@
 package com.echovale.api.controller.client;
 
+import com.echovale.common.exception.BadRequestException;
+import com.echovale.service.MusicOrchestrator;
+import com.echovale.service.dto.MusicDTO;
 import com.echovale.service.dto.Result;
 import com.echovale.service.MusicService;
+import com.echovale.service.impl.MusicOrchestratorImpl;
 import com.echovale.service.vo.LyricVO;
 import com.echovale.service.vo.MusicUrlVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +28,8 @@ public class MusicController {
 
     @Autowired
     MusicService musicService;
+    @Autowired
+    MusicOrchestrator musicOrchestrator;
 
     @GetMapping("/url")
     public Result elicitMusicUrl(@RequestParam(value = "ids", required = false) List<Long> ids,
@@ -46,11 +52,21 @@ public class MusicController {
         return Result.success(res);
     }
 
+    @PostMapping("/new")
+    public Result incrementMusic(@RequestParam("neteaseId") String neteaseId) throws Exception {
+        MusicDTO res = musicService.incrementMusic(neteaseId);
+        return Result.success(res);
+    }
+
 
     @GetMapping("/lyric")
     public Result elicitMusicLyric(@RequestParam(value = "id", required = false) Long id,
                                    @RequestParam(value = "neteaseId", required = false) String neteaseId,
                                    @RequestParam(value = "types") List<String> types) throws Exception {
+
+        if (id == null && neteaseId == null) {
+            throw new BadRequestException("id与netease为null");
+        }
 
         LyricVO res = musicService.elicitLyrics(id, neteaseId, types);
 

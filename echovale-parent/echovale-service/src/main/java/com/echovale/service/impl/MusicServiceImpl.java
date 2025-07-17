@@ -1,6 +1,10 @@
 package com.echovale.service.impl;
 
+import com.echovale.common.constants.str.ServiceString;
+import com.echovale.common.exception.ConflictException;
+import com.echovale.common.exception.NotFoundException;
 import com.echovale.domain.mapper.*;
+import com.echovale.service.MusicOrchestrator;
 import com.echovale.service.dto.MusicDTO;
 import com.echovale.domain.po.*;
 import com.echovale.service.MusicService;
@@ -13,12 +17,10 @@ import com.echovale.service.vo.LyricVO;
 import com.echovale.service.vo.MusicUrlVO;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.netease.music.api.autoconfigure.configuration.api.MusicApi;
-import com.netease.music.api.autoconfigure.configuration.pojo.result.ChorusResult;
-import com.netease.music.api.autoconfigure.configuration.pojo.result.LyricsResult;
-import com.netease.music.api.autoconfigure.configuration.pojo.result.MusicSummaryResult;
-import com.netease.music.api.autoconfigure.configuration.pojo.result.MusicUrlResult;
+import com.netease.music.api.autoconfigure.configuration.pojo.result.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,7 +88,7 @@ public class MusicServiceImpl implements MusicService {
 
 
         // 从数据库中查询neteaseIds
-        if (neteaseIds.isEmpty()) {
+        if (neteaseIds == null) {
             neteaseIds = musicMapper.selectJoinList(String.class,
                     new MPJLambdaWrapper<MusicPO>()
                             .select(MusicPO::getNeteaseId)
@@ -130,13 +132,33 @@ public class MusicServiceImpl implements MusicService {
         return List.of();
     }
 
+    @Lazy // 延迟注入(因为@Transaction@Async等AOP增强导致Bean被Spring代理，最终包装Bean与初始注入Bean不一致)
+    @Autowired
+    MusicOrchestrator musicOrchestrator;
+
+    @Override
+    public MusicDTO incrementMusic(String neteaseId) throws Exception {
+
+        // 查询当前neteaseId是否存在
+        Long id = musicMapper.selectJoinOne(Long.class, wrapperUtil.getMusicPOByNeteaseId(neteaseId));
+        MusicDTO dto = new MusicDTO();
+        if (id == null) {
+            List<MusicDetailResult> detail = musicApi.detail(List.of(neteaseId));
+            List<MusicDTO> musicDTOList = musicOrchestrator.updateMusics(detail);
+            dto = musicDTOList.get(0);
+        } else {
+            throw new ConflictException(ServiceString.NeteaseMusicId + neteaseId);
+        }
+        return dto;
+    }
+
 
     @Override
     public List<MusicDTO> elicitMusic(List<Long> ids) throws Exception {
 
         // 查询
 
-        List<MusicDTO> musicDTOList = musicMapper.selectJoinList(MusicDTO.class, wrapperUtil.getMusicBaseWrapper()
+        List<MusicDTO> musicDTOList = musicMapper.selectJoinList(MusicDTO.class, wrapperUtil.getMusicBaseJoinWrapper()
                 .in(MusicPO::getId, ids));
 
 
@@ -187,6 +209,7 @@ public class MusicServiceImpl implements MusicService {
             id = musicMapper.selectJoinOne(Long.class, new MPJLambdaWrapper<>(MusicPO.class)
                     .select(MusicPO::getId)
                     .eq(MusicPO::getNeteaseId, neteaseId));
+            if (id == null) throw new NotFoundException("网易云音乐id" + neteaseId);
         } else {
             neteaseId = musicMapper.selectJoinOne(String.class, new MPJLambdaWrapper<>(MusicPO.class)
                     .select(MusicPO::getNeteaseId)

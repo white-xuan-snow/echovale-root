@@ -5,7 +5,6 @@ import com.echovale.service.dto.MusicDTO;
 import com.echovale.service.mapping.AlbumDTOMapping;
 import com.echovale.service.mapping.MusicDTOMapping;
 import com.netease.music.api.autoconfigure.configuration.api.AlbumApi;
-import com.netease.music.api.autoconfigure.configuration.api.MusicApi;
 import com.netease.music.api.autoconfigure.configuration.pojo.entity.Author;
 import com.netease.music.api.autoconfigure.configuration.pojo.entity.MusicQuality;
 import com.netease.music.api.autoconfigure.configuration.pojo.result.AlbumListResult;
@@ -74,7 +73,7 @@ public class MappingTest {
                 .endTime(456)
                 .build();
 
-        MusicDTO model = musicDTOMapping.detailToModel(dto);
+        MusicDTO model = musicDTOMapping.byDetailResult(dto);
         musicDTOMapping.chorusToModel(chorusDTO, model);
 
         log.info("[MappingTest].[MusicDTOMapping] model: {}", model);

@@ -31,7 +31,7 @@ public abstract class LyricPOMapping {
         // 未知
         po.setNeteaseKlrc(res.getKlyric());
         // 罗马音歌词
-        po.setNeteaseRomalyc(res.getRomalrc());
+        po.setNeteaseRomalrc(res.getRomalrc());
 
         return po;
     }

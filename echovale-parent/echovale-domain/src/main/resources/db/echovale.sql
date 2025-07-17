@@ -1,15 +1,23 @@
+drop database if exists echovale;
+create database echovale;
+
+use echovale;
+
+drop table if exists ablum;
 create table album
 (
     id           bigint unsigned auto_increment comment '专辑id'
         primary key,
-    netease_id   bigint unsigned             null comment '网易云音乐id',
-    name         varchar(60) charset utf8mb3 null comment '专辑名称',
-    description  text                        null comment '描述',
-    pic_url      text                        null comment '图片url',
-    publish_time datetime                    null comment '发布时间',
-    type         tinyint                     null comment '专辑类型',
-    size         int                         null comment '专辑大小',
-    sub_type     int                         null comment '副类型'
+    netease_id   bigint unsigned              null comment '网易云音乐id',
+    name         varchar(120) charset utf8mb3 null comment '专辑名称',
+    description  text                         null comment '描述',
+    pic_url      text                         null comment '图片url',
+    publish_time datetime(3)                  null comment '发布时间',
+    type         varchar(60) charset utf8mb3  null comment '专辑类型',
+    size         int                          null comment '专辑大小',
+    sub_type     varchar(60) charset utf8mb3  null comment '副类型',
+    constraint album_pk
+        unique (netease_id)
 )
     comment '专辑';
 
@@ -22,6 +30,7 @@ create index album_netease_id_index
 create index album_publish_time_index
     on album (publish_time);
 
+drop table if exists album_authors;
 create table album_authors
 (
     album_id  bigint unsigned not null comment '专辑id',
@@ -36,21 +45,24 @@ create index album_authors_album_id_index
 create index album_authors_author_id_index
     on album_authors (author_id);
 
+drop table if exists author;
 create table author
 (
     id          bigint unsigned auto_increment comment 'id'
         primary key,
-    netease_id  bigint unsigned             null comment '网易云音乐作者id',
-    name        varchar(60) charset utf8mb3 null comment '名称',
-    trans_names text                        null comment '中文译名列表',
-    alias       text                        null comment '别名列表',
-    music_size  int                         null comment '发布音乐数量',
-    album_size  int                         null comment '专辑数量',
-    mv_size     int                         null comment 'mv数量',
-    cover_url   text                        null comment '封面url',
-    avatar_url  text                        null comment '头像url',
-    description text                        null comment '简介',
-    identify    text                        null comment '类型(歌手，编曲。。。)'
+    netease_id  bigint unsigned              null comment '网易云音乐作者id',
+    name        varchar(120) charset utf8mb3 null comment '名称',
+    trans_names text                         null comment '中文译名列表',
+    alias       text                         null comment '别名列表',
+    music_size  int                          null comment '发布音乐数量',
+    album_size  int                          null comment '专辑数量',
+    mv_size     int                          null comment 'mv数量',
+    cover_url   text                         null comment '封面url',
+    avatar_url  text                         null comment '头像url',
+    description text                         null comment '简介',
+    identify    text                         null comment '类型(歌手，编曲。。。)',
+    constraint author_pk
+        unique (netease_id)
 )
     comment '作者';
 
@@ -60,9 +72,13 @@ create index author_alias_index
 create index author_name_index
     on author (name);
 
+create index author_netease_id_index
+    on author (netease_id);
+
 create index author_trans_names_index
     on author (trans_names(60));
 
+drop table if exists language;
 create table language
 (
     id   int unsigned auto_increment comment '语种id'
@@ -71,32 +87,38 @@ create table language
 )
     comment '语种';
 
+drop table if exists lyric;
 create table lyric
 (
-    id             bigint unsigned auto_increment comment '歌词id'
+    music_id        bigint unsigned not null comment '音乐id'
         primary key,
-    netease_lrc    tinytext null comment '网易云音乐lrc歌词路径',
-    netease_tlrc   tinytext null comment '网易云音乐翻译歌词路径',
-    netease_yrc    tinytext null comment '网易云音乐逐字歌词路径',
-    netese_romalrc tinytext null comment '网易云音乐罗马音歌词路径',
-    netease_klrc   tinytext null comment '网易云未知歌词',
-    amll_ttml      tinytext null comment 'amll ttml歌词url',
-    echo_ttml      tinytext null comment '回声ttml歌词路径'
+    netease_lrc     text            null comment '网易云音乐lrc歌词路径',
+    netease_tlrc    text            null comment '网易云音乐翻译歌词路径',
+    netease_yrc     text            null comment '网易云音乐逐字歌词路径',
+    netease_romalrc text            null comment '网易云音乐罗马音歌词路径',
+    netease_klrc    text            null comment '网易云未知歌词',
+    amll_ttml       text            null comment 'amll ttml歌词url',
+    echo_ttml       text            null comment '回声ttml歌词路径'
 )
     comment '歌词';
 
+drop table if exists music;
 create table music
 (
     id         bigint unsigned auto_increment comment '音乐id'
         primary key,
-    netease_id bigint unsigned             null comment '网易云音乐id',
-    name       varchar(60) charset utf8mb3 null comment '音乐名称',
-    album_id   bigint unsigned             null comment '专辑id',
-    fee        tinyint                     null comment '付费等级 0免费无版权 1VIP歌曲 4购买专辑 8非会员可播放最低音质 ',
-    cover_type tinyint                     null comment '0未知 1原唱 2翻唱',
-    mv_id      bigint unsigned             null comment 'mv的id 0表示没有id',
-    time       int unsigned                null comment '持续时间(单位：毫秒)',
-    chorus     tinytext                    null comment '副歌时间'
+    netease_id bigint unsigned              null comment '网易云音乐id',
+    name       varchar(120) charset utf8mb3 null comment '音乐名称',
+    album_id   bigint unsigned              null comment '专辑id',
+    fee        tinyint                      null comment '付费等级 0免费无版权 1VIP歌曲 4购买专辑 8非会员可播放最低音质 ',
+    cover_type tinyint                      null comment '0未知 1原唱 2翻唱',
+    mv_id      bigint unsigned              null comment 'mv的id 0表示没有id',
+    time       int unsigned                 null comment '持续时间(单位：毫秒)',
+    chorus     tinytext                     null comment '副歌时间',
+    constraint music_pk
+        unique (netease_id),
+    constraint music_pk_2
+        unique (album_id)
 )
     comment '音乐';
 
@@ -109,6 +131,7 @@ create index music_name_index
 create index music_netease_id_index
     on music (netease_id);
 
+drop table if exists music_authors;
 create table music_authors
 (
     author_id bigint unsigned not null comment '作者id',
@@ -123,6 +146,7 @@ create index music_authors_author_id_index
 create index music_authors_music_id_index
     on music_authors (music_id);
 
+drop table if exists music_awards;
 create table music_awards
 (
     id       bigint unsigned auto_increment comment '获奖id'
@@ -138,6 +162,7 @@ create index music_awards_content_index
 create index music_awards_music_id_index
     on music_awards (music_id);
 
+drop table if exists music_entertainment;
 create table music_entertainment
 (
     id       bigint unsigned auto_increment comment '影视作品id'
@@ -153,16 +178,18 @@ create index music_entertainment_content_index
 create index music_entertainment_music_id_index
     on music_entertainment (music_id);
 
+drop table if exists music_info_ext;
 create table music_info_ext
 (
     music_id     bigint unsigned not null comment '音乐id'
         primary key,
-    publish_time datetime        null comment '发行时间',
+    publish_time datetime(3)     null comment '发行时间',
     no           int unsigned    null comment '专辑排序 0表示没有排序',
     bpm          int unsigned    null comment '音乐bpm'
 )
     comment '音乐信息扩展表';
 
+drop table if exists music_languages;
 create table music_languages
 (
     music_id    bigint unsigned not null comment '音乐id',
@@ -171,6 +198,8 @@ create table music_languages
 )
     comment '音乐语种关联表';
 
+
+drop table if exists music_qualities;
 create table music_qualities
 (
     id       bigint unsigned auto_increment comment '品质id'
@@ -178,10 +207,15 @@ create table music_qualities
     music_id bigint unsigned  null comment '音乐id',
     level    tinyint unsigned null comment '品质等级',
     br       int unsigned     null comment '码率',
-    sr       int unsigned     null comment '采样率'
+    sr       int unsigned     null comment '采样率',
+    size     int unsigned     null comment '文件大小'
 )
     comment '音乐品质关联表';
 
+create index music_qualities_music_id_index
+    on music_qualities (music_id);
+
+drop table if exists music_sheets;
 create table music_sheets
 (
     id       bigint unsigned auto_increment comment '乐谱id'
@@ -192,6 +226,10 @@ create table music_sheets
 )
     comment '音乐乐谱表关联表';
 
+create index music_sheets_music_id_index
+    on music_sheets (music_id);
+
+drop table if exists music_styles;
 create table music_styles
 (
     music_id bigint unsigned not null comment '音乐id',
@@ -200,6 +238,7 @@ create table music_styles
 )
     comment '音乐曲风关联表';
 
+drop table if exists music_tags;
 create table music_tags
 (
     music_id bigint unsigned not null comment '音乐id',
@@ -208,6 +247,8 @@ create table music_tags
 )
     comment '音乐标签关联表';
 
+
+drop table if exists permission;
 create table permission
 (
     id          int unsigned auto_increment comment '权限id'
@@ -218,6 +259,7 @@ create table permission
 )
     comment '权限';
 
+drop table if exists playlist;
 create table playlist
 (
     id          bigint unsigned auto_increment comment '播放列表id'
@@ -226,10 +268,12 @@ create table playlist
     cover_url   tinytext                     null comment '封面url',
     name        varchar(120) charset utf8mb3 null comment '歌单名称',
     description text                         null comment '描述',
-    update_time datetime                     null comment '更新时间',
-    create_time datetime                     null comment '创建时间',
+    update_time datetime(3)                  null comment '更新时间',
+    create_time datetime(3)                  null comment '创建时间',
     tags        tinytext                     null comment '标签列表',
-    is_user     tinyint(1)                   null comment '是不是用户创建的歌单'
+    is_user     tinyint(1)                   null comment '是不是用户创建的歌单',
+    constraint playlist_pk
+        unique (netease_id)
 )
     comment '播放列表';
 
@@ -248,6 +292,7 @@ create index playlist_tags_index
 create index playlist_update_time_index
     on playlist (update_time);
 
+drop table if exists playlist_musics;
 create table playlist_musics
 (
     playlist_id bigint unsigned not null comment '歌单id',
@@ -265,6 +310,7 @@ create index playlist_musics_playlist_id_index
 create index playlist_musics_playlist_id_index_2
     on playlist_musics (playlist_id);
 
+drop table if exists role;
 create table role
 (
     id          int unsigned auto_increment comment '角色id'
@@ -275,6 +321,8 @@ create table role
 )
     comment '角色';
 
+
+drop table if exists role_permissions;
 create table role_permissions
 (
     role_id       int unsigned not null comment '角色id',
@@ -283,6 +331,7 @@ create table role_permissions
 )
     comment '用户权限关联表';
 
+drop table if exists style;
 create table style
 (
     id   bigint unsigned not null comment '曲风或标签id'
@@ -291,6 +340,7 @@ create table style
 )
     comment '曲风';
 
+drop table if exists tag;
 create table tag
 (
     id   bigint unsigned not null comment '标签id'
@@ -299,6 +349,7 @@ create table tag
 )
     comment '标签';
 
+drop table if exists toplist;
 create table toplist
 (
     id           int unsigned auto_increment comment '排行榜id'
@@ -306,12 +357,14 @@ create table toplist
     netease_id   bigint unsigned             null comment '网易云id',
     name         varchar(60) charset utf8mb3 null comment '排行榜名称',
     description  text                        null comment '描述',
-    create_time  datetime                    null comment '创建时间',
-    update_time  datetime                    null comment '更新时间',
+    create_time  datetime(3)                 null comment '创建时间',
+    update_time  datetime(3)                 null comment '更新时间',
     cover_url    tinytext                    null comment '封面图片url',
     ordered      tinyint(1)                  null comment '是否排序',
     high_quality tinyint(1)                  null comment '是否为精选榜单',
-    update_desc  tinytext                    null comment '更新时间描述'
+    update_desc  tinytext                    null comment '更新时间描述',
+    constraint toplist_pk
+        unique (netease_id)
 )
     comment '排行榜';
 
@@ -327,6 +380,7 @@ create index toplist_netease_id_index
 create index toplist_update_time_index
     on toplist (update_time);
 
+drop table if exists toplist_musics;
 create table toplist_musics
 (
     toplist_id int unsigned    not null comment '排行榜id',
@@ -341,6 +395,7 @@ create index toplist_musics_music_id_index
 create index toplist_musics_toplist_id_index
     on toplist_musics (toplist_id);
 
+drop table if exists user;
 create table user
 (
     id               bigint unsigned auto_increment comment '用户id'
@@ -351,7 +406,9 @@ create table user
     phone            char(11)                    null comment '手机号',
     status           tinyint(1)                  null comment '状态',
     user_meta_ext_id bigint unsigned             null comment '用户元数据扩展表id',
-    user_info_ext_id bigint unsigned             null comment '用户信息扩展表id'
+    user_info_ext_id bigint unsigned             null comment '用户信息扩展表id',
+    constraint user_pk
+        unique (username)
 )
     comment '用户';
 
@@ -364,18 +421,20 @@ create index user_user_meta_ext_id_index
 create index user_username_index
     on user (username);
 
+drop table if exists user_info_ext;
 create table user_info_ext
 (
     id          bigint unsigned auto_increment comment '用户信息扩展表id'
         primary key,
     avatar_path tinytext    null comment '头像alist地址',
     ip_addr     varchar(30) null comment 'ip登录地址(指定ip不加密, 其余ip加密)',
-    login_time  datetime    null comment '登录时间',
-    create_time datetime    null comment '创建时间',
+    login_time  datetime(3) null comment '登录时间',
+    create_time datetime(3) null comment '创建时间',
     is_online   tinyint(1)  null comment '是否在线'
 )
     comment '用户信息扩展表';
 
+drop table if exists user_meta_ext;
 create table user_meta_ext
 (
     id          bigint unsigned auto_increment comment '元数据扩展表id'
@@ -391,11 +450,12 @@ create index user_meta_ext_likelist_id_index
 create index user_meta_ext_settings_id_index
     on user_meta_ext (settings_id);
 
+drop table if exists user_musics;
 create table user_musics
 (
     user_id   bigint unsigned not null comment '用户id',
     music_id  bigint unsigned not null comment '音乐id',
-    play_time datetime        null comment '上一次播放时间',
+    play_time timestamp       null comment '上一次播放时间',
     times     int unsigned    null comment '播放次数',
     primary key (music_id, user_id)
 )
@@ -407,6 +467,7 @@ create index user_musics_music_id_index
 create index user_musics_user_id_index
     on user_musics (user_id);
 
+drop table if exists user_playlists;
 create table user_playlists
 (
     user_id     bigint unsigned not null comment '用户id',
@@ -421,6 +482,7 @@ create index user_playlists_playlist_id_index
 create index user_playlists_user_id_index
     on user_playlists (user_id);
 
+drop table if exists user_roles;
 create table user_roles
 (
     user_id bigint unsigned not null comment '用户id',

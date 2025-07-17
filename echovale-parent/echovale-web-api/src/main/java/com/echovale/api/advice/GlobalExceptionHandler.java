@@ -4,6 +4,7 @@ import com.echovale.common.exception.BaseException;
 import com.echovale.service.dto.Result;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(BaseException.class)
     public ResponseEntity<Result> handleBaseException(final BaseException ex, final HttpServletRequest request) {
         return ResponseEntity
                 .status(ex.getCode())

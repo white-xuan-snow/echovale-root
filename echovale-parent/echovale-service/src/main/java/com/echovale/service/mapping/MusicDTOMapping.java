@@ -1,5 +1,6 @@
 package com.echovale.service.mapping;
 
+import com.echovale.common.utils.StringUtils;
 import com.echovale.common.utils.TimeUtils;
 import com.echovale.service.dto.MusicDTO;
 import com.echovale.domain.po.AlbumPO;
@@ -13,8 +14,6 @@ import com.echovale.service.config.MappingConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,15 +41,18 @@ public abstract class MusicDTOMapping {
     @Mapping(source = "res.ar", target = "authors")
     abstract void detailAutoMapping(MusicDetailResult res, @MappingTarget MusicDTO model);
 
-    public MusicDTO detailToModel(MusicDetailResult res) {
+    public MusicDTO byDetailResult(MusicDetailResult res) {
         return detailCore(res, new MusicDTO());
     }
-    public MusicDTO detailToModel(MusicDetailResult res, MusicDTO model) {
+    public MusicDTO byDetailResult(MusicDetailResult res, MusicDTO model) {
         return detailCore(res, model);
     }
 
     public abstract void byPO(MusicPO po, @MappingTarget MusicDTO model);
 
+    @Mapping(target = "neteaseId", ignore = true)
+    @Mapping(target = "name", ignore = true)
+    @Mapping(target = "id", ignore = true)
     @Mapping(source = "po.id", target = "album.id")
     public abstract void albumToModel(AlbumPO po, @MappingTarget MusicDTO model);
 
@@ -130,12 +132,16 @@ public abstract class MusicDTOMapping {
         return chorusCore(res, model);
     }
 
-    private MusicDTO chorusCore(ChorusResult res, MusicDTO model) {
+    @Autowired
+    StringUtils stringUtils;
 
-        model.setChorus(List.of(
-                res.getStartTime(),
-                res.getEndTime()
-        ).toString());
+    private MusicDTO chorusCore(ChorusResult res, MusicDTO model) {
+        // 如果没有副歌，跳过赋值
+
+        Integer startTime = res == null ? 0 : res.getStartTime();
+        Integer endTime = res == null ? 0 : res.getEndTime();
+
+        model.setChorus(stringUtils.list2String(List.of(startTime, endTime)));
 
         return model;
     }

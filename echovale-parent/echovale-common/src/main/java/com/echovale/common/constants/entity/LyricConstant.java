@@ -16,14 +16,14 @@ public class LyricConstant {
     public static final String NETEASE_LRC = "neteaseLrc";
     public static final String NETEASE_TLRC = "neteaseTlrc";
     public static final String NETEASE_YRC = "neteaseYrc";
-    public static final String NETEASE_ROMALYC = "neteaseRomalyc";
+    public static final String NETEASE_ROMALRC = "neteaseRomalrc";
     public static final String NETEASE_KLRC = "neteaseKlrc";
     public static final String AMLL_TTML = "amllTtml";
     public static final String ECHO_TTML = "echoTtml";
 
     public static final HashSet<String> ALL_FIELDS = new HashSet<>(
             Arrays.asList(NETEASE_LRC, NETEASE_TLRC, NETEASE_YRC,
-                    NETEASE_ROMALYC, NETEASE_KLRC, AMLL_TTML, ECHO_TTML)
+                    NETEASE_ROMALRC, NETEASE_KLRC, AMLL_TTML, ECHO_TTML)
     );
 
 

@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class WrapperUtil {
-    public MPJLambdaWrapper<MusicPO> getMusicBaseWrapper() {
+    public MPJLambdaWrapper<MusicPO> getMusicBaseJoinWrapper() {
         return new MPJLambdaWrapper<MusicPO>()
                 .selectAll(MusicPO.class)
                 .leftJoin(AlbumPO.class, AlbumPO::getId, MusicPO::getAlbumId)
@@ -29,7 +29,7 @@ public class WrapperUtil {
     }
 
     public MPJLambdaWrapper<MusicPO> getMusicEntireWrapper() {
-        return getMusicBaseWrapper()
+        return getMusicBaseJoinWrapper()
                 .leftJoin(MusicInfoExtendPO.class, MusicInfoExtendPO::getMusicId, MusicPO::getId)
                 .leftJoin(MusicSheetsPO.class, MusicSheetsPO::getMusicId, MusicPO::getId)
                 .leftJoin(LyricPO.class, LyricPO::getMusicId, MusicPO::getId)
@@ -45,6 +45,18 @@ public class WrapperUtil {
                 .selectCollection(TagPO.class, MusicDTO::getTags)
                 .selectCollection(LanguagePO.class, MusicDTO::getLanguagePOS)
                 .selectCollection(MusicSheetsPO.class, MusicDTO::getSheets);
+    }
+
+
+    public MPJLambdaWrapper<MusicPO> getMusicBaseWrapper() {
+        return new MPJLambdaWrapper<>(MusicPO.class)
+                .selectAll(MusicPO.class);
+    }
+
+
+    public MPJLambdaWrapper<MusicPO> getMusicPOByNeteaseId(String neteaseId) {
+        return getMusicBaseWrapper()
+                .eq(MusicPO::getNeteaseId, neteaseId);
     }
 
     public MPJLambdaWrapper<PlaylistPO> getPlaylistWrapper(Boolean isUser) {

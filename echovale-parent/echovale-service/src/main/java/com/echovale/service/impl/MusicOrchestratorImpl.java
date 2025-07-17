@@ -197,7 +197,7 @@ public class MusicOrchestratorImpl implements MusicOrchestrator {
 
         List<MusicDTO> musicDTOList = nonentityTracks.stream()
                 .map(o1 -> {
-                    MusicDTO musicDTO = musicDTOMapping.detailToModel(o1);
+                    MusicDTO musicDTO = musicDTOMapping.byDetailResult(o1);
                     musicDTOMapping.chorusToModel(chorusMap.get(o1.getId()), musicDTO);
                     return musicDTO;
                 })
@@ -209,7 +209,7 @@ public class MusicOrchestratorImpl implements MusicOrchestrator {
                 .map(MusicDTO::getAlbum)
                 .toList();
 
-        albumService.insertAlbums(albumPOList);
+//        albumService.insertAlbums(albumPOList);
 
 
         for (int i = 0; i < musicDTOList.size(); i++) {
@@ -260,8 +260,8 @@ public class MusicOrchestratorImpl implements MusicOrchestrator {
 
         // 异步更新部分
 //        updateMusicAsync(nonentityNeteaseMusicIds, nonentityNeteaseAuthorIds, nonentityNeteaseAlbumIds);
-
-
+        log.info("MusicOrchestrator].[updateMusics] Successfully Updated {} Music(s)", musicDTOList.size());
+        log.info("MusicOrchestrator].[updateMusics] 成功添加{}首歌曲", musicDTOList.size());
 
 
         return musicDTOList;
@@ -302,7 +302,7 @@ public class MusicOrchestratorImpl implements MusicOrchestrator {
         for (Long id : nonentityNeteaseAuthorIds) {
             log.info("[MusicOrchestrator].[updateMusicAsync] 发起author请求API。。。");
             Thread.sleep(1000);
-            authorFutureList.add(authorService.elicitDetails(id));
+            authorFutureList.add(authorService.elicitDetailsAsync(id));
         }
 
         /*

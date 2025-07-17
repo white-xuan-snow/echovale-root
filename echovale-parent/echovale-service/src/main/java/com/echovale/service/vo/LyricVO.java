@@ -21,7 +21,7 @@ public class LyricVO {
     private String neteaseLrc;
     private String neteaseTlrc;
     private String neteaseYrc;
-    private String neteaseRomalyc;
+    private String neteaseRomalrc;
     private String neteaseKlrc;
     private String amllTtml;
     private String echoTtml;

@@ -26,7 +26,7 @@ public abstract class LyricVOMapping {
     @Mapping(target = "neteaseLrc", conditionExpression = "java(allowFields.contains(LyricConstant.NETEASE_LRC))")
     @Mapping(target = "neteaseTlrc", conditionExpression = "java(allowFields.contains(LyricConstant.NETEASE_TLRC))")
     @Mapping(target = "neteaseYrc", conditionExpression = "java(allowFields.contains(LyricConstant.NETEASE_YRC))")
-    @Mapping(target = "neteaseRomalyc", conditionExpression = "java(allowFields.contains(LyricConstant.NETEASE_ROMALYC))")
+    @Mapping(target = "neteaseRomalrc", conditionExpression = "java(allowFields.contains(LyricConstant.NETEASE_ROMALRC))")
     @Mapping(target = "neteaseKlrc", conditionExpression = "java(allowFields.contains(LyricConstant.NETEASE_KLRC))")
     @Mapping(target = "amllTtml", conditionExpression = "java(allowFields.contains(LyricConstant.AMLL_TTML))")
     @Mapping(target = "echoTtml", conditionExpression = "java(allowFields.contains(LyricConstant.ECHO_TTML))")
