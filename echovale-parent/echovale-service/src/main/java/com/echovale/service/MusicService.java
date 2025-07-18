@@ -19,7 +19,7 @@ import java.util.concurrent.CompletableFuture;
 @Service
 public interface MusicService {
     List<String> elicitMusicUrl(List<Long> ids, List<String> neteaseIds, String level) throws Exception;
-    List<MusicDTO> elicitMusic(List<Long> ids) throws Exception;
+    List<MusicDTO> selectMusic(List<Long> ids) throws Exception;
 
     List<Long> nonentityNeteaseIds(List<Long> neteaseIds) ;
 
@@ -46,4 +46,6 @@ public interface MusicService {
     List<MusicUrlVO> elicitMusicUrlDetail(List<Long> ids, List<String> neteaseIds, String level) throws Exception;
 
     MusicDTO incrementMusic(String neteaseId) throws Exception;
+
+    List<MusicDTO> selectMusicByNeteaseIds(List<Long> neteaseMusicIds);
 }

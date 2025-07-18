@@ -152,9 +152,18 @@ public class MusicServiceImpl implements MusicService {
         return dto;
     }
 
+    @Override
+    public List<MusicDTO> selectMusicByNeteaseIds(List<Long> neteaseMusicIds) {
+
+        List<MusicDTO> musicDTOList = musicMapper.selectJoinList(MusicDTO.class, wrapperUtil.getMusicBaseJoinWrapper()
+                .in(MusicDTO::getNeteaseId, neteaseMusicIds));
+
+        return musicDTOList;
+    }
+
 
     @Override
-    public List<MusicDTO> elicitMusic(List<Long> ids) throws Exception {
+    public List<MusicDTO> selectMusic(List<Long> ids) throws Exception {
 
         // 查询
 
@@ -177,7 +186,7 @@ public class MusicServiceImpl implements MusicService {
 
         // 使用filter(HashSet::contains)过滤已存在的id
         return neteaseIds.stream()
-                .filter(o -> !nonentityNeteaseIdsSet.contains(o))
+                .filter(nonentityNeteaseIdsSet::contains)
                 .toList();
     }
 

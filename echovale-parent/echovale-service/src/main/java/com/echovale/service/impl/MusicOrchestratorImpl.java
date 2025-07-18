@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import com.netease.music.api.autoconfigure.configuration.pojo.entity.Author;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
@@ -51,8 +50,107 @@ public class MusicOrchestratorImpl implements MusicOrchestrator {
     AlbumDTOMapping albumDTOMapping;
 
 
+    @Transactional
+    @Override
+    public List<MusicDTO> updateMusics(List<MusicDetailResult> tracks) throws Exception {
+        // 先过滤存在的id
+        // 再插入基本信息
+        // 避免后续漏掉id详细信息的更新
+
+        /*
+        音乐部分
+        */
+
+        // 提取网易云音乐id
+        List<Long> neteaseMusicIds = tracks.stream()
+                .map(MusicDetailResult::getId)
+                .toList();
+
+        // 过滤已存在的歌曲id
+        List<Long> nonentityNeteaseMusicIds = musicService.nonentityNeteaseIds(neteaseMusicIds);
+
+        // 更新数据库中不存在的音乐
+        if (!nonentityNeteaseMusicIds.isEmpty()) {
+            updateNonentityMusics(tracks, nonentityNeteaseMusicIds);
+        }
+
+        // 重新查询所有歌曲
+//        List<MusicDTO> res = musicService.selectMusicByNeteaseIds(neteaseMusicIds);
+
+        // 将所有DetailResult转换为DTO
+        List<MusicDTO> res = tracks.stream()
+                .map(o -> musicDTOMapping.byDetailResult(o))
+                .toList();
+
+
+        return res;
+    }
+
+
+
+    private void updateNonentityMusics(List<MusicDetailResult> tracks, List<Long> nonentityNeteaseMusicIds) throws Exception {
+        // 副歌api (批处理api)
+        List<ChorusResult> chorusDTOList = musicService.elicitChorus(nonentityNeteaseMusicIds);
+
+
+        // 即刻更新部分
+        HashSet<Long> nonentityNeteaseMusicIdSet = new HashSet<>(nonentityNeteaseMusicIds);
+
+        List<MusicDetailResult> nonentityTracks = tracks.stream()
+                .filter(o -> nonentityNeteaseMusicIdSet.contains(o.getId()))
+                .toList();
+
+
+        // 建立Map 方便后续匹配两个对象
+        Map<Long, ChorusResult> chorusMap = chorusDTOList.stream()
+                .collect(Collectors.toMap(ChorusResult::getId, chorusDTO -> chorusDTO));
+
+
+        List<MusicDTO> musicDTOList = nonentityTracks.stream()
+                .map(o1 -> {
+                    MusicDTO musicDTO = musicDTOMapping.byDetailResult(o1);
+                    musicDTOMapping.chorusToModel(chorusMap.get(o1.getId()), musicDTO);
+                    return musicDTO;
+                })
+                .toList();
+        // 插入音乐
+        List<MusicPO> musicPOList = musicDTOList.stream()
+                .map(o -> musicPOMapping.byDTO(o))
+                .toList();
+
+        musicService.insertMusics(musicPOList);
+
+        // 将id更新到model中
+        for (int i = 0; i < musicDTOList.size(); i++) {
+            musicDTOMapping.byPO(musicPOList.get(i), musicDTOList.get(i));
+        }
+
+        // 插入音乐信息扩展表
+        List<MusicInfoExtendPO> musicInfoExtendPOList = musicDTOList.stream()
+                .map(MusicDTO::getInfo)
+                .toList();
+
+        // 插入或更新扩展表
+        musicService.insertInfosExtend(musicInfoExtendPOList);
+
+        log.info("MusicOrchestrator].[updateMusics] Successfully Updated {} Music(s)", musicDTOList.size());
+        log.info("MusicOrchestrator].[updateMusics] 成功添加{}首歌曲", musicDTOList.size());
+    }
+
+
+
+    @Override
+    public List<MusicDTO> elicitMusicDTOList(List<Long> musicIdList) throws Exception {
+
+        List<MusicDTO> musicDTOList = musicService.selectMusic(musicIdList);
+
+
+        return musicDTOList;
+    }
+
 
 //    @Override
+//    @Transactional
 //    public List<MusicDTO> updateMusics(List<MusicDetailResult> tracks) throws Exception {
 //        // 先过滤存在的id
 //        // 再插入基本信息
@@ -73,6 +171,32 @@ public class MusicOrchestratorImpl implements MusicOrchestrator {
 //        // 副歌api (批处理api)
 //        List<ChorusResult> chorusDTOList = musicService.elicitChorus(nonentityNeteaseMusicIds);
 //
+//        /*
+//        作者部分
+//        */
+//
+//        // 提取author id
+//        List<Long> neteaseAuthorIds = tracks.stream()
+//                .flatMap(a -> a.getAr().stream()) //使用flatMap展平子列表字段
+//                .map(Author::getId)
+//                .distinct() // 去重
+//                .toList();
+//
+//        // 过滤已存在的id
+//        List<Long> nonentityNeteaseAuthorIds = authorService.nonentityNeteaseIds(neteaseAuthorIds);
+//
+//        /*
+//        专辑部分
+//        */
+//
+//        // 提取专辑id
+//        List<Long> neteaseAlbumIds = tracks.stream()
+//                .map(o -> o.getAl().getId())
+//                .distinct() // 去重
+//                .toList();
+//
+//        // 过滤已存在的id
+//        List<Long> nonentityNeteaseAlbumIds = albumService.nonentityNeteaseIds(neteaseAlbumIds);
 //
 //        // 即刻更新部分
 //        HashSet<Long> nonentityNeteaseMusicIdSet = new HashSet<>(nonentityNeteaseMusicIds);
@@ -89,11 +213,25 @@ public class MusicOrchestratorImpl implements MusicOrchestrator {
 //
 //        List<MusicDTO> musicDTOList = nonentityTracks.stream()
 //                .map(o1 -> {
-//                    MusicDTO musicDTO = musicDTOMapping.detailToModel(o1);
+//                    MusicDTO musicDTO = musicDTOMapping.byDetailResult(o1);
 //                    musicDTOMapping.chorusToModel(chorusMap.get(o1.getId()), musicDTO);
 //                    return musicDTO;
 //                })
 //                .toList();
+//
+//
+//        // 插入专辑
+//        List<AlbumPO> albumPOList = musicDTOList.stream()
+//                .map(MusicDTO::getAlbum)
+//                .toList();
+//
+////        albumService.insertAlbums(albumPOList);
+//
+//
+//        for (int i = 0; i < musicDTOList.size(); i++) {
+//            musicDTOMapping.albumToModel(albumPOList.get(i), musicDTOList.get(i));
+//        }
+//
 //        // 插入音乐
 //        List<MusicPO> musicPOList = musicDTOList.stream()
 //                .map(o -> musicPOMapping.byDTO(o))
@@ -117,155 +255,33 @@ public class MusicOrchestratorImpl implements MusicOrchestrator {
 //
 //
 //
+//        // 作者
+//        List<AuthorPO> authorPOList = musicDTOList.stream()
+//                .flatMap(o1 -> o1.getAuthors().stream())
+//                .toList();
 //
+//        authorService.insertAuthors(authorPOList);
+//
+//        List<MusicAuthorsPO> musicAuthorsPOList = musicDTOList.stream()
+//                .flatMap(o1 -> o1.getAuthors().stream()
+//                        .map(o2 -> MusicAuthorsPO.builder()
+//                                .musicId(o1.getId()) // 前面先插入music获取id再返回
+//                                .authorId(o2.getId())
+//                                .build()))
+//                .toList();
+//
+//        authorService.insertMusicAuthors(musicAuthorsPOList);
+//
+//
+//
+//        // 异步更新部分
+////        updateMusicAsync(nonentityNeteaseMusicIds, nonentityNeteaseAuthorIds, nonentityNeteaseAlbumIds);
+//        log.info("MusicOrchestrator].[updateMusics] Successfully Updated {} Music(s)", musicDTOList.size());
+//        log.info("MusicOrchestrator].[updateMusics] 成功添加{}首歌曲", musicDTOList.size());
 //
 //
 //        return musicDTOList;
 //    }
-//
-    @Override
-    public List<MusicDTO> elicitMusicDTOList(List<Long> musicIdList) throws Exception {
-
-        List<MusicDTO> musicDTOList = musicService.elicitMusic(musicIdList);
-
-
-        return musicDTOList;
-    }
-
-
-    @Override
-    @Transactional
-    public List<MusicDTO> updateMusics(List<MusicDetailResult> tracks) throws Exception {
-        // 先过滤存在的id
-        // 再插入基本信息
-        // 避免后续漏掉id详细信息的更新
-
-        /*
-        音乐部分
-        */
-
-        // 提取网易云音乐id
-        List<Long> neteaseMusicIds = tracks.stream()
-                .map(MusicDetailResult::getId)
-                .toList();
-
-        // 过滤已存在的歌曲id
-        List<Long> nonentityNeteaseMusicIds = musicService.nonentityNeteaseIds(neteaseMusicIds);
-
-        // 副歌api (批处理api)
-        List<ChorusResult> chorusDTOList = musicService.elicitChorus(nonentityNeteaseMusicIds);
-
-        /*
-        作者部分
-        */
-
-        // 提取author id
-        List<Long> neteaseAuthorIds = tracks.stream()
-                .flatMap(a -> a.getAr().stream()) //使用flatMap展平子列表字段
-                .map(Author::getId)
-                .distinct() // 去重
-                .toList();
-
-        // 过滤已存在的id
-        List<Long> nonentityNeteaseAuthorIds = authorService.nonentityNeteaseIds(neteaseAuthorIds);
-
-        /*
-        专辑部分
-        */
-
-        // 提取专辑id
-        List<Long> neteaseAlbumIds = tracks.stream()
-                .map(o -> o.getAl().getId())
-                .distinct() // 去重
-                .toList();
-
-        // 过滤已存在的id
-        List<Long> nonentityNeteaseAlbumIds = albumService.nonentityNeteaseIds(neteaseAlbumIds);
-
-        // 即刻更新部分
-        HashSet<Long> nonentityNeteaseMusicIdSet = new HashSet<>(nonentityNeteaseMusicIds);
-
-        List<MusicDetailResult> nonentityTracks = tracks.stream()
-                .filter(o -> nonentityNeteaseMusicIdSet.contains(o.getId()))
-                .toList();
-
-
-        // 建立Map 方便后续匹配两个对象
-        Map<Long, ChorusResult> chorusMap = chorusDTOList.stream()
-                .collect(Collectors.toMap(ChorusResult::getId, chorusDTO -> chorusDTO));
-
-
-        List<MusicDTO> musicDTOList = nonentityTracks.stream()
-                .map(o1 -> {
-                    MusicDTO musicDTO = musicDTOMapping.byDetailResult(o1);
-                    musicDTOMapping.chorusToModel(chorusMap.get(o1.getId()), musicDTO);
-                    return musicDTO;
-                })
-                .toList();
-
-
-        // 插入专辑
-        List<AlbumPO> albumPOList = musicDTOList.stream()
-                .map(MusicDTO::getAlbum)
-                .toList();
-
-//        albumService.insertAlbums(albumPOList);
-
-
-        for (int i = 0; i < musicDTOList.size(); i++) {
-            musicDTOMapping.albumToModel(albumPOList.get(i), musicDTOList.get(i));
-        }
-
-        // 插入音乐
-        List<MusicPO> musicPOList = musicDTOList.stream()
-                .map(o -> musicPOMapping.byDTO(o))
-                .toList();
-
-        musicService.insertMusics(musicPOList);
-
-        // 将id更新到model中
-        for (int i = 0; i < musicDTOList.size(); i++) {
-            musicDTOMapping.byPO(musicPOList.get(i), musicDTOList.get(i));
-        }
-
-        // 插入音乐信息扩展表
-        List<MusicInfoExtendPO> musicInfoExtendPOList = musicDTOList.stream()
-                .map(MusicDTO::getInfo)
-                .toList();
-
-        // 插入或更新扩展表
-        musicService.insertInfosExtend(musicInfoExtendPOList);
-
-
-
-
-        // 作者
-        List<AuthorPO> authorPOList = musicDTOList.stream()
-                .flatMap(o1 -> o1.getAuthors().stream())
-                .toList();
-
-        authorService.insertAuthors(authorPOList);
-
-        List<MusicAuthorsPO> musicAuthorsPOList = musicDTOList.stream()
-                .flatMap(o1 -> o1.getAuthors().stream()
-                        .map(o2 -> MusicAuthorsPO.builder()
-                                .musicId(o1.getId()) // 前面先插入music获取id再返回
-                                .authorId(o2.getId())
-                                .build()))
-                .toList();
-
-        authorService.insertMusicAuthors(musicAuthorsPOList);
-
-
-
-        // 异步更新部分
-//        updateMusicAsync(nonentityNeteaseMusicIds, nonentityNeteaseAuthorIds, nonentityNeteaseAlbumIds);
-        log.info("MusicOrchestrator].[updateMusics] Successfully Updated {} Music(s)", musicDTOList.size());
-        log.info("MusicOrchestrator].[updateMusics] 成功添加{}首歌曲", musicDTOList.size());
-
-
-        return musicDTOList;
-    }
 
 
     // 弃用 并发量太高 api服务器会返回null
