@@ -23,6 +23,7 @@
     "@pixi/filter-color-matrix": "^7.4.3",
     "@pixi/sprite": "^7.4.3",
     "element-plus": "^2.10.4",
+    "font-awesome": "^4.7.0",
     "jss": "^10.10.0",
     "jss-preset-default": "^10.10.0",
     "lodash": "^4.17.21",

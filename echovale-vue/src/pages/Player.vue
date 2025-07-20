@@ -1,24 +1,34 @@
 <script setup lang="ts">
 
-import {onMounted, onUnmounted, ref, type Ref, watch} from "vue";
+import {computed, onMounted, onUnmounted, ref, type Ref, watch} from "vue";
 import {EplorRenderer, type LyricLine, type LyricLineMouseEvent} from "@applemusic-like-lyrics/core";
 // import {debounce} from "../hooks/utils.ts";
 import {debounce} from "lodash"
 import {LyricPlayer} from "@applemusic-like-lyrics/core";
 import {meTTML, ttml, yrc} from "../constant/testResource.ts";
 import {parseTTML, parseYrc} from "@applemusic-like-lyrics/lyric";
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import type {SpringParams} from "@applemusic-like-lyrics/core/dist/utils/spring";
+import {useTheme} from "vuetify/framework";
 import {
   faBackward,
   faForward,
   faHeart,
   faPause,
-  faRepeat,
-  faVolumeHigh,
+  faPlay,
+  faRepeat, faVolumeHigh,
   faVolumeLow, faXmark
 } from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
-import type {SpringParams} from "@applemusic-like-lyrics/core/dist/utils/spring";
 
+
+const theme = useTheme()
+
+// theme.global.name.value = 'dark'
+
+
+const fontThemeColor = computed(() => ({
+  color: theme.current.value.colors.background
+}))
 
 function setCanvasSize(canvas: HTMLCanvasElement) {
   canvas.width = window.innerWidth;
@@ -127,8 +137,6 @@ function loadLyricPlayer() {
   player.setLinePosYSpringParams(springParamsX)
   player.setLinePosXSpringParams(springParamsY)
   player.setLineScaleSpringParams(springParamsScale)
-
-  player.update(fps)
   player.addEventListener('line-click', (evt) => redirectLyricPosition(evt))
 
   setLyricPlayerAnimation(fps)
@@ -144,6 +152,9 @@ function redirectLyricPosition(evt: Event) {
   music.currentTime = e.line.getLine().startTime / 1000
   player.resetScroll()
   player.calcLayout(false, true)
+  isPlaying.value = true
+  music.play()
+  player.resume()
 }
 
 let interval: number = 0
@@ -155,12 +166,14 @@ let secStr: Ref<string> = ref('')
 
 let progress: Ref<string> = ref('')
 
+
 function setLyricPlayerAnimation(fps: number) {
   let timeout = 1000 / fps
   music = document.getElementById("music") as HTMLAudioElement
   if (interval !== 0) clearInterval(interval)
   interval = setInterval(() => {
     if (isMusicProgressUpdate.value) return
+    if (!isPlaying.value) player.pause()
     duration.value = music.duration
     currentTime.value = music.currentTime * 1000
     player.setCurrentTime(currentTime.value)
@@ -204,8 +217,12 @@ function loadMusic() {
   watchMusicVolume()
 }
 
+const musciDefaultVolume = 0.5
+
 // TODO Web Audio API 丝滑过渡防跳音
 function watchMusicVolume() {
+  music.volume = musciDefaultVolume
+  volume.value = musciDefaultVolume * 100
   watch(volume, (newValue) => {
     music.volume = newValue / 100
     console.log("[Player].[watchMusicVolume]", music.volume)
@@ -238,6 +255,23 @@ const volumeSliderTrackSize: Ref<number> = ref(10)
 
 
 
+let isPlaying: Ref<boolean> = ref(false)
+
+const togglePlay = () => {
+  console.log("[Player].[togglePlay]", isPlaying.value)
+
+  isPlaying.value = !isPlaying.value
+  if (isPlaying.value) {
+    music.play()
+    player.resume()
+  }
+  else {
+    music.pause()
+    player.pause()
+  }
+}
+
+
 onMounted(() => {
 
   // 加载流体背景
@@ -261,7 +295,7 @@ onUnmounted(() => {
 <template>
   <canvas id="eplor-canvas" style="z-index: -2; left: 0; top: 0; position: fixed; pointer-events: none; width: 100vw; height: 100vh;" />
   <v-container class="pa-0" style="width: 100vw; height: 100vh; z-index: 0;">
-  <v-container class="player-font">
+  <v-container class="player-font" :style="fontThemeColor">
     <v-row no-gutters class="d-flex justify-space-evenly" style="width: 100vw;">
 <!--      music player-->
       <v-col cols="5" style="max-width: 54vh; min-width: 30vw; min-height: 90vh; max-height: 96vh;">
@@ -315,11 +349,20 @@ onUnmounted(() => {
           <v-row>
             <v-container style="max-width: 54vh;">
               <v-row style="display: flex; flex-direction: row; justify-content: space-between;">
-                <v-col class="pa-0" cols="2" style="display: flex; justify-content: start; align-self: center;"><font-awesome-icon :icon="faRepeat" /></v-col>
-                <v-col cols="2"><font-awesome-icon :icon="faBackward" /></v-col>
-                <v-col cols="4"><font-awesome-icon :icon="faPause" /></v-col>
-                <v-col cols="2"><font-awesome-icon :icon="faForward" /></v-col>
-                <v-col class="pa-0" cols="2" style="display: flex; justify-content: end; align-self: center;"><font-awesome-icon :icon="faHeart"></font-awesome-icon></v-col>
+                <v-col class="pa-0" cols="2" style="display: flex; justify-content: start; align-self: center;"><font-awesome-icon size="lg" :icon="faRepeat" /></v-col>
+                <v-col cols="2"><font-awesome-icon size="2x" :icon="faBackward" /></v-col>
+                <transition name="fade" mode="out-in">
+                <v-col cols="4" @click="togglePlay">
+                    <font-awesome-icon size="2x" v-if="isPlaying" key="pause" :icon="faPause" />
+                    <font-awesome-icon size="2x" v-else key="play" :icon="faPlay" />
+                </v-col>
+                </transition>
+                <v-col cols="2"><font-awesome-icon size="2x" :icon="faForward" /></v-col>
+                <transition name="fade" mode="out-in">
+                <v-col class="pa-0" cols="2" style="display: flex; justify-content: end; align-self: center;">
+                  <font-awesome-icon size="lg" :icon="faHeart" />
+                </v-col>
+                </transition>
               </v-row>
             </v-container>
           </v-row>
@@ -344,7 +387,7 @@ onUnmounted(() => {
       </v-col>
 <!--      lyric player-->
       <v-col cols="7">
-        <v-container class="lyric-player" id="lyric-player" style=""></v-container>
+        <v-container class="lyric-player" id="lyric-player" :style="fontThemeColor"></v-container>
       </v-col>
     </v-row>
   </v-container>

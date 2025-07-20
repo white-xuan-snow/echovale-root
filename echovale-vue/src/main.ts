@@ -6,6 +6,7 @@ import { createPinia } from "pinia";
 import Vuetify from "./plugins/vuetify";
 import ElementPlus from "element-plus";
 import { FontAwesomeIcon } from "./plugins/fontawesome.ts";
+import 'font-awesome/css/font-awesome.min.css';
 // import { router } from "./router";
 
 import App from './App.vue'
