@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import {System} from "./src/constant/system.ts";
-import wasm from "@applemusic-like-lyrics/lyric/node_modules/vite-plugin-wasm";
+import wasm from "vite-plugin-wasm";
 
 // https://vite.dev/config/
 export default defineConfig({

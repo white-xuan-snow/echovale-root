@@ -1,11 +1,23 @@
 <script setup lang="ts">
 
-import {onMounted, onUnmounted} from "vue";
-import {EplorRenderer} from "@applemusic-like-lyrics/core";
-import {debounce} from "../hooks/utils.ts";
+import {onMounted, onUnmounted, ref, type Ref, watch} from "vue";
+import {EplorRenderer, type LyricLine, type LyricLineMouseEvent} from "@applemusic-like-lyrics/core";
+// import {debounce} from "../hooks/utils.ts";
+import {debounce} from "lodash"
 import {LyricPlayer} from "@applemusic-like-lyrics/core";
-import {lrc, ttml} from "../constant/testResource.ts";
-import {type LyricLine, parseLrc, parseTTML} from "@applemusic-like-lyrics/lyric";
+import {meTTML, ttml, yrc} from "../constant/testResource.ts";
+import {parseTTML, parseYrc} from "@applemusic-like-lyrics/lyric";
+import {
+  faBackward,
+  faForward,
+  faHeart,
+  faPause,
+  faRepeat,
+  faVolumeHigh,
+  faVolumeLow, faXmark
+} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import type {SpringParams} from "@applemusic-like-lyrics/core/dist/utils/spring";
 
 
 function setCanvasSize(canvas: HTMLCanvasElement) {
@@ -15,12 +27,26 @@ function setCanvasSize(canvas: HTMLCanvasElement) {
   console.log("[Player].[setCanvasSize] height:", canvas.height);
 }
 
+let music: HTMLAudioElement
+let player: LyricPlayer
+let eplorRender: EplorRenderer
+
+
+// 背景帧率
+const fps = 120
+
+
+
+
+let currentTime: Ref<number> = ref(0)
+let duration: Ref<number> = ref(0)
+let volume: Ref<number> = ref(0)
+
+
 
 function loadEplorRender() {
   // 图片
-  const album = 'src/assets/love.jpg'
-  // 背景帧率
-  const fps = 120
+  const album = 'src/assets/me.jpg'
   // 流体速率
   const flowSpeed = 10
   // 明度
@@ -43,7 +69,7 @@ function loadEplorRender() {
   eplorCanvas.style.filter = `contrast(${contrast}%)`
 
   // 创建流体背景对象
-  const eplorRender = new EplorRenderer(eplorCanvas);
+  eplorRender = new EplorRenderer(eplorCanvas);
 
   // 设置图片
   eplorRender.setAlbum(album)
@@ -55,48 +81,106 @@ function loadEplorRender() {
   eplorRender.setRenderScale(renderScale)
 
   console.log("[Player].[loadEplorRender] Loaded EplorRender.")
-
-  // 卸载时释放内存
-  onUnmounted(() => {
-    eplorRender.dispose()
-    console.log("[Player].[onUnmounted] EplorRender Unmounted.")
-  })
 }
 
 function loadLyricPlayer() {
 
   // const lines = parseLrc(lrc)
-  const lines = parseTTML(ttml)
-  // const lyricLines = convertLyricLine(lines.lines)
+  // const lines = parseTTML(ttml)
+  // const lines = parseYrc(yrc)
+  const lines = parseTTML(meTTML)
+  // const lyricLines = convertLyricLine(lines)
 
   const lyricPlayerContainer = document.getElementById("lyric-player") as HTMLDivElement
 
   // console.log(lyricLines)
 
-  const player = new LyricPlayer()
+  player = new LyricPlayer()
   lyricPlayerContainer.appendChild(player.getElement())
   player.setLyricLines(lines.lines)
   player.setEnableBlur(true)
   player.setEnableScale(true)
-  player.setAlignPosition(0.5)
+  player.setAlignPosition(0.4)
   player.setEnableSpring(true)
   player.setAlignAnchor("center")
+  player.setCurrentTime(0)
 
-  setLyricPlayerAnimation(player, 60)
+  const springParamsX: SpringParams = {
+    mass: 5,
+    stiffness: 500,
+    damping: 70,
+    soft: false
+  }
+  const springParamsY: SpringParams = {
+    mass: 1,
+    stiffness: 100,
+    damping: 1,
+    soft: true
+  }
+  const springParamsScale: SpringParams = {
+    mass: 0.5,
+    stiffness: 50,
+    damping: 10,
+    soft: true
+  }
+
+  player.setLinePosYSpringParams(springParamsX)
+  player.setLinePosXSpringParams(springParamsY)
+  player.setLineScaleSpringParams(springParamsScale)
+
+  player.update(fps)
+  player.addEventListener('line-click', (evt) => redirectLyricPosition(evt))
+
+  setLyricPlayerAnimation(fps)
+
 }
 
+function redirectLyricPosition(evt: Event) {
+  const e = evt as LyricLineMouseEvent
+  evt.preventDefault()
+  evt.stopImmediatePropagation()
+  evt.stopPropagation()
+  console.log("[Player].[loadLyricPlayer].[line-click Listener]", e.line, e.lineIndex)
+  music.currentTime = e.line.getLine().startTime / 1000
+  player.resetScroll()
+  player.calcLayout(false, true)
+}
 
-function setLyricPlayerAnimation(player: LyricPlayer, fps: number) {
+let interval: number = 0
+
+let minNum: Ref<number> = ref(0)
+let secNum: Ref<number> = ref(0)
+let minStr: Ref<string> = ref('')
+let secStr: Ref<string> = ref('')
+
+let progress: Ref<string> = ref('')
+
+function setLyricPlayerAnimation(fps: number) {
   let timeout = 1000 / fps
-  let interval: number
-  const music = document.getElementById("music") as HTMLAudioElement
+  music = document.getElementById("music") as HTMLAudioElement
+  if (interval !== 0) clearInterval(interval)
   interval = setInterval(() => {
-    const currentTime = music.currentTime
-    player.setCurrentTime(currentTime * 1000)
-    player.update(20)
-    console.log(currentTime)
+    if (isMusicProgressUpdate.value) return
+    duration.value = music.duration
+    currentTime.value = music.currentTime * 1000
+    player.setCurrentTime(currentTime.value)
+    player.update(timeout)
+    // console.log("[Player].[setLyricPlayerAnimation]", currentTime.value)
+
+    // 计算位数
+    const sec = currentTime.value / 1000
+    minNum.value = Math.floor(sec / 60)
+    minStr.value = minNum.value.toString().padStart(2, '0')
+    secNum.value = Math.floor(sec % 60)
+    secStr.value = secNum.value.toString().padStart(2, '0')
+    progress.value = (sec / duration.value * 100).toFixed(2)
+    // console.log("[Player].[setLyricPlayerAnimation] progress: ", progress.value)
+
+
   }, timeout)
 }
+
+
 
 function convertLyricLine(lines: LyricLine[]) {
   return lines.map((line, i, lines) => ({
@@ -112,9 +196,45 @@ function convertLyricLine(lines: LyricLine[]) {
     translatedLyric: "",
     romanLyric: "",
     isBG: false,
-    isDuet: false
+    isDuet: false,
   }));
 }
+
+function loadMusic() {
+  watchMusicVolume()
+}
+
+// TODO Web Audio API 丝滑过渡防跳音
+function watchMusicVolume() {
+  watch(volume, (newValue) => {
+    music.volume = newValue / 100
+    console.log("[Player].[watchMusicVolume]", music.volume)
+  })
+}
+
+let isMusicProgressUpdate: Ref<boolean> = ref(false)
+let lastMusicTime: Ref<number> = ref(0)
+const updateMusicProgress = () => {
+  isMusicProgressUpdate.value = true
+  const updateProgress = Number.parseFloat(progress.value)
+  const updateTime = Math.floor(updateProgress / 100 * duration.value)
+  if (Math.abs(updateTime - lastMusicTime.value) < 1) {
+    lastMusicTime.value = updateTime
+    isMusicProgressUpdate.value = false
+    return
+  }
+  music.currentTime = updateTime
+  lastMusicTime.value = updateTime
+  isMusicProgressUpdate.value = false
+  console.log("[Player].[updateMusicProgress]", progress.value)
+}
+
+const closeMusicPlayer = () => {
+
+}
+
+const progressSliderTrackSize: Ref<number> = ref(10)
+const volumeSliderTrackSize: Ref<number> = ref(10)
 
 
 
@@ -126,24 +246,199 @@ onMounted(() => {
   // 加载歌词播放器
   loadLyricPlayer()
 
+  loadMusic()
+
 })
+
+onUnmounted(() => {
+  eplorRender.dispose()
+  player.dispose()
+})
+
 
 </script>
 
 <template>
   <canvas id="eplor-canvas" style="z-index: -2; left: 0; top: 0; position: fixed; pointer-events: none; width: 100vw; height: 100vh;" />
-  <v-container class="pa-0" style="width: 100vw; height: 100vh; z-index: -1">
-    <v-row style="width: 100%; height: 100%">
-      <v-col cols="4"></v-col>
-      <v-col class="lyric-player" id="lyric-player" cols="8" style="height: 100vh; width: 100%; position: relative; z-index: -1; font-size: 10px;"></v-col>
+  <v-container class="pa-0" style="width: 100vw; height: 100vh; z-index: 0;">
+  <v-container class="player-font">
+    <v-row no-gutters class="d-flex justify-space-evenly" style="width: 100vw;">
+<!--      music player-->
+      <v-col cols="5" style="max-width: 54vh; min-width: 30vw; min-height: 90vh; max-height: 96vh;">
+        <v-container class="d-flex flex-column justify-space-between" style="max-width: 36vw; min-width: 30vw; min-height: 90vh; max-height: 90vh;">
+          <v-row>
+            <v-container class="d-flex justify-center align-center" style="padding-top: 0;">
+              <div class="player-back-btn d-flex justify-center align-center"
+                   @click="closeMusicPlayer">
+                <font-awesome-icon :icon="faXmark" />
+              </div>
+            </v-container>
+          </v-row>
+<!--          img-->
+          <v-row>
+            <v-container class="pa-0 d-flex justify-center">
+              <v-img aspect-ratio="1" max-width="54vh" cover class="img-display" src="src/assets/me.jpg"></v-img>
+            </v-container>
+          </v-row>
+          <!--          info-->
+          <v-row style="flex: 1;">
+            <v-container style="padding: 1rem 0; max-width: 54vh;">
+              <v-card class="music-info" color="transparent" >
+                <v-card-title class="pa-0">ME!</v-card-title>
+                <v-card-subtitle class="pa-0">Taylor Swift, Brendon Urie</v-card-subtitle>
+              </v-card>
+            </v-container>
+          </v-row>
+          <!--          progress-->
+          <v-row>
+            <v-container class="pa-0" style="max-width: 54vh;">
+              <v-slider :class="'ma-0' "
+                        track-color="rgba(220,220,220,.5)"
+                        track-fill-color="rgba(245,245,245,.5)"
+                        :track-size="progressSliderTrackSize"
+                        v-model="progress"
+                        @update:modelValue="updateMusicProgress"
+                        @mouseenter="progressSliderTrackSize = 16"
+                        @mouseleave="progressSliderTrackSize = 10"
+                        hide-details />
+            </v-container>
+          </v-row>
+          <!--          progress number-->
+          <v-row>
+            <v-container class="progress-number pa-0" style="max-width: 54vh;">
+              <span>{{ minStr }}:{{ secStr }}</span>
+              <span></span>
+              <span>{{duration}}</span>
+            </v-container>
+          </v-row>
+          <!--          controller-->
+          <v-row>
+            <v-container style="max-width: 54vh;">
+              <v-row style="display: flex; flex-direction: row; justify-content: space-between;">
+                <v-col class="pa-0" cols="2" style="display: flex; justify-content: start; align-self: center;"><font-awesome-icon :icon="faRepeat" /></v-col>
+                <v-col cols="2"><font-awesome-icon :icon="faBackward" /></v-col>
+                <v-col cols="4"><font-awesome-icon :icon="faPause" /></v-col>
+                <v-col cols="2"><font-awesome-icon :icon="faForward" /></v-col>
+                <v-col class="pa-0" cols="2" style="display: flex; justify-content: end; align-self: center;"><font-awesome-icon :icon="faHeart"></font-awesome-icon></v-col>
+              </v-row>
+            </v-container>
+          </v-row>
+          <!--          volume-->
+          <v-row>
+            <v-col class="pa-0 flex-row-start" cols="1" style="max-width: 54vh;"><font-awesome-icon :icon="faVolumeLow" /></v-col>
+            <v-col class="d-flex align-center" style="padding-left: 0; max-width: 54vh;" cols="10">
+              <v-slider class="ma-0 volume-slider" style="height: 2rem;"
+                  :track-size="volumeSliderTrackSize"
+                  track-color="rgba(220,220,220,.5)"
+                  track-fill-color="rgba(245,245,245,.5)"
+                  :thumb-label="false"
+                  @mouseenter="volumeSliderTrackSize = 16"
+                  @mouseleave="volumeSliderTrackSize = 10"
+                  v-model="volume"
+                  hide-details />
+            </v-col>
+            <v-col class="pa-0 flex-row-end" cols="1" style="max-width: 54vh;"><font-awesome-icon :icon="faVolumeHigh" /></v-col>
+          </v-row>
+
+        </v-container>
+      </v-col>
+<!--      lyric player-->
+      <v-col cols="7">
+        <v-container class="lyric-player" id="lyric-player" style=""></v-container>
+      </v-col>
     </v-row>
   </v-container>
-  <audio id="music" src="src/assets/music/Fortnight.m4a" autoplay controls></audio>
+  </v-container>
+
+  <audio id="music" src="src/assets/music/me.flac" autoplay controls loop style="display: none"></audio>
 </template>
 
 <style scoped>
-  .lyric-player * {
-    font-size: 4rem !important;
-    text-align: left;
+
+  .lyric-player {
+    height: 90vh;
+    position: relative;
+    z-index: 0;
+    display: flex;
+    justify-content: center;
   }
+
+  .player-font * {
+    font-family: "PingFang SC";
+    font-weight: bold;
+  }
+
+
+
+
+  .img-display {
+    border-radius: 12px;
+    box-shadow: 0 0 24px rgb(100,100,100);
+  }
+
+  .player-back-btn {
+    width: 2rem;
+    height: 1.5rem;
+    border-radius: 8px;
+    background-color: rgba(200,200,200,.5);
+  }
+  .music-info {
+    text-align: left;
+    box-shadow: 0 0;
+  }
+  .progress-number {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+
+  .flex-row-start {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+  }
+  .flex-row-center {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+  }
+  .flex-row-end {
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    align-items: center;
+  }
+
+  .flex-column-evenly {
+    width: 36vw;
+    height: 40vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: start;
+  }
+
+
+
+
+
+</style>
+
+<style>
+.v-slider-thumb {
+  display: none;
+}
+
+.lyricLine-0-1-2 * {
+  text-align: left;
+}
+
+.lyricDuetLine-0-1-3 * {
+  text-align: right;
+}
+
 </style>

@@ -5,6 +5,7 @@ import 'element-plus/dist/index.css'
 import { createPinia } from "pinia";
 import Vuetify from "./plugins/vuetify";
 import ElementPlus from "element-plus";
+import { FontAwesomeIcon } from "./plugins/fontawesome.ts";
 // import { router } from "./router";
 
 import App from './App.vue'
@@ -15,6 +16,7 @@ const pinia = createPinia()
 app.use(Vuetify)
 app.use(ElementPlus)
 app.use(pinia)
+app.component('font-awesome-icon', FontAwesomeIcon)
 // app.use(router)
 
 app.mount("#app")
