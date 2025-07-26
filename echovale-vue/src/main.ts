@@ -7,7 +7,7 @@ import Vuetify from "./plugins/vuetify";
 import ElementPlus from "element-plus";
 import { FontAwesomeIcon } from "./plugins/fontawesome.ts";
 import 'font-awesome/css/font-awesome.min.css';
-// import { router } from "./router";
+import router from "./router/index";
 
 import App from './App.vue'
 
@@ -18,10 +18,6 @@ app.use(Vuetify)
 app.use(ElementPlus)
 app.use(pinia)
 app.component('font-awesome-icon', FontAwesomeIcon)
-// app.use(router)
+app.use(router)
 
 app.mount("#app")
-
-// init()
-
-

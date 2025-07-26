@@ -134,7 +134,8 @@ public class MusicOrchestratorImpl implements MusicOrchestrator {
         musicService.insertInfosExtend(musicInfoExtendPOList);
 
         log.info("MusicOrchestrator].[updateMusics] Successfully Updated {} Music(s)", musicDTOList.size());
-        log.info("MusicOrchestrator].[updateMusics] 成功添加{}首歌曲", musicDTOList.size());
+        log.info("MusicOrchestrator].[updateMusics] 成功添加{}首歌曲", musicDTOList.size()
+        );
     }
 
 

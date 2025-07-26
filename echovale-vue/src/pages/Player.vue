@@ -1,15 +1,27 @@
 <script setup lang="ts">
+import { defineOptions } from 'vue'
+defineOptions({
+  name: 'PlayerPage'
+})
 
-import {computed, onMounted, onUnmounted, ref, type Ref, watch} from "vue";
+import {computed, nextTick, onMounted, onUnmounted, ref, type Ref, watch} from "vue";
 import {EplorRenderer, type LyricLine, type LyricLineMouseEvent} from "@applemusic-like-lyrics/core";
+
+interface SpringParams {
+  mass: number
+  stiffness: number
+  damping: number
+  soft: boolean
+}
 // import {debounce} from "../hooks/utils.ts";
 import {debounce} from "lodash"
 import {LyricPlayer} from "@applemusic-like-lyrics/core";
 import {meTTML, ttml, yrc} from "../constant/testResource.ts";
 import {parseTTML, parseYrc} from "@applemusic-like-lyrics/lyric";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
-import type {SpringParams} from "@applemusic-like-lyrics/core/dist/utils/spring";
+import {usePlayerStore} from "../stores/playerStore";
 import {useTheme} from "vuetify/framework";
+import {useRouter} from "vue-router";
 import {
   faBackward,
   faForward,
@@ -37,13 +49,13 @@ function setCanvasSize(canvas: HTMLCanvasElement) {
   console.log("[Player].[setCanvasSize] height:", canvas.height);
 }
 
-let music: HTMLAudioElement
-let player: LyricPlayer
-let eplorRender: EplorRenderer
+  let player: LyricPlayer
+  let eplorRender: EplorRenderer
+  const playerStore = usePlayerStore()
+  let music = playerStore.getAudioPlayer()
 
-
-// 背景帧率
-const fps = 120
+  // 背景帧率
+  const fps = 120
 
 
 
@@ -138,10 +150,15 @@ function loadLyricPlayer() {
   player.setLinePosXSpringParams(springParamsY)
   player.setLineScaleSpringParams(springParamsScale)
   player.addEventListener('line-click', (evt) => redirectLyricPosition(evt))
+  player.addEventListener('line-touched', (evt) => redirectLyricPosition(evt))
 
   setLyricPlayerAnimation(fps)
 
+  loadMusic()
+
 }
+
+
 
 function redirectLyricPosition(evt: Event) {
   const e = evt as LyricLineMouseEvent
@@ -152,7 +169,7 @@ function redirectLyricPosition(evt: Event) {
   music.currentTime = e.line.getLine().startTime / 1000
   player.resetScroll()
   player.calcLayout(false, true)
-  isPlaying.value = true
+  playerStore.isPlaying = true
   music.play()
   player.resume()
 }
@@ -168,12 +185,12 @@ let progress: Ref<string> = ref('')
 
 
 function setLyricPlayerAnimation(fps: number) {
+  // 初始化
   let timeout = 1000 / fps
-  music = document.getElementById("music") as HTMLAudioElement
   if (interval !== 0) clearInterval(interval)
   interval = setInterval(() => {
     if (isMusicProgressUpdate.value) return
-    if (!isPlaying.value) player.pause()
+    if (!playerStore.isPlaying) player.pause()
     duration.value = music.duration
     currentTime.value = music.currentTime * 1000
     player.setCurrentTime(currentTime.value)
@@ -213,21 +230,20 @@ function convertLyricLine(lines: LyricLine[]) {
   }));
 }
 
-function loadMusic() {
-  watchMusicVolume()
-}
+  function loadMusic() {
+    watchMusicVolume()
+  }
 
-const musciDefaultVolume = 0.5
-
-// TODO Web Audio API 丝滑过渡防跳音
-function watchMusicVolume() {
-  music.volume = musciDefaultVolume
-  volume.value = musciDefaultVolume * 100
-  watch(volume, (newValue) => {
-    music.volume = newValue / 100
-    console.log("[Player].[watchMusicVolume]", music.volume)
-  })
-}
+  // TODO Web Audio API 丝滑过渡防跳音
+  function watchMusicVolume() {
+    console.log("[Player].[loadMusic] volume", playerStore.volume)
+    playerStore.setVolume(playerStore.volume)
+    volume.value = playerStore.volume * 100
+    watch(volume, (newValue) => {
+      playerStore.setVolume(newValue / 100)
+      console.log("[Player].[watchMusicVolume]", newValue / 100)
+    })
+  }
 
 let isMusicProgressUpdate: Ref<boolean> = ref(false)
 let lastMusicTime: Ref<number> = ref(0)
@@ -246,8 +262,9 @@ const updateMusicProgress = () => {
   console.log("[Player].[updateMusicProgress]", progress.value)
 }
 
+const router = useRouter()
 const closeMusicPlayer = () => {
-
+  router.back()
 }
 
 const progressSliderTrackSize: Ref<number> = ref(10)
@@ -255,13 +272,12 @@ const volumeSliderTrackSize: Ref<number> = ref(10)
 
 
 
-let isPlaying: Ref<boolean> = ref(false)
 
 const togglePlay = () => {
-  console.log("[Player].[togglePlay]", isPlaying.value)
+  console.log("[Player].[togglePlay]", playerStore.isPlaying)
 
-  isPlaying.value = !isPlaying.value
-  if (isPlaying.value) {
+  playerStore.isPlaying = !playerStore.isPlaying
+  if (playerStore.isPlaying) {
     music.play()
     player.resume()
   }
@@ -273,6 +289,7 @@ const togglePlay = () => {
 
 
 onMounted(() => {
+  console.log("[Player].[onMounted]")
 
   // 加载流体背景
   loadEplorRender()
@@ -280,13 +297,14 @@ onMounted(() => {
   // 加载歌词播放器
   loadLyricPlayer()
 
-  loadMusic()
+
 
 })
 
 onUnmounted(() => {
   eplorRender.dispose()
   player.dispose()
+  console.log("[Player].[onUnmounted]")
 })
 
 
@@ -353,7 +371,7 @@ onUnmounted(() => {
                 <v-col cols="2"><font-awesome-icon size="2x" :icon="faBackward" /></v-col>
                 <transition name="fade" mode="out-in">
                 <v-col cols="4" @click="togglePlay">
-                    <font-awesome-icon size="2x" v-if="isPlaying" key="pause" :icon="faPause" />
+                    <font-awesome-icon size="2x" v-if="playerStore.isPlaying" key="pause" :icon="faPause" />
                     <font-awesome-icon size="2x" v-else key="play" :icon="faPlay" />
                 </v-col>
                 </transition>
@@ -393,7 +411,6 @@ onUnmounted(() => {
   </v-container>
   </v-container>
 
-  <audio id="music" src="src/assets/music/me.flac" autoplay controls loop style="display: none"></audio>
 </template>
 
 <style scoped>
@@ -469,6 +486,7 @@ onUnmounted(() => {
 
 
 
+
 </style>
 
 <style>
@@ -476,12 +494,18 @@ onUnmounted(() => {
   display: none;
 }
 
-.lyricLine-0-1-2 * {
+[class*="lyricLine-0-1-"] * {
   text-align: left;
 }
 
-.lyricDuetLine-0-1-3 * {
+[class*="lyricDuetLine-0-1-"] * {
   text-align: right;
+}
+
+body::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  background: transparent;
 }
 
 </style>
