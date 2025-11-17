@@ -6,7 +6,7 @@ import com.echovale.service.dto.MusicDTO;
 import com.echovale.service.AlbumService;
 import com.echovale.service.AuthorService;
 import com.echovale.service.MusicService;
-import com.echovale.service.MusicOrchestrator;
+import com.echovale.service.MusicApplicationService;
 import com.echovale.service.mapping.*;
 import com.netease.music.api.autoconfigure.configuration.pojo.result.*;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
-public class MusicOrchestratorImpl implements MusicOrchestrator {
+public class MusicApplicationServiceImpl implements MusicApplicationService {
 
 
     @Autowired
@@ -133,8 +133,8 @@ public class MusicOrchestratorImpl implements MusicOrchestrator {
         // 插入或更新扩展表
         musicService.insertInfosExtend(musicInfoExtendPOList);
 
-        log.info("MusicOrchestrator].[updateMusics] Successfully Updated {} Music(s)", musicDTOList.size());
-        log.info("MusicOrchestrator].[updateMusics] 成功添加{}首歌曲", musicDTOList.size()
+        log.info("MusicApplicationService].[updateMusics] Successfully Updated {} Music(s)", musicDTOList.size());
+        log.info("MusicApplicationService].[updateMusics] 成功添加{}首歌曲", musicDTOList.size()
         );
     }
 
@@ -277,8 +277,8 @@ public class MusicOrchestratorImpl implements MusicOrchestrator {
 //
 //        // 异步更新部分
 ////        updateMusicAsync(nonentityNeteaseMusicIds, nonentityNeteaseAuthorIds, nonentityNeteaseAlbumIds);
-//        log.info("MusicOrchestrator].[updateMusics] Successfully Updated {} Music(s)", musicDTOList.size());
-//        log.info("MusicOrchestrator].[updateMusics] 成功添加{}首歌曲", musicDTOList.size());
+//        log.info("MusicApplicationService].[updateMusics] Successfully Updated {} Music(s)", musicDTOList.size());
+//        log.info("MusicApplicationService].[updateMusics] 成功添加{}首歌曲", musicDTOList.size());
 //
 //
 //        return musicDTOList;
@@ -297,7 +297,7 @@ public class MusicOrchestratorImpl implements MusicOrchestrator {
         // 歌词api (逐次api)
         List<CompletableFuture<LyricsResult>> lyricsFutureList = new ArrayList<>();
         for (Long id : nonentityNeteaseMusicIds) {
-            log.info("[MusicOrchestrator].[updateMusicAsync] 发起lyric请求API。。。");
+            log.info("[MusicApplicationService].[updateMusicAsync] 发起lyric请求API。。。");
             Thread.sleep(1000);
             lyricsFutureList.add(musicService.elicitLyricsAsync(id));
         }
@@ -305,7 +305,7 @@ public class MusicOrchestratorImpl implements MusicOrchestrator {
         // summary api (逐次api)
         List<CompletableFuture<MusicSummaryResult>> summaryFutureList = new ArrayList<>();
         for (Long id : nonentityNeteaseMusicIds) {
-            log.info("[MusicOrchestrator].[updateMusicAsync] 发起summary请求API。。。");
+            log.info("[MusicApplicationService].[updateMusicAsync] 发起summary请求API。。。");
             Thread.sleep(1000);
             summaryFutureList.add(musicService.elicitSummary(id));
         }
@@ -317,7 +317,7 @@ public class MusicOrchestratorImpl implements MusicOrchestrator {
         // 歌手详情 api (逐次api)
         List<CompletableFuture<AuthorDetailResult>> authorFutureList = new ArrayList<>();
         for (Long id : nonentityNeteaseAuthorIds) {
-            log.info("[MusicOrchestrator].[updateMusicAsync] 发起author请求API。。。");
+            log.info("[MusicApplicationService].[updateMusicAsync] 发起author请求API。。。");
             Thread.sleep(1000);
             authorFutureList.add(authorService.elicitDetailsAsync(id));
         }
@@ -329,7 +329,7 @@ public class MusicOrchestratorImpl implements MusicOrchestrator {
         // 专辑api (逐次api)
         List<CompletableFuture<AlbumListResult>> albumFutureList = new ArrayList<>();
         for (Long id : nonentityNeteaseAlbumIds) {
-            log.info("[MusicOrchestrator].[updateMusicAsync] 发起album请求API。。。");
+            log.info("[MusicApplicationService].[updateMusicAsync] 发起album请求API。。。");
             Thread.sleep(1000);
             albumFutureList.add(albumService.elicitAlbum(id));
         }

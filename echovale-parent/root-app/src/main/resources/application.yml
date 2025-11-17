@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: echovale-root-app
+
+  profiles:
+    active: music
+
+  output:
+    ansi:
+      enabled: always
+
+  jackson:
+    default-property-inclusion: non_empty
+
+  datasource:
+    username: root
+    password: 248812
+    url: jdbc:mysql://localhost:3306/echovale
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+
+server:
+  port: 8080
+  address: localhost
+
+
+
+logging:
+  level:
+    org.springframework.jdbc: debug
+  #    com.baomidou.dynamic: off
+  pattern:
+    console: "%clr(%d{MM-dd HH:mm:ss}){faint} [%thread] %clr(%-5level){highlight} %clr(%36.36logger{36}){cyan}: %msg%n"
+
+
+
+mybatis-plus:
+  global-config:
+    db-config:
+      id-type: assign_id

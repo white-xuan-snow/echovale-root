@@ -1,0 +1,25 @@
+package com.echovale.music.infrastructure.po;
+
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+/**
+ * @author 30531
+ * @version 1.0
+ * @description: TODO
+ * @date 2025/6/11 0:10
+ */
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@TableName("language")
+public class LanguagePO {
+    @TableId
+    private Integer id;
+    private String name;
+}

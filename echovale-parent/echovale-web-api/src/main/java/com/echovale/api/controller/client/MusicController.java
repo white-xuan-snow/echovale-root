@@ -1,11 +1,10 @@
 package com.echovale.api.controller.client;
 
 import com.echovale.common.exception.BadRequestException;
-import com.echovale.service.MusicOrchestrator;
+import com.echovale.service.MusicApplicationService;
 import com.echovale.service.dto.MusicDTO;
 import com.echovale.service.dto.Result;
 import com.echovale.service.MusicService;
-import com.echovale.service.impl.MusicOrchestratorImpl;
 import com.echovale.service.vo.LyricVO;
 import com.echovale.service.vo.MusicUrlVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +28,7 @@ public class MusicController {
     @Autowired
     MusicService musicService;
     @Autowired
-    MusicOrchestrator musicOrchestrator;
+    MusicApplicationService musicApplicationService;
 
     @GetMapping("/url")
     public Result elicitMusicUrl(@RequestParam(value = "ids", required = false) List<Long> ids,

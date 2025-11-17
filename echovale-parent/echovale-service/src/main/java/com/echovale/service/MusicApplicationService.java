@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public interface MusicOrchestrator {
+public interface MusicApplicationService {
     List<MusicDTO> updateMusics(List<MusicDetailResult> tracks) throws Exception;
 
     List<MusicDTO> elicitMusicDTOList(List<Long> musicIdList) throws Exception;

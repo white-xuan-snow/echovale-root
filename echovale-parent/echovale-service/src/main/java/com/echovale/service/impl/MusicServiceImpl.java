@@ -4,7 +4,7 @@ import com.echovale.common.constants.str.ServiceString;
 import com.echovale.common.exception.ConflictException;
 import com.echovale.common.exception.NotFoundException;
 import com.echovale.domain.mapper.*;
-import com.echovale.service.MusicOrchestrator;
+import com.echovale.service.MusicApplicationService;
 import com.echovale.service.dto.MusicDTO;
 import com.echovale.domain.po.*;
 import com.echovale.service.MusicService;
@@ -134,7 +134,7 @@ public class MusicServiceImpl implements MusicService {
 
     @Lazy // 延迟注入(因为@Transaction@Async等AOP增强导致Bean被Spring代理，最终包装Bean与初始注入Bean不一致)
     @Autowired
-    MusicOrchestrator musicOrchestrator;
+    MusicApplicationService musicApplicationService;
 
     @Override
     public MusicDTO incrementMusic(String neteaseId) throws Exception {
@@ -144,7 +144,7 @@ public class MusicServiceImpl implements MusicService {
         MusicDTO dto = new MusicDTO();
         if (id == null) {
             List<MusicDetailResult> detail = musicApi.detail(List.of(neteaseId));
-            List<MusicDTO> musicDTOList = musicOrchestrator.updateMusics(detail);
+            List<MusicDTO> musicDTOList = musicApplicationService.updateMusics(detail);
             dto = musicDTOList.get(0);
         } else {
             throw new ConflictException(ServiceString.NeteaseMusicId + neteaseId);

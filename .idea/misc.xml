@@ -11,6 +11,9 @@
         <option value="$PROJECT_DIR$/echovale-parent/echovale-domain/pom.xml" />
         <option value="$PROJECT_DIR$/echovale-parent/echovale-web-api/pom.xml" />
         <option value="$PROJECT_DIR$/echovale-parent/echovale-common/pom.xml" />
+        <option value="$PROJECT_DIR$/echovale-parent/music-agg/pom.xml" />
+        <option value="$PROJECT_DIR$/echovale-parent/playlist-agg/pom.xml" />
+        <option value="$PROJECT_DIR$/echovale-parent/search-agg/pom.xml" />
       </list>
     </option>
   </component>

@@ -1,0 +1,35 @@
+package com.echovale.music.infrastructure.po;
+
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+/**
+ * @author 30531
+ * @version 1.0
+ * @description: TODO
+ * @date 2025/6/10 15:28
+ */
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@TableName("author")
+public class AuthorPO {
+    @TableId
+    private Long id;
+    private String name;
+    private Long neteaseId;
+    private String transNames;
+    private String alias;
+    private Integer musicSize;
+    private Integer albumSize;
+    private Integer mvSize;
+    private String coverUrl;
+    private String avatarUrl;
+    private String description;
+    private String identify;
+}

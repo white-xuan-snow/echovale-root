@@ -1,12 +1,10 @@
 package com.echovale.service.impl;
 
-import com.echovale.service.MusicOrchestrator;
+import com.echovale.service.MusicApplicationService;
 import com.echovale.service.SearchService;
 import com.echovale.service.dto.MusicDTO;
-import com.echovale.service.mapping.MusicDTOMapping;
 import com.echovale.service.vo.SearchVO;
 import com.netease.music.api.autoconfigure.configuration.api.MusicApi;
-import com.netease.music.api.autoconfigure.configuration.module.MusicModule;
 import com.netease.music.api.autoconfigure.configuration.pojo.result.SearchResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +28,7 @@ public class SearchServiceImpl implements SearchService {
     MusicApi musicApi;
 
     @Autowired
-    MusicOrchestrator musicOrchestrator;
+    MusicApplicationService musicApplicationService;
 
 
     @Override
@@ -38,7 +36,7 @@ public class SearchServiceImpl implements SearchService {
 
         SearchResult searchResult = musicApi.search(content, limit, offset, type);
 
-        List<MusicDTO> musicDTOList = musicOrchestrator.updateMusics(searchResult.getSongs());
+        List<MusicDTO> musicDTOList = musicApplicationService.updateMusics(searchResult.getSongs());
 
         return SearchVO.builder()
                 .songCount(searchResult.getSongCount())

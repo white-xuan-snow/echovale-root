@@ -21,3 +21,8 @@ app.component('font-awesome-icon', FontAwesomeIcon)
 app.use(router)
 
 app.mount("#app")
+
+
+const windowStore = useWindowStore()
+windowStore.init()
+

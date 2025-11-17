@@ -4,7 +4,7 @@ import com.echovale.common.utils.TimeUtils;
 import com.echovale.domain.mapper.PlaylistMapper;
 import com.echovale.domain.mapper.PlaylistMusicsMapper;
 import com.echovale.domain.po.PlaylistMusicsPO;
-import com.echovale.service.MusicOrchestrator;
+import com.echovale.service.MusicApplicationService;
 import com.echovale.service.dto.MusicDTO;
 import com.echovale.domain.po.PlaylistPO;
 import com.echovale.service.PlaylistService;
@@ -43,7 +43,7 @@ public class PlaylistServiceImpl implements PlaylistService {
     @Autowired
     PlaylistMusicsMapper playlistMusicsMapper;
     @Autowired
-    MusicOrchestrator musicOrchestrator;
+    MusicApplicationService musicApplicationService;
 
     @Autowired
     TimeUtils timeUtils;
@@ -115,7 +115,7 @@ neteaseId
             playlistMapper.insertOrUpdate(playlistPO);
 
             // 更新歌曲相关信息
-            musicDTOList = musicOrchestrator.updateMusics(playlist.getTracks());
+            musicDTOList = musicApplicationService.updateMusics(playlist.getTracks());
 
         } else {
 
@@ -172,7 +172,7 @@ neteaseId
                 .map(PlaylistMusicsPO::getMusicId)
                 .toList();
 
-        return musicOrchestrator.elicitMusicDTOList(musicIdList);
+        return musicApplicationService.elicitMusicDTOList(musicIdList);
     }
 
     /** 

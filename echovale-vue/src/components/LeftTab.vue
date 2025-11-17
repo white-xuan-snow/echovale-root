@@ -14,6 +14,9 @@ const playlists = [
   {id: 2, name: "工作音乐", cover: "src/assets/me.jpg"},
   {id: 3, name: "放松时光", cover: "src/assets/me.jpg"}
 ];
+
+
+
 </script>
 
 <template>
