@@ -2,11 +2,17 @@ package com.echovale.music.api.controller;
 
 
 import com.echovale.common.domain.infrastructure.presistence.Result;
+import com.echovale.music.api.dto.MusicIncrementRequest;
+import com.echovale.music.api.vo.MusicUrlDetailVO;
 import com.echovale.music.api.dto.MusicUrlRequest;
+import com.echovale.music.api.vo.MusicUrlVO;
+import com.echovale.music.api.vo.MusicVO;
+import com.echovale.music.appliaction.command.AddMusicCommand;
 import com.echovale.music.appliaction.command.ElicitMusicUrlCommand;
-import com.echovale.music.appliaction.service.ElicitMusicUrlApplicationService;
+import com.echovale.music.appliaction.service.MusicApplicationService;
+import com.echovale.music.infrastructure.converter.AddMusicCommandConverter;
+import com.echovale.music.infrastructure.converter.ElicitMusicUrlCommandConverter;
 import jakarta.validation.Valid;
-import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,39 +33,42 @@ public class MusicController {
 
 
     @Autowired
-    ElicitMusicUrlApplicationService elicitMusicUrlApplicationService;
+    private MusicApplicationService musicApplicationService;
+    @Autowired
+    private ElicitMusicUrlCommandConverter elicitMusicUrlCommandConverter;
+    @Autowired
+    private AddMusicCommandConverter addMusicCommandConverter;
 
     @GetMapping("/url")
     public ResponseEntity<?> elicitMusicUrl(@Valid MusicUrlRequest musicUrlRequest) throws Exception {
 
-        // TODO level取值检测
+        ElicitMusicUrlCommand command = elicitMusicUrlCommandConverter.byMusicUrlRequest(musicUrlRequest);
 
-
-        ElicitMusicUrlCommand command = ElicitMusicUrlCommand.builder()
-                .ids(musicUrlRequest.getIds())
-                .neteaseIds(musicUrlRequest.getNeteaseIds())
-                .level(musicUrlRequest.getLevel())
-                .build();
-
-        List<String> res = elicitMusicUrlApplicationService.elicitMusicUrl(command);
+        List<MusicUrlVO> res = musicApplicationService.elicitMusicUrl(command);
 
         return ResponseEntity.ok(Result.success(res));
     }
 
-//    @GetMapping("/url/detail")
-//    public Result elicitMusicUrlDetail(@RequestParam(value = "ids", required = false) List<Long> ids,
-//                                       @RequestParam(value = "neteaseIds", required = false) List<String> neteaseIds,
-//                                       @RequestParam String level) throws Exception {
-//        List<MusicUrlVO> res = musicService.elicitMusicUrlDetail(ids, neteaseIds, level);
-//
-//        return Result.success(res);
-//    }
-//
-//    @PostMapping("/new")
-//    public Result incrementMusic(@RequestParam("neteaseId") String neteaseId) throws Exception {
-//        MusicDTO res = musicService.incrementMusic(neteaseId);
-//        return Result.success(res);
-//    }
+    @GetMapping("/url/detail")
+    public ResponseEntity<?> elicitMusicUrlDetail(@Valid MusicUrlRequest musicUrlRequest) throws Exception {
+
+        ElicitMusicUrlCommand command = elicitMusicUrlCommandConverter.byMusicUrlRequest(musicUrlRequest);
+
+        List<MusicUrlDetailVO> res = musicApplicationService.elicitMusicUrlDetail(command);
+
+        return ResponseEntity.ok(Result.success(res));
+    }
+
+    @PostMapping("/new")
+    public Result incrementMusic(@Valid MusicIncrementRequest musicIncrementRequest) throws Exception {
+
+        AddMusicCommand addMusicCommand = addMusicCommandConverter.byIncrementCommand(musicIncrementRequest);
+
+        MusicVO res = musicApplicationService.addMusic(addMusicCommand);
+
+        return Result.success(res);
+    }
+
 //
 //
 //    @GetMapping("/lyric")

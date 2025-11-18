@@ -1,20 +1,20 @@
 package com.echovale.music.api.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.NonNull;
 import lombok.Value;
 
 /**
  * @author 30531
  * @version 1.0
  * @description: TODO
- * @date 2025/11/17 19:26
+ * @date 2025/11/18 11:50
  */
-
 @Value
 @Builder
-public class MusicUrlResultDTO {
+@AllArgsConstructor
+public class MusicIncrementRequest {
+    @NonNull
     Long id;
-    Long neteaseId;
-    String url;
-    String status;
 }

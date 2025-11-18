@@ -1,5 +1,9 @@
 package com.echovale.music.appliaction.command;
 
+import com.echovale.music.domain.valueobject.MusicId;
+import com.echovale.music.domain.valueobject.NeteaseId;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
 
@@ -13,6 +17,7 @@ import java.util.List;
  */
 @Value
 @Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ElicitMusicUrlCommand {
     List<Long> ids;
     List<Long> neteaseIds;
@@ -20,7 +25,8 @@ public class ElicitMusicUrlCommand {
     String level;
 
 
-    public boolean hasNeteaseIds() {
-        return neteaseIds != null && !neteaseIds.isEmpty();
+    public boolean withoutNeteaseIds() {
+        return neteaseIds == null || neteaseIds.isEmpty();
     }
+
 }

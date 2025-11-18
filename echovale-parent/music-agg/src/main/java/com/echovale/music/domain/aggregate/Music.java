@@ -25,8 +25,8 @@ import java.util.List;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Music {
-    private Long id;
-    private Long neteaseId;
+    private MusicId id;
+    private NeteaseId neteaseId;
     private String name;
     private Integer fee;
     private Integer coverType;

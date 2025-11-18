@@ -1,6 +1,6 @@
 package com.echovale.music.infrastructure.query.wrapper;
 
-import com.echovale.music.appliaction.query.dto.MusicIdMappingDTO;
+import com.echovale.music.appliaction.query.dto.MusicIdMapping;
 import com.echovale.music.infrastructure.po.MusicPO;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import org.springframework.stereotype.Component;
@@ -16,11 +16,20 @@ import org.springframework.stereotype.Component;
 public class MusicWrapper {
 
 
-    public MPJLambdaWrapper<MusicPO> queryMusicDoubleKeyWrapper() {
+    public MPJLambdaWrapper<MusicPO> queryMusicIdsWrapper() {
         return baseMusicWrapper()
-                .selectAs(MusicPO::getId, MusicIdMappingDTO::getId)
-                .selectAs(MusicPO::getNeteaseId, MusicIdMappingDTO::getNeteaseId);
+                .selectAs(MusicPO::getId, MusicIdMapping::getId)
+                .selectAs(MusicPO::getNeteaseId, MusicIdMapping::getNeteaseId);
     }
+
+    public MPJLambdaWrapper<MusicPO> queryMusicIdByNeteaseIdWrapper(Long neteaseId) {
+        return baseMusicWrapper()
+                .select(MusicPO::getId)
+                .eq(MusicPO::getNeteaseId, neteaseId);
+    }
+
+
+
 
 
 

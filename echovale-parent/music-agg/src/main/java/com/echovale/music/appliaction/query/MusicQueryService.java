@@ -1,0 +1,17 @@
+package com.echovale.music.appliaction.query;
+
+import com.echovale.music.appliaction.query.dto.MusicIdMapping;
+import com.echovale.music.domain.valueobject.MusicId;
+import com.echovale.music.domain.valueobject.NeteaseId;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+
+@Service
+public interface MusicQueryService {
+
+    List<MusicIdMapping> queryMusicDoubleKeyByIds(List<MusicId> ids);
+
+    Boolean queryMusicExistsByNeteaseId(NeteaseId neteaseId);
+}
