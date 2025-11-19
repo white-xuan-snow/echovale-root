@@ -21,7 +21,7 @@ import java.util.List;
 @Getter
 // access = AccessLevel.PRIVATE
 // 限制外部使用Builder
-@Builder(access = AccessLevel.PRIVATE)
+@Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Music {
@@ -58,6 +58,12 @@ public class Music {
 
         return Music.builder()
                 .build();
+    }
+
+
+
+    public Long getMusicIdValue() {
+        return id.getId();
     }
 
 

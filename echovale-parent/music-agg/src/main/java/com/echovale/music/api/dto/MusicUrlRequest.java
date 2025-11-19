@@ -1,5 +1,6 @@
 package com.echovale.music.api.dto;
 
+import com.echovale.music.api.constant.Message;
 import com.echovale.music.api.validation.MusicLevelConstraint;
 import jakarta.validation.constraints.AssertTrue;
 import lombok.Builder;
@@ -21,7 +22,7 @@ public class MusicUrlRequest {
     @MusicLevelConstraint
     String level;
 
-    @AssertTrue(message = "ids或neteaseIds请至少提供一个")
+    @AssertTrue(message = Message.Assert.AT_LEAST_ONE_ID_PRESENT)
     public boolean isAtLeastOneIdPresent() {
         boolean isIdsPresent = ids != null && !ids.isEmpty();
         boolean isNeteaseIdsPresent = neteaseIds != null && !neteaseIds.isEmpty();

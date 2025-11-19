@@ -28,4 +28,14 @@ public class Author {
     private String avatarUrl;
     private String description;
     private String identify;
+
+
+    public Long getNeteaseIdValue() {
+        return neteaseId.getId();
+    }
+
+
+    public Long getIdValue() {
+        return id.getId();
+    }
 }

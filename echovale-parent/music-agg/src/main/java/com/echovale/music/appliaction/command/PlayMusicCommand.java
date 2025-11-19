@@ -14,6 +14,12 @@ import lombok.Value;
 @Value
 @Builder
 @AllArgsConstructor
-public class AddMusicCommand {
+public class PlayMusicCommand {
     Long id;
+    Long neteaseId;
+
+
+    public boolean withoutId() {
+        return id == null;
+    }
 }

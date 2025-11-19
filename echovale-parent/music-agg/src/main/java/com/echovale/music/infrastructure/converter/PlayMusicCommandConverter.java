@@ -1,7 +1,7 @@
 package com.echovale.music.infrastructure.converter;
 
-import com.echovale.music.api.dto.MusicIncrementRequest;
-import com.echovale.music.appliaction.command.AddMusicCommand;
+import com.echovale.music.api.dto.MusicPlayRequest;
+import com.echovale.music.appliaction.command.PlayMusicCommand;
 import com.echovale.music.infrastructure.config.MappingConfig;
 import org.mapstruct.Mapper;
 
@@ -14,15 +14,15 @@ import org.mapstruct.Mapper;
 @Mapper(config = MappingConfig.class,
         componentModel = "spring"
 )
-public abstract class AddMusicCommandConverter {
+public abstract class PlayMusicCommandConverter {
 
-    public AddMusicCommand byIncrementCommand(MusicIncrementRequest res) {
+    public PlayMusicCommand byPlayCommand(MusicPlayRequest res) {
         return core(res);
     }
 
-    abstract AddMusicCommand toAddMusicCommand(MusicIncrementRequest res);
+    abstract PlayMusicCommand toAddMusicCommand(MusicPlayRequest res);
 
-    private AddMusicCommand core(MusicIncrementRequest res) {
+    private PlayMusicCommand core(MusicPlayRequest res) {
         return toAddMusicCommand(res);
     }
 }

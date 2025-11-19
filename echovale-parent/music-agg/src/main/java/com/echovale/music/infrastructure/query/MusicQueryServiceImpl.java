@@ -1,8 +1,11 @@
 package com.echovale.music.infrastructure.query;
 
+import com.echovale.music.appliaction.query.MusicQueryService;
 import com.echovale.music.appliaction.query.dto.MusicIdMapping;
+import com.echovale.music.domain.aggregate.Music;
 import com.echovale.music.domain.valueobject.MusicId;
 import com.echovale.music.domain.valueobject.NeteaseId;
+import com.echovale.music.infrastructure.converter.MusicConverter;
 import com.echovale.music.infrastructure.mapper.MusicMapper;
 import com.echovale.music.infrastructure.po.MusicPO;
 import com.echovale.music.infrastructure.query.wrapper.MusicWrapper;
@@ -22,13 +25,16 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class MusicQueryServiceImpl implements com.echovale.music.appliaction.query.MusicQueryService {
+public class MusicQueryServiceImpl implements MusicQueryService {
 
     @Autowired
     MusicMapper musicMapper;
 
     @Autowired
     MusicWrapper musicWrapper;
+
+    @Autowired
+    private MusicConverter musicConverter;
 
     @Override
     public List<MusicIdMapping> queryMusicDoubleKeyByIds(List<MusicId> ids) {
@@ -45,5 +51,23 @@ public class MusicQueryServiceImpl implements com.echovale.music.appliaction.que
         MPJLambdaWrapper<MusicPO> wrapper = musicWrapper.queryMusicIdByNeteaseIdWrapper(neteaseId.getId());
 
         return musicMapper.selectCount(wrapper) > 0;
+    }
+
+    @Override
+    public MusicId queryMusicIdByNeteaseId(NeteaseId neteaseId) {
+        return null;
+
+    }
+
+    @Override
+    public Music queryMusicByIds(MusicId musicId, NeteaseId neteaseId) {
+
+        MPJLambdaWrapper<MusicPO> wrapper = musicWrapper.queryMusicByIdsWrapper(musicId, neteaseId);
+
+        MusicPO musicPO = musicMapper.selectOne(wrapper);
+
+        log.info("[MusicQueryServiceImpl].[queryMusicByIds] 通过音乐id：{}, netease id: {} 查询结果：{}", musicId.getId(), neteaseId.getId(), musicPO != null);
+
+        return musicConverter.toAggregate(musicPO);
     }
 }

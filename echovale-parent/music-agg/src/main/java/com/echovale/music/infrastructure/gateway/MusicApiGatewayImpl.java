@@ -37,12 +37,12 @@ public class MusicApiGatewayImpl implements MusicApiGateway {
     @Override
     public List<MusicUrlDetailVO> elicitMusicUrl(List<MusicId> musicIdList, List<NeteaseId> neteaseIdList, String level) throws Exception {
 
-        List<String> neteaseIdListStr = neteaseIdList.stream()
-                .map(neteaseId -> neteaseId.getId().toString())
+        List<Long> apiIdList = neteaseIdList.stream()
+                .map(NeteaseId::getId)
                 .toList();
 
 
-        List<MusicUrlResult> musicUrlResults = musicApi.getMusicV1Url(neteaseIdListStr, level);
+        List<MusicUrlResult> musicUrlResults = musicApi.getMusicV1Url(apiIdList, level);
 
         List<MusicUrlDetailVO> musicUrlDetailVOList = new ArrayList<>();
 
@@ -58,7 +58,7 @@ public class MusicApiGatewayImpl implements MusicApiGateway {
     @Override
     public MusicDetailResult elicitMusic(NeteaseId neteaseId) throws Exception {
 
-        List<MusicDetailResult> detail = musicApi.detail(List.of(neteaseId.getNeteaseIdStr()));
+        List<MusicDetailResult> detail = musicApi.getMusicDetail(List.of(neteaseId.getId()));
 
         return detail.get(0);
     }
