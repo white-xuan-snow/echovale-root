@@ -25,15 +25,15 @@ import org.mapstruct.MappingTarget;
 )
 public abstract class AuthorConverter {
 
-    public Author toAggregate(AuthorDetailResult res) {
+    public Author byDetailResult(AuthorDetailResult res) {
         return core(res);
     }
 
-    public AuthorPO toPO(Author author) {
+    public AuthorPO byAggregate(Author author) {
         return core(author);
     }
 
-    public Author toAggregate(AuthorPO authorPO) {
+    public Author byPO(AuthorPO authorPO) {
         return core(authorPO);
     }
 

@@ -1,9 +1,9 @@
-package com.echovale.music.appliaction.gateway;
+package com.echovale.music.domain.gateway;
 
 import com.echovale.music.api.vo.MusicUrlDetailVO;
 import com.echovale.music.domain.valueobject.MusicId;
 import com.echovale.music.domain.valueobject.NeteaseId;
-import com.netease.music.api.autoconfigure.configuration.pojo.result.MusicDetailResult;
+import com.netease.music.api.autoconfigure.configuration.pojo.result.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,4 +22,13 @@ public interface MusicApiGateway {
 
     MusicDetailResult elicitMusic(NeteaseId neteaseId) throws Exception;
 
+    List<AuthorDetailResult> elicitMusicAuthors(NeteaseId neteaseId) throws Exception;
+
+    AlbumResult elicitAlbum(NeteaseId neteaseId) throws Exception;
+
+    AlbumListResult elicitAlbumList(NeteaseId neteaseId) throws Exception;
+
+    ChorusResult elicitChorus(NeteaseId neteaseId) throws Exception;
+
+    List<ChorusResult> elicitChoruses(List<NeteaseId> neteaseIdList) throws Exception;
 }

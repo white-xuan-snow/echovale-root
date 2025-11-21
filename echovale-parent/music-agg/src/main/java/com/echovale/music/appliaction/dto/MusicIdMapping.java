@@ -1,4 +1,4 @@
-package com.echovale.music.appliaction.query.dto;
+package com.echovale.music.appliaction.dto;
 
 import com.echovale.music.domain.valueobject.MusicId;
 import com.echovale.music.domain.valueobject.NeteaseId;

@@ -42,6 +42,6 @@ public class AlbumQueryServiceImpl implements AlbumQueryService {
 
         log.info("[AlbumQueryServiceImpl].[queryAlbumById] 通过专辑id: {} 查询结果：{}", albumId.getId(), albumPO != null);
 
-        return albumConverter.toAggregate(albumPO);
+        return albumConverter.byAlbumResult(albumPO);
     }
 }

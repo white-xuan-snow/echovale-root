@@ -1,13 +1,14 @@
 package com.echovale.music.infrastructure.gateway;
 
 import com.echovale.music.api.vo.MusicUrlDetailVO;
-import com.echovale.music.appliaction.gateway.MusicApiGateway;
+import com.echovale.music.domain.gateway.MusicApiGateway;
 import com.echovale.music.domain.valueobject.MusicId;
 import com.echovale.music.domain.valueobject.NeteaseId;
 import com.echovale.music.infrastructure.converter.MusicUrlDetailVOConverter;
+import com.netease.music.api.autoconfigure.configuration.api.AlbumApi;
+import com.netease.music.api.autoconfigure.configuration.api.AuthorApi;
 import com.netease.music.api.autoconfigure.configuration.api.MusicApi;
-import com.netease.music.api.autoconfigure.configuration.pojo.result.MusicDetailResult;
-import com.netease.music.api.autoconfigure.configuration.pojo.result.MusicUrlResult;
+import com.netease.music.api.autoconfigure.configuration.pojo.result.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,12 @@ public class MusicApiGatewayImpl implements MusicApiGateway {
 
     @Autowired
     private MusicApi musicApi;
+
+    @Autowired
+    private AlbumApi albumApi;
+
+    @Autowired
+    private AuthorApi authorApi;
 
     @Autowired
     private MusicUrlDetailVOConverter musicUrlDetailVOConverter;
@@ -63,7 +70,49 @@ public class MusicApiGatewayImpl implements MusicApiGateway {
         return detail.get(0);
     }
 
+    @Override
+    public List<AuthorDetailResult> elicitMusicAuthors(NeteaseId neteaseId) throws Exception {
 
+        MusicDetailResult musicDetailResult = elicitMusic(neteaseId);
+
+        return musicDetailResult.getAr();
+    }
+
+    @Override
+    public AlbumResult elicitAlbum(NeteaseId neteaseId) throws Exception {
+
+        AlbumListResult albumListResult = elicitAlbumList(neteaseId);
+
+        return albumListResult.getAlbum();
+    }
+
+    @Override
+    public AlbumListResult elicitAlbumList(NeteaseId neteaseId) throws Exception {
+
+        MusicDetailResult musicDetailResult = elicitMusic(neteaseId);
+
+        NeteaseId albumNeteaseId = new NeteaseId(musicDetailResult.getAl().getId());
+
+        AlbumListResult albumListResult = albumApi.album(albumNeteaseId.getId());
+
+        return albumListResult;
+    }
+
+    @Override
+    public ChorusResult elicitChorus(NeteaseId neteaseId) throws Exception {
+
+        List<ChorusResult> chorusResults = elicitChoruses(List.of(neteaseId));
+
+        return chorusResults.get(0);
+    }
+
+    @Override
+    public List<ChorusResult> elicitChoruses(List<NeteaseId> neteaseIdList) throws Exception {
+
+        List<ChorusResult> chorus = musicApi.getChorus(NeteaseId.getNeteaseIdList(neteaseIdList));
+
+        return chorus;
+    }
 
 
 }

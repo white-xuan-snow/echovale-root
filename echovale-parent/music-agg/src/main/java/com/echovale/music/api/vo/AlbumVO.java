@@ -3,6 +3,7 @@ package com.echovale.music.api.vo;
 import com.echovale.music.domain.valueobject.AlbumId;
 import com.echovale.music.domain.valueobject.AuthorId;
 import com.echovale.music.domain.valueobject.NeteaseId;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

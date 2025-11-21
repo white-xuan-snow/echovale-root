@@ -1,5 +1,6 @@
 package com.echovale.music.domain.valueobject;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.*;
 
 /**
@@ -12,5 +13,10 @@ import lombok.*;
 @Value
 @AllArgsConstructor
 public class AlbumId {
+    @JsonValue
     Long id;
+
+    public Boolean isNull() {
+        return id == null;
+    }
 }

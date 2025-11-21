@@ -5,16 +5,18 @@ import com.echovale.music.api.vo.MusicUrlVO;
 import com.echovale.music.api.vo.MusicVO;
 import com.echovale.music.appliaction.command.PlayMusicCommand;
 import com.echovale.music.appliaction.command.ElicitMusicUrlCommand;
-import com.echovale.music.appliaction.gateway.MusicApiGateway;
+import com.echovale.music.appliaction.dto.MusicDTO;
+import com.echovale.music.domain.gateway.MusicApiGateway;
 import com.echovale.music.appliaction.query.AlbumQueryService;
 import com.echovale.music.appliaction.query.AuthorQueryService;
 import com.echovale.music.appliaction.query.MusicQueryService;
-import com.echovale.music.appliaction.query.dto.MusicIdMapping;
+import com.echovale.music.appliaction.dto.MusicIdMapping;
 import com.echovale.music.domain.aggregate.Album;
 import com.echovale.music.domain.aggregate.Author;
 import com.echovale.music.domain.aggregate.Music;
 import com.echovale.music.domain.repository.AuthorRepository;
 import com.echovale.music.domain.repository.MusicRepository;
+import com.echovale.music.domain.service.MusicSupplyService;
 import com.echovale.music.domain.valueobject.MusicId;
 import com.echovale.music.domain.valueobject.NeteaseId;
 import com.echovale.music.infrastructure.converter.AlbumConverter;
@@ -45,6 +47,9 @@ public class MusicApplicationServiceImpl implements MusicApplicationService {
 
     @Autowired
     private MusicRepository musicRepository;
+
+    @Autowired
+    private MusicSupplyService musicSupplyService;
 
 
     @Autowired
@@ -116,51 +121,13 @@ public class MusicApplicationServiceImpl implements MusicApplicationService {
     @Override
     public MusicVO playMusic(PlayMusicCommand command) throws Exception {
 
-        // 尝试使用id或neteaseId查询音乐
-
         NeteaseId neteaseId = new NeteaseId(command.getNeteaseId());
 
         MusicId musicId = new MusicId(command.getId());
 
-        Music music = musicQueryService.queryMusicByIds(musicId, neteaseId);
+        MusicDTO musicDTO = musicSupplyService.getMusic(musicId, neteaseId);
 
-
-        if (music.getId() == null) {
-
-            // 外部获取MusicDetailResult
-            MusicDetailResult musicDetailResult = musicApiGatewayImpl.elicitMusic(neteaseId);
-
-            // 转换为Music聚合根
-            Music musicFromNetease = musicConverter.toAggregate(musicDetailResult);
-
-            // 转换为Author聚合根
-            List<Author> authors = musicDetailResult.getAr().stream()
-                    .map(authorConverter::toAggregate)
-                    .toList();
-
-            // 转换为Album聚合根
-
-            Album album = albumConverter.toAggregate(musicDetailResult.getAl());
-
-            // 转换为MusicVO
-
-
-        }
-
-
-        List<Author> authors = authorQueryService.queryAuthorsByMusicId(music.getId());
-
-        // 查询专辑
-        Album album = albumQueryService.queryAlbumById(music.getAlbumId());
-
-        // 组装
-        MusicVO musicVO = musicConverter.byAggregates(music, authors, album);
-
-
-
-        return null;
+        return musicConverter.byDTO(musicDTO);
     }
-
-
 
 }

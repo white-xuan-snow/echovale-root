@@ -38,12 +38,12 @@ public class AuthorRepositoryImpl implements AuthorRepository {
 
         MPJLambdaWrapper<AuthorPO> wrapper = authorWrapper.queryByNeteaseIdWrapper(neteaseId);
 
-        AuthorPO authorPO = authorConverter.toPO(author);
+        AuthorPO authorPO = authorConverter.byAggregate(author);
 
         authorMapper.insertOrUpdate(authorPO);
 
         authorPO = authorMapper.selectOne(wrapper);
 
-        return authorConverter.toAggregate(authorPO);
+        return authorConverter.byPO(authorPO);
     }
 }

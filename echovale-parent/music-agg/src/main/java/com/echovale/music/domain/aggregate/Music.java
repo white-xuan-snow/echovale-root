@@ -63,7 +63,16 @@ public class Music {
 
 
     public Long getMusicIdValue() {
-        return id.getId();
+        return id == null ? null : id.getId();
+    }
+
+    public Long getNeteaseIdValue() {
+        return neteaseId == null ? null : neteaseId.getId();
+    }
+
+
+    public Long getAlbumIdValue() {
+        return albumId == null ? null : albumId.getId();
     }
 
 

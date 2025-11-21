@@ -1,6 +1,6 @@
 package com.echovale.music.appliaction.query;
 
-import com.echovale.music.appliaction.query.dto.MusicIdMapping;
+import com.echovale.music.appliaction.dto.MusicIdMapping;
 import com.echovale.music.domain.aggregate.Music;
 import com.echovale.music.domain.valueobject.MusicId;
 import com.echovale.music.domain.valueobject.NeteaseId;
@@ -19,4 +19,6 @@ public interface MusicQueryService {
     MusicId queryMusicIdByNeteaseId(NeteaseId neteaseId);
 
     Music queryMusicByIds(MusicId musicId, NeteaseId neteaseId);
+
+    NeteaseId queryNeteaseIdById(MusicId id);
 }

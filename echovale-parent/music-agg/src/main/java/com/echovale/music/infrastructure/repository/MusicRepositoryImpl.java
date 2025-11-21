@@ -5,8 +5,11 @@ import com.echovale.music.domain.aggregate.Music;
 import com.echovale.music.domain.repository.MusicRepository;
 import com.echovale.music.domain.valueobject.NeteaseId;
 import com.echovale.music.infrastructure.converter.AuthorConverter;
+import com.echovale.music.infrastructure.converter.MusicConverter;
 import com.echovale.music.infrastructure.mapper.AuthorMapper;
+import com.echovale.music.infrastructure.mapper.MusicMapper;
 import com.echovale.music.infrastructure.po.AuthorPO;
+import com.echovale.music.infrastructure.po.MusicPO;
 import com.echovale.music.infrastructure.query.MusicQueryServiceImpl;
 import com.netease.music.api.autoconfigure.configuration.pojo.result.MusicDetailResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +38,13 @@ public class MusicRepositoryImpl implements MusicRepository {
     private AuthorMapper authorMapper;
 
 
+    @Autowired
+    private MusicMapper musicMapper;
+
+
+    @Autowired
+    private MusicConverter musicConverter;
+
     @Override
     public Music findByNeteaseId(NeteaseId id) {
         Long neteaseId = id.getId();
@@ -43,17 +53,19 @@ public class MusicRepositoryImpl implements MusicRepository {
     }
 
     @Override
-    public Music save(MusicDetailResult musicDetailResult) {
+    public Music save(Music music) {
 
+        MusicPO musicPO = musicConverter.toPO(music);
 
+        musicMapper.insertOrUpdate(musicPO);
 
-        return null;
+        return musicConverter.toAggregate(musicPO);
     }
 
     @Override
     public List<Author> saveAuthors(List<Author> authors) {
         List<AuthorPO> authorPOS = authors.stream()
-                .map(authorConverter::toPO)
+                .map(authorConverter::byAggregate)
                 .toList();
 
         authorMapper.insertOrUpdate(authorPOS);

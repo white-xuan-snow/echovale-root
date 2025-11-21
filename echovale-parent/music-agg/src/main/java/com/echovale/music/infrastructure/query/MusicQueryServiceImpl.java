@@ -1,7 +1,7 @@
 package com.echovale.music.infrastructure.query;
 
 import com.echovale.music.appliaction.query.MusicQueryService;
-import com.echovale.music.appliaction.query.dto.MusicIdMapping;
+import com.echovale.music.appliaction.dto.MusicIdMapping;
 import com.echovale.music.domain.aggregate.Music;
 import com.echovale.music.domain.valueobject.MusicId;
 import com.echovale.music.domain.valueobject.NeteaseId;
@@ -69,5 +69,15 @@ public class MusicQueryServiceImpl implements MusicQueryService {
         log.info("[MusicQueryServiceImpl].[queryMusicByIds] 通过音乐id：{}, netease id: {} 查询结果：{}", musicId.getId(), neteaseId.getId(), musicPO != null);
 
         return musicConverter.toAggregate(musicPO);
+    }
+
+    @Override
+    public NeteaseId queryNeteaseIdById(MusicId id) {
+
+        MPJLambdaWrapper<MusicPO> wrapper = musicWrapper.queryNeteaseIdByIdWrapper(id);
+
+        Long neteaseId = musicMapper.selectJoinOne(Long.class, wrapper);
+
+        return new NeteaseId(neteaseId);
     }
 }

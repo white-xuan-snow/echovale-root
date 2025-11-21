@@ -2,6 +2,7 @@ package com.echovale.music.api.vo;
 
 import com.echovale.music.domain.valueobject.AuthorId;
 import com.echovale.music.domain.valueobject.NeteaseId;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.*;
 
 /**

@@ -13,7 +13,7 @@ import java.util.List;
 public interface MusicRepository {
     Music findByNeteaseId(NeteaseId id);
 
-    Music save(MusicDetailResult musicDetailResult);
+    Music save(Music music);
 
     List<Author> saveAuthors(List<Author> authors);
 }

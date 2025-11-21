@@ -1,5 +1,6 @@
 package com.echovale.music.domain.valueobject;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,6 +20,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public class MusicId {
+    @JsonValue
     Long id;
 
     public static List<MusicId> getEmptyList(int size) {
