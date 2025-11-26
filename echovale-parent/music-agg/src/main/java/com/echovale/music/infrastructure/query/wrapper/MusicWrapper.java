@@ -5,6 +5,7 @@ import com.echovale.music.domain.valueobject.MusicId;
 import com.echovale.music.domain.valueobject.NeteaseId;
 import com.echovale.music.infrastructure.po.AuthorPO;
 import com.echovale.music.infrastructure.po.MusicPO;
+import com.echovale.music.infrastructure.po.MusicQualitiesPO;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import org.springframework.stereotype.Component;
 
@@ -60,5 +61,15 @@ public class MusicWrapper {
         return baseMusicWrapper()
                 .select(MusicPO::getNeteaseId)
                 .eq(MusicPO::getId, id.getId());
+    }
+
+    public MPJLambdaWrapper<MusicQualitiesPO> queryMusicQualitiesWrapper(MusicId musicId) {
+        return baseMusicQualitiesWrapper()
+                .eq(MusicQualitiesPO::getMusicId, musicId.getId());
+    }
+
+
+    public MPJLambdaWrapper<MusicQualitiesPO> baseMusicQualitiesWrapper() {
+        return new MPJLambdaWrapper<>(MusicQualitiesPO.class);
     }
 }

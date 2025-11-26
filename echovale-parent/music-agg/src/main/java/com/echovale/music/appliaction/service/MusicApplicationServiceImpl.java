@@ -127,7 +127,7 @@ public class MusicApplicationServiceImpl implements MusicApplicationService {
 
         MusicDTO musicDTO = musicSupplyService.getMusic(musicId, neteaseId);
 
-        return musicConverter.byDTO(musicDTO);
+        return musicConverter.toVO(musicDTO);
     }
 
 }

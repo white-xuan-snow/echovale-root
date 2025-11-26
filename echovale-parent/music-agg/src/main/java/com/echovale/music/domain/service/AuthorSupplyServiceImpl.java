@@ -57,7 +57,7 @@ public class AuthorSupplyServiceImpl implements AuthorSupplyService {
         } else {
 
             // 从外部获取数据
-            if (neteaseId.isNull()) {
+            if (!neteaseId.isValid()) {
 
                 // 获取外部数据ID
                 neteaseId = musicQueryService.queryNeteaseIdById(id);

@@ -58,12 +58,12 @@ public abstract class MusicDTOMapping {
 
     private MusicDTO detailCore(MusicDetailResult res, MusicDTO model) {
 
+
         model.setNeteaseId(res.getId());
         model.setQualities(detailQualities(res));
         model.setCoverType(res.getOriginCoverType());
         model.setMvId(Long.parseLong(res.getMv()));
         model.setInfo(detailExtendInfo(res));
-
         detailAutoMapping(res, model);
 
         return model;

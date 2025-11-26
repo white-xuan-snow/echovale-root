@@ -17,9 +17,7 @@ import lombok.Value;
 @Builder
 @AllArgsConstructor
 public class MusicQualityVO {
-    Long id;
-    MusicId musicId;
-    QualityLevel level;
+    String level;
     Integer br;
     Integer sr;
     Integer size;

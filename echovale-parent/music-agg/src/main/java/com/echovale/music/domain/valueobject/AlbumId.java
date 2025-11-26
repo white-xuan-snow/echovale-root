@@ -16,7 +16,20 @@ public class AlbumId {
     @JsonValue
     Long id;
 
-    public Boolean isNull() {
-        return id == null;
+    public AlbumId() {
+        this.id = 0L;
+    }
+
+
+    public Boolean isValid() {
+        return id != null && id != 0L;
+    }
+
+
+    public static AlbumId of(Long id) {
+        if (id == null) {
+            return new AlbumId();
+        }
+        return new AlbumId(id);
     }
 }

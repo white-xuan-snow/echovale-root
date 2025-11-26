@@ -68,15 +68,15 @@ public class MusicSupplyServiceImpl implements MusicSupplyService {
         Album album;
         List<Author> authorList;
 
-        if (music == null) {
+        if (music.isNull()) {
             log.info("[MusicSupplyServiceImpl].[getMusic] 从外部获取Music");
 
             MusicDetailResult musicDetailResult = musicApiGateway.elicitMusic(neteaseId);
             ChorusResult chorusResult = musicApiGateway.elicitChorus(neteaseId);
 
 
-            music = musicConverter.toAggregate(musicDetailResult);
-            music = musicConverter.addChorus(music, chorusResult);
+            music = musicConverter.toAggregateByResult(musicDetailResult);
+            music = musicConverter.addChorus(chorusResult, music);
 
             // 持久化
             music = musicRepository.save(music);
@@ -95,6 +95,6 @@ public class MusicSupplyServiceImpl implements MusicSupplyService {
 
         }
 
-        return musicConverter.toAggregate(music, authorList, album);
+        return musicConverter.toDTO(music, authorList, album);
     }
 }

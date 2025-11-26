@@ -1,6 +1,8 @@
 package com.echovale.music.infrastructure.config;
 
 import org.mapstruct.MapperConfig;
+import org.mapstruct.NullValueMappingStrategy;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
 
 /**
@@ -12,7 +14,8 @@ import org.mapstruct.ReportingPolicy;
 @MapperConfig(
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         unmappedSourcePolicy = ReportingPolicy.WARN,
-        nullValuePropertyMappingStrategy = org.mapstruct.NullValuePropertyMappingStrategy.SET_TO_NULL
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+        nullValueMappingStrategy = NullValueMappingStrategy.RETURN_NULL
 )
 public class MappingConfig {
 }

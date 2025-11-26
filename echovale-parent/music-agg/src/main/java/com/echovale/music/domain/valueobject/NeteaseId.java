@@ -24,15 +24,27 @@ public class NeteaseId {
         return String.valueOf(id);
     }
 
+    public NeteaseId() {
+        this.id = 0L;
+    }
 
-    public Boolean isNull() {
-        return id == null;
+
+    public Boolean isValid() {
+        return id != null && id != 0L;
     }
 
     public static List<Long> getNeteaseIdList(List<NeteaseId> neteaseIdList) {
         return neteaseIdList.stream()
                 .map(NeteaseId::getId)
                 .toList();
+    }
+
+
+    public static NeteaseId of(Long id) {
+        if (id == null) {
+            return null;
+        }
+        return new NeteaseId(id);
     }
 
 }

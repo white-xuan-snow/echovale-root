@@ -5,15 +5,21 @@ import com.echovale.music.appliaction.dto.MusicDTO;
 import com.echovale.music.domain.aggregate.Album;
 import com.echovale.music.domain.aggregate.Author;
 import com.echovale.music.domain.aggregate.Music;
+import com.echovale.music.domain.entity.MusicQuality;
+import com.echovale.music.domain.valueobject.AlbumId;
 import com.echovale.music.domain.valueobject.MusicId;
+import com.echovale.music.domain.valueobject.NeteaseId;
 import com.echovale.music.infrastructure.config.MappingConfig;
+import com.echovale.music.infrastructure.converter.qualifier.MusicQualifier;
 import com.echovale.music.infrastructure.po.MusicPO;
+import com.echovale.music.infrastructure.po.MusicQualitiesPO;
+import com.netease.music.api.autoconfigure.configuration.module.MusicModule;
 import com.netease.music.api.autoconfigure.configuration.pojo.result.ChorusResult;
 import com.netease.music.api.autoconfigure.configuration.pojo.result.MusicDetailResult;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
+import org.mapstruct.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,110 +35,110 @@ import java.util.List;
         imports = {
                 com.echovale.music.domain.valueobject.MusicId.class,
                 com.echovale.music.domain.valueobject.NeteaseId.class,
-                com.echovale.music.domain.valueobject.AlbumId.class
+                com.echovale.music.domain.valueobject.AlbumId.class,
+                java.util.List.class
         },
         uses = {
                 AlbumConverter.class,
                 AuthorConverter.class,
-                java.util.List.class
+                MusicQualityConverter.class,
+                MusicQualifier.class
         }
 )
-public abstract class MusicConverter {
-
-    public Music toAggregate(MusicPO musicPO) {
-        return autoMapping(musicPO);
-    }
-
-    @Mapping(target = "id", expression = "java(new MusicId(res.getId()))")
-    @Mapping(target = "neteaseId", expression = "java(new NeteaseId(res.getNeteaseId()))")
-    @Mapping(target = "albumId", expression = "java(new AlbumId(res.getAlbumId()))")
-    abstract Music autoMapping(MusicPO res);
+public interface MusicConverter {
 
 
-    public Music toAggregate(MusicDetailResult musicDetailResult) {
-        return autoMapping(musicDetailResult);
-    }
+//    @Mapping(target = "id", expression = "java(MusicId.of(res.getId()))")
+//    @Mapping(target = "neteaseId", expression = "java(new NeteaseId(res.getNeteaseId()))")
+//    @Mapping(target = "albumId", expression = "java(new AlbumId(res.getAlbumId()))")
+    @Mapping(target = "id", source = "res.id")
+    @Mapping(target = "neteaseId", source = "res.neteaseId", qualifiedByName = "mapNeteaseId")
+    @Mapping(target = "albumId", source = "res.albumId", qualifiedByName = "mapAlbumId")
+    @Mapping(target = "qualities", source = "q")
+    Music toAggregateByPOS(MusicPO res, List<MusicQualitiesPO> q);
+
+
+//    public Music toAggregate(MusicDetailResult musicDetailResult) {
+
+//
+//        return music;
+//    }
 
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "neteaseId", expression = "java(new NeteaseId(res.getId()))")
-    @Mapping(target = "albumId", expression = "java(new AlbumId(res.getAl().getId()))")
-    @Mapping(target = "mvId", expression = "java(Long.parseLong(res.getMv()))")
+    @Mapping(target = "neteaseId", source = "res.id", qualifiedByName = "mapNeteaseId")
+    @Mapping(target = "mvId", source = "res.mv")
     @Mapping(target = "coverType", source = "originCoverType")
-    abstract Music autoMapping(MusicDetailResult res);
+    @Mapping(target = "qualities", source = "res", qualifiedByName = "mapMusicQualities")
+    Music toAggregateByResult(MusicDetailResult res);
 
 
 
-    public MusicVO byAggregate(Music music, MusicVO musicVO) {
-        return core(music, musicVO);
-    }
-
-    public MusicVO byAggregate(Music music) {
-        return core(music, MusicVO.builder().build());
-    }
-
-    abstract MusicVO autoMapping(Music res, @MappingTarget MusicVO target);
 
 
-    private MusicVO core(Music music, MusicVO musicVO) {
-        return autoMapping(music, musicVO);
-    }
+
+    MusicVO toVO(Music res, @MappingTarget MusicVO target);
 
 
-    public MusicVO byAggregates(Music music, List<Author> authors, Album album, MusicVO musicVO) {
-        return core(music, authors, album, musicVO);
-    }
-
-    public MusicVO byAggregates(Music music, List<Author> authors, Album album) {
-        return core(music, authors, album, MusicVO.builder().build());
-    }
 
 
-    @Mapping(target = "authors", source = "as")
-    @Mapping(target = "album", source = "a")
+
+    @Mapping(target = "authors", source = "res.authorList")
+    @Mapping(target = "album", source = "res.album")
+    @Mapping(target = "id", source = "res.music.id")
+    @Mapping(target = "neteaseId", source = "res.music.neteaseId")
+    @Mapping(target = "name", source = "res.music.name")
+//    @Mapping(target = "qualities", source = "res.qualities")
+    @Mapping(target = ".", source = "res.music")
+    MusicVO toVO(MusicDTO res);
+
+
+
+
+//    public MusicDTO toAggregate(Music music, List<Author> authors, Album album) {
+//        return MusicDTO.builder()
+//                .music(music)
+//                .authorList(authors)
+//                .album(album)
+//                .build();
+//    }
+
+
+
+
+
+
+
     @Mapping(target = "id", source = "res.id")
     @Mapping(target = "neteaseId", source = "res.neteaseId")
-    @Mapping(target = "name", source = "res.name")
-    abstract MusicVO autoMapping(Music res, List<Author> as, Album a, @MappingTarget MusicVO target);
-
-
-    private MusicVO core(Music music, List<Author> authors, Album album, MusicVO musicVO) {
-        return autoMapping(music, authors, album, musicVO);
-    }
-
-
-    public MusicDTO toAggregate(Music music, List<Author> authors, Album album) {
-        return MusicDTO.builder()
-                .music(music)
-                .authorList(authors)
-                .album(album)
-                .build();
-    }
-
-
-
-    public MusicVO byDTO(MusicDTO musicDTO) {
-        return byAggregates(musicDTO.getMusic(), musicDTO.getAuthorList(), musicDTO.getAlbum());
-    }
+    @Mapping(target = "albumId", source = "res.albumId")
+    MusicPO toPO(Music res);
 
 
 
 
-    @Mapping(target = "id", expression = "java(res.getMusicIdValue())")
-    @Mapping(target = "neteaseId", expression = "java(res.getNeteaseIdValue())")
-    @Mapping(target = "albumId", expression = "java(res.getAlbumIdValue())")
-    abstract MusicPO autoMapping(Music res);
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "chorus", source = "res")
+    Music addChorus(ChorusResult res, @MappingTarget Music music);
 
 
 
-    public MusicPO toPO(Music music) {
-        return autoMapping(music);
-    }
+/**
+ * 将Music实体及其相关的作者和专辑信息转换为MusicDTO对象
+ *
+ * @param res Music实体对象，包含音乐的基本信息
+ * @param authors 作者列表，与音乐相关联的作者信息
+ * @param album 专辑对象，包含音乐所属专辑的信息
+ * @return 转换后的MusicDTO对象，用于数据传输
+ */
+    @Mapping(target = "music", source = "res")
+    @Mapping(target = "authorList", source = "authors")
+    @Mapping(target = "album", source = "album")
+    MusicDTO toDTO(Music res, List<Author> authors, Album album);
 
-    @Mapping(target = "chorus", expression = "java(List.of(res.getStartTime(), res.getEndTime()))")
-    abstract Music autoMapping(ChorusResult res, @MappingTarget Music music);
 
-    public Music addChorus(Music music, ChorusResult chorusResult) {
-        return autoMapping(chorusResult, music);
-    }
+
+
+
+
 }

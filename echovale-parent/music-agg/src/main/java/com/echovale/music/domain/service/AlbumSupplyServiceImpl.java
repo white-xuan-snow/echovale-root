@@ -48,7 +48,7 @@ public class AlbumSupplyServiceImpl implements AlbumSupplyService {
     public AlbumDTO getAlbumDTO(MusicId id, NeteaseId neteaseId, AlbumId albumId) {
 
         // 从数据库
-        if (!albumId.isNull()) {
+        if (albumId.isValid()) {
 
             Album album = albumQueryService.queryAlbumById(albumId);
 
@@ -64,16 +64,18 @@ public class AlbumSupplyServiceImpl implements AlbumSupplyService {
     public Album getAlbum(MusicId id, NeteaseId neteaseId, AlbumId albumId) throws Exception {
         Album album;
 
-        if (!albumId.isNull()) {
+        if (albumId.isValid()) {
             // 从数据库
             album = albumQueryService.queryAlbumById(albumId);
         } else {
             // 从外部数据
-            if (neteaseId.isNull()) {
+            if (!neteaseId.isValid()) {
                 // 获取neteaseId
                 neteaseId = musicQueryService.queryNeteaseIdById(id);
             }
             AlbumResult albumResult = musicApiGateway.elicitAlbum(neteaseId);
+
+            // 这样的Album已经是 TODO 11/26
 
             album = albumConverter.byAlbumResult(albumResult);
 

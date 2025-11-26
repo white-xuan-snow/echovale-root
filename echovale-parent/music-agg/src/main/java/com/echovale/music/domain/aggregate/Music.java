@@ -18,7 +18,7 @@ import java.util.List;
  * @date 2025/11/17 15:08
  */
 
-@Getter
+@Data
 // access = AccessLevel.PRIVATE
 // 限制外部使用Builder
 @Builder
@@ -77,4 +77,7 @@ public class Music {
 
 
 
+    public Boolean isNull() {
+        return id == null;
+    }
 }
