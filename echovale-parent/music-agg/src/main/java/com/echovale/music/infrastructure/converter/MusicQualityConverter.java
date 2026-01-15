@@ -3,21 +3,19 @@ package com.echovale.music.infrastructure.converter;
 import com.echovale.music.api.vo.MusicQualityVO;
 import com.echovale.music.domain.entity.MusicQuality;
 import com.echovale.music.domain.valueobject.MusicId;
-import com.echovale.music.infrastructure.config.MappingConfig;
+import com.echovale.common.domain.infrastructure.config.MappingConfig;
 import com.echovale.music.infrastructure.converter.qualifier.MusicQualifier;
 import com.echovale.music.infrastructure.po.MusicQualitiesPO;
 import com.netease.music.api.autoconfigure.configuration.pojo.entity.MusicQualityDTO;
-import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 /**
- * @description: TODO 
+ * @description: TODO
  * @author 30531
  * @date 2025/11/24 10:20
  * @version 1.0
  */
-
 
 
 /**
@@ -25,7 +23,7 @@ import org.mapstruct.Mapping;
  * 它被配置为 Spring 组件，并引入了 MusicId 类。
  */
 @Mapper(config = MappingConfig.class,
-        componentModel =  "spring",
+        componentModel = "spring",
         imports = {
                 MusicId.class
         },
@@ -36,25 +34,19 @@ import org.mapstruct.Mapping;
 public interface MusicQualityConverter {
 
 
-
-
-
-//    @Mapping(target = "musicId", source = "musicId")
+    //    @Mapping(target = "musicId", source = "musicId")
     @Mapping(target = "level", expression = "java(level)")
     MusicQuality toAggregate(MusicQualityDTO res, String level, Long musicId);
-
 
 
     MusicQualityVO toVO(MusicQuality res);
 
 
-
-//    @Mapping(target = "musicId", source = "res.musicId")
+    //    @Mapping(target = "musicId", source = "res.musicId")
 //    @Mapping(target = "level", source = "res.level")
     @Mapping(target = "musicId", source = "musicId")
     // TODO MusicId中也存在getId方法，与MusicQuality中的getId方法冲突了
     @Mapping(target = "id", source = "res.id")
-
     MusicQualitiesPO toPO(MusicQuality res, MusicId musicId);
 
 

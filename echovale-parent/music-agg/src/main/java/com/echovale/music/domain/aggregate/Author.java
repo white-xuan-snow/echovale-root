@@ -2,7 +2,10 @@ package com.echovale.music.domain.aggregate;
 
 import com.echovale.music.domain.valueobject.AuthorId;
 import com.echovale.music.domain.valueobject.NeteaseId;
+import com.echovale.shared.domain.valueobject.ActivityStatus;
 import lombok.*;
+
+import java.util.List;
 
 /**
  * @author 30531
@@ -28,6 +31,13 @@ public class Author {
     private String avatarUrl;
     private String description;
     private String identify;
+    private ActivityStatus status;
+
+    public static List<AuthorId> getIds(List<Author> authors) {
+        return authors.stream()
+                .map(Author::getId)
+                .toList();
+    }
 
 
     public Long getNeteaseIdValue() {

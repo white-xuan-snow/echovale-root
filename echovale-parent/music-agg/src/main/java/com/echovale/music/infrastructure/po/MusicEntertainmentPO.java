@@ -1,6 +1,7 @@
 package com.echovale.music.infrastructure.po;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.github.jeffreyning.mybatisplus.anno.MppMultiId;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,7 +19,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @TableName("music_entertainment")
 public class MusicEntertainmentPO {
+    @MppMultiId
     private Long id;
+    @MppMultiId
     private Long musicId;
     private String content;
 }

@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @author 30531
  * @version 1.0
@@ -32,7 +34,7 @@ public class AuthorRepositoryImpl implements AuthorRepository {
     private AuthorConverter authorConverter;
 
     @Override
-     public Author findOrCreateByNeteaseId(Author author) {
+    public Author findOrCreateByNeteaseId(Author author) {
 
         Long neteaseId = author.getNeteaseIdValue();
 
@@ -45,5 +47,23 @@ public class AuthorRepositoryImpl implements AuthorRepository {
         authorPO = authorMapper.selectOne(wrapper);
 
         return authorConverter.byPO(authorPO);
+    }
+
+    @Override
+    public List<Author> save(List<Author> authors) {
+
+        if (authors.isEmpty()) {
+            return List.of();
+        }
+
+        List<AuthorPO> authorPOList = authors.stream()
+                .map(authorConverter::byAggregate)
+                .toList();
+
+        authorMapper.insertOrUpdate(authorPOList);
+
+        return authorPOList.stream()
+                .map(authorConverter::byPO)
+                .toList();
     }
 }

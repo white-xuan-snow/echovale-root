@@ -1,7 +1,8 @@
 package com.echovale.music.appliaction.command;
 
-import com.echovale.music.domain.valueobject.MusicId;
-import com.echovale.music.domain.valueobject.NeteaseId;
+import com.echovale.music.appliaction.constant.Message;
+import com.echovale.music.appliaction.validation.MusicLevelConstraint;
+import jakarta.validation.constraints.AssertTrue;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,12 +22,19 @@ import java.util.List;
 public class ElicitMusicUrlCommand {
     List<Long> ids;
     List<Long> neteaseIds;
-
+    @MusicLevelConstraint
     String level;
 
 
     public boolean withoutNeteaseIds() {
         return neteaseIds == null || neteaseIds.isEmpty();
+    }
+
+    @AssertTrue(message = Message.Assert.AT_LEAST_ONE_ID_PRESENT)
+    public boolean isAtLeastOneIdPresent() {
+        boolean isIdsPresent = ids != null && !ids.isEmpty();
+        boolean isNeteaseIdsPresent = neteaseIds != null && !neteaseIds.isEmpty();
+        return isIdsPresent || isNeteaseIdsPresent;
     }
 
 }

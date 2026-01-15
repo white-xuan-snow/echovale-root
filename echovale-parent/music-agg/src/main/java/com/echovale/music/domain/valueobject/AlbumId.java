@@ -1,7 +1,11 @@
 package com.echovale.music.domain.valueobject;
 
+import com.echovale.music.domain.aggregate.Music;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author 30531
@@ -18,6 +22,12 @@ public class AlbumId {
 
     public AlbumId() {
         this.id = 0L;
+    }
+
+    public static List<AlbumId> byMusics(List<Music> musicList) {
+        return musicList.stream()
+                .map(Music::getAlbumId)
+                .collect(Collectors.toList());
     }
 
 

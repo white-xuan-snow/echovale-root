@@ -1,5 +1,6 @@
 package com.echovale.music.domain.valueobject;
 
+import com.echovale.music.appliaction.command.PlayMusicsCommand;
 import com.echovale.music.infrastructure.po.MusicPO;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
@@ -9,6 +10,7 @@ import lombok.Value;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author 30531
@@ -27,6 +29,23 @@ public class MusicId {
 
     public MusicId() {
         this.id = 0L;
+    }
+
+    public static List<MusicId> byPlayMusicsCommand(PlayMusicsCommand command) {
+        return byLongList(command.getIds());
+
+    }
+
+    public static List<MusicId> byLongList(List<Long> ids) {
+        return ids.stream()
+                .map(MusicId::of)
+                .toList();
+    }
+
+    public static List<Long> toLongList(List<MusicId> musicIds) {
+        return musicIds.stream()
+                .map(MusicId::getId)
+                .toList();
     }
 
     public Boolean isValid() {
@@ -52,6 +71,12 @@ public class MusicId {
         return new MusicId(id);
     }
 
+    public static List<MusicId> of(List<MusicPO> musicPOList) {
+        return musicPOList.stream()
+                .map(MusicId::of)
+                .toList();
+    }
+
 
     public static MusicId of(MusicPO musicPO) {
         if (musicPO == null) {
@@ -59,4 +84,12 @@ public class MusicId {
         }
         return new MusicId(musicPO.getId());
     }
+
+
+
+    public static Boolean isListEmpty(List<MusicId> musicIds) {
+        return musicIds == null || musicIds.isEmpty();
+    }
+
+
 }

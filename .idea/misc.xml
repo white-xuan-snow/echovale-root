@@ -14,7 +14,13 @@
         <option value="$PROJECT_DIR$/echovale-parent/music-agg/pom.xml" />
         <option value="$PROJECT_DIR$/echovale-parent/playlist-agg/pom.xml" />
         <option value="$PROJECT_DIR$/echovale-parent/search-agg/pom.xml" />
+        <option value="$PROJECT_DIR$/echovale-parent/purchase/pom.xml" />
       </list>
+    </option>
+    <option name="ignoredFiles">
+      <set>
+        <option value="$PROJECT_DIR$/echovale-parent/purchase/pom.xml" />
+      </set>
     </option>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_17" project-jdk-name="17" project-jdk-type="JavaSDK">

@@ -1,5 +1,7 @@
 package com.echovale.music.appliaction.command;
 
+import com.echovale.music.appliaction.constant.Message;
+import jakarta.validation.constraints.AssertTrue;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
@@ -21,5 +23,11 @@ public class PlayMusicCommand {
 
     public boolean withoutId() {
         return id == null;
+    }
+
+
+    @AssertTrue(message = Message.Assert.AT_LEAST_ONE_ID_PRESENT)
+    public boolean isAtLeastOnIdPresent() {
+        return id != null || neteaseId != null;
     }
 }

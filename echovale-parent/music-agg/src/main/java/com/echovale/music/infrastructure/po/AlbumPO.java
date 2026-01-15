@@ -34,4 +34,5 @@ public class AlbumPO {
     private String type;
     private Integer size;
     private String subType;
+    private Integer status;
 }

@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { defineOptions } from 'vue'
 defineOptions({
   name: 'PlayerPage'
 })
 
 import {computed, nextTick, onMounted, onUnmounted, ref, type Ref, watch} from "vue";
-import {EplorRenderer, type LyricLine, type LyricLineMouseEvent} from "@applemusic-like-lyrics/core";
+import "@applemusic-like-lyrics/core/style.css"; // Import required styles
 
 interface SpringParams {
   mass: number
@@ -13,11 +12,31 @@ interface SpringParams {
   damping: number
   soft: boolean
 }
+
+
+
+
+const fps = 120
+const lowFreqVolumeTimeout = 200
+
+// 流体速率
+const flowSpeed = 5
+// 明度
+const brightness = 200
+// 对比度
+const contrast = 200
+// 渲染精度
+const renderScale = 0.8
+
+
+
+
+
+
 // import {debounce} from "../hooks/utils.ts";
 import {debounce} from "lodash"
-import {LyricPlayer} from "@applemusic-like-lyrics/core";
+import { LyricLineMouseEvent, type LyricLine } from "@applemusic-like-lyrics/core";
 import {meTTML, ttml, yrc} from "../constant/testResource.ts";
-import {parseTTML} from "@applemusic-like-lyrics/lyric";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {usePlayerStore} from "../stores/playerStore";
 import {useRouter} from "vue-router";
@@ -32,12 +51,17 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import {useThemeStore} from "../stores/themeStore.ts";
 
+
+import {LyricPlayer} from "@applemusic-like-lyrics/core";
+import {MeshGradientRenderer} from "@applemusic-like-lyrics/core";
+import {parseTTML} from "@applemusic-like-lyrics/lyric";
+
+
 const themeStore = useThemeStore()
 
 const fontThemeColor = themeStore.fontThemeColor
 
 // theme.global.name.value = 'dark'
-
 
 
 
@@ -49,12 +73,11 @@ function setCanvasSize(canvas: HTMLCanvasElement) {
 }
 
   let player: LyricPlayer
-  let eplorRender: EplorRenderer
+  let meshRender: MeshGradientRenderer
   const playerStore = usePlayerStore()
   let music = playerStore.getAudioPlayer()
 
   // 背景帧率
-  const fps = 60
 
 
 
@@ -63,19 +86,17 @@ let currentTime: Ref<number> = ref(0)
 let duration: Ref<number> = ref(0)
 let volume: Ref<number> = ref(0)
 
+// Web Audio API related variables
+let audioContext: AudioContext | null = null;
+let analyser: AnalyserNode | null = null;
+let source: MediaElementAudioSourceNode | null = null;
+
+let renderInterval = 0;
 
 
 function loadEplorRender() {
   // 图片
   const album = 'src/assets/me.jpg'
-  // 流体速率
-  const flowSpeed = 10
-  // 明度
-  const brightness = 200
-  // 对比度
-  const contrast = 200
-  // 渲染精度
-  const renderScale = 0.8
 
   // 流体背景canvas容器
   const eplorCanvas = document.getElementById("eplor-canvas") as HTMLCanvasElement;
@@ -90,18 +111,19 @@ function loadEplorRender() {
   eplorCanvas.style.filter = `contrast(${contrast}%)`
 
   // 创建流体背景对象
-  eplorRender = new EplorRenderer(eplorCanvas);
+  meshRender = new MeshGradientRenderer(eplorCanvas);
 
   // 设置图片
-  eplorRender.setAlbum(album)
+  meshRender.setAlbum(album)
   // 设置fps
-  eplorRender.setFPS(fps)
-  // 设置流体速率
-  eplorRender.setFlowSpeed(flowSpeed)
-  // 设置渲染精度
-  eplorRender.setRenderScale(renderScale)
+  meshRender.setFPS(fps)
 
-  console.log("[Player].[loadEplorRender] Loaded EplorRender.")
+
+  // 设置流体速率
+  meshRender.setFlowSpeed(flowSpeed)
+  // 设置渲染精度
+  meshRender.setRenderScale(renderScale)
+
 }
 
 function loadLyricPlayer() {
@@ -119,6 +141,11 @@ function loadLyricPlayer() {
   player.setEnableSpring(true)
   player.setAlignAnchor("center")
   player.setCurrentTime(0)
+
+
+  player.setWordFadeWidth(1)
+
+
 
   const springParamsX: SpringParams = {
     mass: 5,
@@ -234,7 +261,7 @@ function redirectLyricPosition(evt: Event) {
   console.log("[Player].[loadLyricPlayer].[line-click Listener]", e.line, e.lineIndex)
   music.currentTime = e.line.getLine().startTime / 1000
   player.resetScroll()
-  player.calcLayout(false, true)
+  player.calcLayout(false)
   playerStore.isPlaying = true
   music.play()
   player.resume()
@@ -246,13 +273,15 @@ let minNum: Ref<number> = ref(0)
 let secNum: Ref<number> = ref(0)
 let minStr: Ref<string> = ref('')
 let secStr: Ref<string> = ref('')
+let remainingMinStr: Ref<string> = ref('00')
+let remainingSecStr: Ref<string> = ref('00')
 
 let progress: Ref<string> = ref('')
 
 
-function setLyricPlayerAnimation(fps: number) {
+function setLyricPlayerAnimation(fps: number = 60) {
   // 初始化
-  let timeout = 1000 / fps
+  let lyricPlayerAnimationTimeout = 1000 / fps
   if (interval !== 0) clearInterval(interval)
   interval = setInterval(() => {
     if (isMusicProgressUpdate.value) return
@@ -260,7 +289,7 @@ function setLyricPlayerAnimation(fps: number) {
     duration.value = music.duration
     currentTime.value = music.currentTime * 1000
     player.setCurrentTime(currentTime.value)
-    player.update(timeout)
+    player.update(lyricPlayerAnimationTimeout)
     // console.log("[Player].[setLyricPlayerAnimation]", currentTime.value)
 
     // 计算位数
@@ -272,10 +301,78 @@ function setLyricPlayerAnimation(fps: number) {
     progress.value = (sec / duration.value * 100).toFixed(2)
     // console.log("[Player].[setLyricPlayerAnimation] progress: ", progress.value)
 
-
-  }, timeout)
+    // 计算剩余时间
+    if (duration.value) {
+      const remainingTotalSeconds = Math.floor(duration.value - sec)
+      if (remainingTotalSeconds >= 0) {
+        const remainingMinutes = Math.floor(remainingTotalSeconds / 60)
+        const remainingSeconds = remainingTotalSeconds % 60
+        remainingMinStr.value = remainingMinutes.toString().padStart(2, '0')
+        remainingSecStr.value = remainingSeconds.toString().padStart(2, '0')
+      }
+    }
+  }, lyricPlayerAnimationTimeout)
 }
 
+
+
+// 在循环外部定义持久变量
+let currentDisplayVolume = 0; // 用于渲染的平滑值
+const DECAY_RATE = 0.08;      // 下降速度（数值越大下降越快）
+const BEAT_THRESHOLD = 0.55;  // 触发阈值 (0.0 - 1.0)，可根据曲风微调
+
+function analyzeBeat(analyser, audioContext) {
+  if (!analyser || !audioContext) return;
+
+  const bufferLength = analyser.frequencyBinCount;
+  const dataArray = new Uint8Array(bufferLength);
+  analyser.getByteFrequencyData(dataArray);
+
+  // 1. 扩大频段检测范围 (40Hz - 180Hz) 覆盖大鼓和部分军鼓
+  const sampleRate = audioContext.sampleRate;
+  const freqPerBin = sampleRate / analyser.fftSize;
+  const startIndex = Math.floor(40 / freqPerBin);
+  const endIndex = Math.ceil(180 / freqPerBin);
+
+  // 2. 获取该频段的最大能量点
+  let maxRaw = 0;
+  for (let i = startIndex; i <= endIndex; i++) {
+    if (dataArray[i] > maxRaw) maxRaw = dataArray[i];
+  }
+
+  // 归一化当前能量 (0.0 - 1.0)
+  const normEnergy = maxRaw / 255;
+
+  // 3. 核心逻辑：阈值判断与非线性映射
+  if (normEnergy > BEAT_THRESHOLD) {
+    // --- 【大鼓点触发】 ---
+    // 只要超过阈值，立即向 0.8 以上抬升
+    // 使用快速插值，让它在 1-2 帧内跳到高位
+    const targetHigh = 0.8 + (normEnergy - BEAT_THRESHOLD) * 0.4; // 动态高位，最高约 1.0
+    currentDisplayVolume = targetHigh;
+  } else {
+    // --- 【小音量/回弹阶段】 ---
+    // 如果小于阈值，目标是向 0.2 以下降
+    const targetLow = normEnergy * 0.3; // 缩减小鼓点影响，使其保持在 0.2 以下
+
+    // 缓慢回弹：当前值向低位目标靠近
+    if (currentDisplayVolume > targetLow) {
+      currentDisplayVolume -= DECAY_RATE; // 线性下降，产生“余震”感
+      if (currentDisplayVolume < targetLow) currentDisplayVolume = targetLow;
+    } else {
+      currentDisplayVolume = targetLow;
+    }
+  }
+
+  // 4. 最终限制在合法范围
+  const finalValue = Math.max(0, Math.min(1, currentDisplayVolume));
+
+  // 5. 传给渲染器
+  meshRender.setLowFreqVolume(finalValue);
+
+  console.log('meshRender.setLowFreqVolume:', finalValue)
+
+}
 
 
 function convertLyricLine(lines: LyricLine[]) {
@@ -298,6 +395,33 @@ function convertLyricLine(lines: LyricLine[]) {
 
   function loadMusic() {
     watchMusicVolume()
+
+    music.autoplay = true
+    music.loop = true
+  }
+
+  function initAudioAnalyzer() {
+    if (audioContext) {
+      return;
+    }
+    try {
+      audioContext = new AudioContext();
+      source = audioContext.createMediaElementSource(music);
+      analyser = audioContext.createAnalyser();
+
+      // Configure the analyser
+      analyser.fftSize = 2048; // A common size for detailed frequency analysis
+      analyser.minDecibels = -90;
+      analyser.maxDecibels = -10;
+      analyser.smoothingTimeConstant = 0.85;
+
+      // Connect the nodes: music -> source -> analyser -> speakers
+      source.connect(analyser);
+      analyser.connect(audioContext.destination);
+      console.log("[Player].[initAudioAnalyzer] Web Audio API initialized successfully.");
+    } catch (e) {
+      console.error("[Player].[initAudioAnalyzer] Error initializing Web Audio API:", e);
+    }
   }
 
   // TODO Web Audio API 丝滑过渡防跳音
@@ -363,6 +487,16 @@ const portraitImageWidth = computed(() => {
 })
 
 const togglePlay = () => {
+  // Initialize audio analyzer on first play to comply with browser autoplay policies
+  if (!audioContext) {
+    initAudioAnalyzer();
+  }
+
+  // Resume AudioContext if it's suspended
+  if (audioContext && audioContext.state === 'suspended') {
+    audioContext.resume();
+  }
+
   console.log("[Player].[togglePlay]", playerStore.isPlaying)
 
   playerStore.isPlaying = !playerStore.isPlaying
@@ -400,7 +534,7 @@ onMounted(async () => {
 onUnmounted(() => {
   // 移除窗口监听器
   window.removeEventListener('resize', handleResize)
-  eplorRender.dispose()
+  meshRender.dispose()
   player.dispose()
   console.log("[Player].[onUnmounted]")
 })
@@ -458,8 +592,7 @@ onUnmounted(() => {
                 <v-row>
                   <v-container class="progress-number pa-0" style="max-width: 54vh;">
                     <span>{{ minStr }}:{{ secStr }}</span>
-                    <span></span>
-                    <span>{{duration}}</span>
+                    <span>-{{ remainingMinStr }}:{{ remainingSecStr }}</span>
                   </v-container>
                 </v-row>
                 <v-row>
@@ -544,7 +677,7 @@ onUnmounted(() => {
           </v-row>
 
           <!-- 歌词区域 -->
-          <v-row style="flex: 1 1 auto; min-height: 0; margin-top: 0; padding: 0 1rem;">
+          <v-row style="flex: 1 1 auto; min-height: 0; margin-top: 0;">
             <v-col cols="12" class="pa-0 d-flex align-start justify-start" style="padding-left: calc(25% + 1rem);">
               <div class="lyric-player portrait-lyric-player d-flex align-start justify-start"
                    id="lyric-player-portrait"
@@ -558,56 +691,8 @@ onUnmounted(() => {
   </transition>
 </template>
 
-
-
-
-
-/* Player.vue 样式部分修改 */
 <style scoped>
-
-/* Player.vue 的 <style scoped> 块 */
-
-.player-back-btn {
-  /* 基础样式 (确保 transition 属性存在，实现平滑过渡) */
-  /* 假设你当前的基础样式是： */
-  width: 40px; /* 默认宽度 */
-  height: 40px; /* 默认高度 */
-  border-radius: 50%; /* 默认圆形 */
-  /* 其他样式（如背景色、阴影等...）*/
-
-  /* **关键：添加过渡效果** */
-  transition: all 0.3s ease-in-out; /* 让 width, height, border-radius 等属性在 0.3s 内平滑变化 */
-}
-
-
-.player-back-btn {
-  position: fixed;
-  width: 70px; /* 宽度变长 (从小圆变为长条) */
-  height: 8px; /* 高度变窄 (变为细条) */
-  border-radius: 4px; /* 保持圆润 (小横条的圆角) */
-  background-color: rgba(200,200,200,.5);
-  transition: all 0.3s ease-in-out; /* 让 width, height, border-radius 等属性在 0.3s 内平滑变化 */
-}
-.player-back-btn > svg {
-  opacity: 0;
-  transform: scale(0);
-  transition: opacity 0.4s ease-in-out;
-}
-
-.player-back-btn:hover {
-  /* 悬停时的样式：变为圆润的小横条 */
-  width: 2rem;
-  height: 1.5rem;
-  border-radius: 8px;
-
-  /* 提示：如果你的图标是可见的，你可能还需要在 hover 时隐藏图标： */
-}
-.player-back-btn:hover > svg {
-  opacity: 1;
-  transform: scale(1);
-}
-
-
+/* General Player Styles */
 .player-mask {
   position: fixed;
   left: 0;
@@ -615,12 +700,198 @@ onUnmounted(() => {
   z-index: 9999;
 }
 
-/* 打开动画 - 快速进入并强阻尼停止 */
+.player-font * {
+  font-family: "PingFang SC";
+  font-weight: bold;
+}
+
+.img-display {
+  border-radius: 12px;
+  box-shadow: 0 0 24px rgb(100, 100, 100);
+}
+
+.music-info {
+  text-align: left;
+  box-shadow: none;
+}
+
+.progress-number {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Back Button Styling */
+.player-back-btn {
+  position: fixed;
+  width: 70px;
+  height: 8px;
+  border-radius: 4px;
+  background-color: rgba(200, 200, 200, .5);
+  transition: all 0.3s ease-in-out;
+}
+
+.player-back-btn > svg {
+  opacity: 0;
+  transform: scale(0);
+  transition: opacity 0.4s ease-in-out;
+}
+
+.player-back-btn:hover {
+  width: 2rem;
+  height: 1.5rem;
+  border-radius: 8px;
+}
+
+.player-back-btn:hover > svg {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Layout Helpers */
+.flex-row-start {
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: center;
+}
+
+.flex-row-center {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.flex-row-end {
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  align-items: center;
+}
+
+.flex-column-evenly {
+  width: 36vw;
+  height: 40vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: start;
+}
+
+/* Lyric Player Containers */
+.lyric-player {
+  height: 80vh;
+  position: relative;
+  z-index: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 400px;
+  /* overflow: hidden; */ /* REMOVED: This was causing descenders to be clipped */
+}
+
+.portrait-lyric-player {
+  height: calc(100vh - 180px);
+  min-height: 320px;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  position: relative;
+  /* overflow: hidden; */ /* REMOVED: This was causing descenders to be clipped */
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+/* Portrait Mode Specific Styles */
+.portrait-img {
+  border-radius: 8px;
+  box-shadow: 0 0 12px rgba(100, 100, 100, 0.3);
+}
+
+.portrait-music-info {
+  text-align: left;
+}
+
+.portrait-title {
+  font-size: 1.5rem !important;
+  font-weight: bold !important;
+  margin-bottom: 0.5rem !important;
+  padding-left: 0 !important;
+  margin-left: 0 !important;
+}
+
+.portrait-subtitle {
+  font-size: 1rem !important;
+  opacity: 0.8 !important;
+  padding-left: 0 !important;
+  margin-left: 0 !important;
+}
+
+.portrait-lyric-container {
+  width: 100%;
+  margin-left: 0;
+  padding-left: 0;
+}
+
+/* Media query for smaller portrait screens */
+@media (max-width: 480px) {
+  .portrait-title {
+    font-size: 1.3rem !important;
+  }
+
+  .portrait-subtitle {
+    font-size: 0.9rem !important;
+  }
+
+  .portrait-lyric-player {
+    height: calc(100vh - 160px);
+    min-height: 280px;
+  }
+}
+
+/* Deep styles for AMLL component */
+#lyric-player :deep(.lyricLine-0-1-2) {
+  letter-spacing: -0.05rem;
+  font-weight: bolder;
+  font-size: xxx-large;
+  overflow: visible !important; /* Ensure lines can overflow */
+}
+
+#lyric-player :deep(.lyricBgLine-0-1-4) {
+  font-size: x-large !important;
+}
+
+#lyric-player-portrait :deep(.lyricLine-0-1-2) {
+  letter-spacing: -0.05rem;
+  line-height: 1.4; /* INCREASED: Provides more space for descenders */
+  font-weight: bolder;
+  overflow: visible !important; /* Ensure lines can overflow */
+}
+
+#lyric-player-portrait :deep(.lyricBgLine-0-1-4) {
+  font-size: x-large;
+}
+
+#lyric-player-portrait :deep(.lyricPlayer-0-1-1) {
+  padding: 0;
+  width: 95vw !important;
+}
+
+#lyric-player-portrait [class*="lyricLine-"] {
+  text-align: left !important;
+  padding-left: 0 !important;
+  margin-left: 0 !important;
+}
+
+/* Animations */
 .player-mask-enter-active {
   animation: slideInUp 0.6s cubic-bezier(0.2, 0.9, 0.2, 1) both;
 }
 
-/* 关闭动画 - 快速退出并强阻尼停止 */
 .player-mask-leave-active {
   animation: slideOutDown 0.6s cubic-bezier(0.2, 0.9, 0.2, 1) both;
 }
@@ -648,210 +919,16 @@ onUnmounted(() => {
 }
 </style>
 
-
-
-
-<style scoped>
-
-  .lyric-player {
-    height: 80vh;
-    position: relative;
-    z-index: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    min-height: 400px; /* 确保最小高度 */
-    overflow: hidden; /* 防止内容溢出 */
-  }
-
-  .player-font * {
-    font-family: "PingFang SC";
-    font-weight: bold;
-    /* text-shadow: 2px 2px 20px rgba(0, 0, 0, 0.5); */
-  }
-
-
-
-
-  .img-display {
-    border-radius: 12px;
-    box-shadow: 0 0 24px rgb(100,100,100);
-  }
-
-  .music-info {
-    text-align: left;
-    box-shadow: 0 0;
-  }
-  .progress-number {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-
-  .flex-row-start {
-    display: flex;
-    flex-direction: row;
-    justify-content: start;
-    align-items: center;
-  }
-  .flex-row-center {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-  }
-  .flex-row-end {
-    display: flex;
-    flex-direction: row;
-    justify-content: end;
-    align-items: center;
-  }
-
-  .flex-column-evenly {
-    width: 36vw;
-    height: 40vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-    align-items: start;
-  }
-
-  /* 竖屏模式专用样式 */
-  .portrait-img {
-    border-radius: 8px;
-    box-shadow: 0 0 12px rgba(100, 100, 100, 0.3);
-  }
-
-  .portrait-music-info {
-    text-align: left;
-  }
-
-  .portrait-title {
-    font-size: 1.5rem !important;
-    font-weight: bold;
-    margin-bottom: 0.5rem;
-  }
-
-  .portrait-subtitle {
-    font-size: 1rem !important;
-    opacity: 0.8;
-  }
-
-  .portrait-lyric-player {
-    height: calc(100vh - 180px);
-    min-height: 320px;
-    width: 100%;
-    padding: 0;
-    margin: 0;
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    align-items: flex-start;
-    justify-content: flex-start;
-  }
-
-  /* 竖屏模式下的响应式调整 */
-  @media (max-width: 480px) {
-    .portrait-title {
-      font-size: 1.3rem !important;
-    }
-
-    .portrait-subtitle {
-      font-size: 0.9rem !important;
-    }
-
-    .portrait-lyric-player {
-      height: calc(100vh - 160px);
-      min-height: 280px;
-    }
-  }
-
-/* 确保歌词区域与图片左侧对齐 */
-.portrait-lyric-container {
-  width: 100%;
-  margin-left: 0;
-  padding-left: 0;
-}
-
-/* 强制设置 lyricPlayer-0-1-1 类的 padding-left 为 0 */
-.lyricPlayer-0-1-1 {
-  padding-left: 0 !important;
-}
-
-/* 确保歌曲名称样式不被覆盖 */
-.portrait-title {
-  font-size: 1.5rem !important;
-  font-weight: bold !important;
-  margin-bottom: 0.5rem !important;
-  padding-left: 0 !important;
-  margin-left: 0 !important;
-}
-
-.portrait-subtitle {
-  font-size: 1rem !important;
-  opacity: 0.8 !important;
-  padding-left: 0 !important;
-  margin-left: 0 !important;
-}
-
-#lyric-player :deep(.lyricLine-0-1-2) {
-  letter-spacing: -0.05rem;
-  font-weight: bolder;
-  font-size: xxx-large;
-  overflow: visible;
-  padding-bottom: 1rem;
-}
-
-
-
-
-
-#lyric-player :deep(.lyricBgLine-0-1-4) {
-  font-size: x-large !important;
-}
-
-#lyric-player-portrait :deep(.lyricLine-0-1-2) {
-  letter-spacing: -0.05rem;
-  line-height: 1.1;
-  font-weight: bolder;
-}
-
-#lyric-player-portrait :deep(.lyricBgLine-0-1-4) {
-  font-size: x-large;
-}
-
-/* 强制竖屏模式下歌词播放器容器的样式 */
-#lyric-player-portrait :deep(.lyricPlayer-0-1-1) {
-  padding: 0;
-  width: 95vw !important;
-}
-
-/* 确保歌词行在竖屏模式下正确对齐 */
-#lyric-player-portrait [class*="lyricLine-"] {
-  text-align: left !important;
-  padding-left: 0 !important;
-  margin-left: 0 !important;
-}
-
-
-
-
-
-</style>
-
 <style>
 .v-slider-thumb {
   display: none;
 }
 
-[class*="lyricLine-0-1-"] * {
+[class*="_lyricLine_ut4sn_6"] * {
   text-align: left;
 }
 
-[class*="lyricDuetLine-0-1-"] * {
+[class*="_lyricDuetLine_ut4sn_79"] * {
   text-align: right;
 }
 

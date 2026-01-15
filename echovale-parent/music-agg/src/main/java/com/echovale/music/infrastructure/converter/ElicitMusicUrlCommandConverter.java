@@ -9,25 +9,17 @@ package com.echovale.music.infrastructure.converter;
 
 import com.echovale.music.api.dto.MusicUrlRequest;
 import com.echovale.music.appliaction.command.ElicitMusicUrlCommand;
-import com.echovale.music.infrastructure.config.MappingConfig;
+import com.echovale.common.domain.infrastructure.config.MappingConfig;
+import com.echovale.music.infrastructure.converter.qualifier.MusicQualifier;
 import org.mapstruct.Mapper;
 
 @Mapper(config = MappingConfig.class,
-        componentModel = "spring"
+        componentModel = "spring",
+        uses = {
+                MusicQualifier.class
+        }
 )
-public abstract class ElicitMusicUrlCommandConverter {
-
-
-    public ElicitMusicUrlCommand byMusicUrlRequest(MusicUrlRequest res) {
-        return core(res);
-    }
-
-
-
-    abstract ElicitMusicUrlCommand toCommand(MusicUrlRequest res);
-
-    private ElicitMusicUrlCommand core(MusicUrlRequest res) {
-        return toCommand(res);
-    }
+public interface ElicitMusicUrlCommandConverter {
+    ElicitMusicUrlCommand byRequest(MusicUrlRequest res);
 
 }

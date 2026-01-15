@@ -8,9 +8,9 @@ export const usePlayerStore = defineStore('player', () => {
     title: '我的音乐',
     artists: ['艺术家'],
     cover: '/src/assets/me.jpg',
-    audioSrc: '/src/assets/music/me.flac', 
+    audioSrc: '/src/assets/music/me.flac',
     lrcSrc: '/src/assets/music/Fortnight.lrc',
-    duration: 180,
+    duration: 180, // 初始占位时长
     quality: 'standard'
   })
 
@@ -28,6 +28,7 @@ export const usePlayerStore = defineStore('player', () => {
   // 播放状态
   const isPlaying = ref(false)
   const currentTime = ref(0)
+  const duration = ref(0) // 音频的真实总时长
   const progress = ref(0)
   const volume = ref(0.5)
   const playMode = ref('order') // order/loop/random
@@ -42,7 +43,7 @@ export const usePlayerStore = defineStore('player', () => {
       duration: 180
     },
     {
-      id: 2, 
+      id: 2,
       title: '歌曲2',
       artists: ['作者2', '作者3'],
       cover: 'src/assets/love.jpg',
@@ -75,11 +76,24 @@ export const usePlayerStore = defineStore('player', () => {
     playMode.value = modes[(currentIndex + 1) % modes.length]
   }
 
+  // 由用户交互（如拖动滑块）调用
   const seek = (time: number) => {
-    if (audioPlayer.value) {
+    if (audioPlayer.value && isFinite(audioPlayer.value.duration)) {
       audioPlayer.value.currentTime = time
       currentTime.value = time
       progress.value = (time / audioPlayer.value.duration) * 100
+    }
+  }
+
+  // 由播放器本身在播放时持续调用，用于同步UI
+  const setCurrentTime = (time: number) => {
+    currentTime.value = time
+  }
+
+  // 在音频元数据加载完毕后调用
+  const setDuration = (d: number) => {
+    if (isFinite(d)) {
+      duration.value = d
     }
   }
 
@@ -92,6 +106,7 @@ export const usePlayerStore = defineStore('player', () => {
     currentSong,
     isPlaying,
     currentTime,
+    duration, // 导出 duration
     volume,
     playMode,
     playlist,
@@ -99,6 +114,8 @@ export const usePlayerStore = defineStore('player', () => {
     changePlayMode,
     seek,
     setVolume,
-    getAudioPlayer
+    getAudioPlayer,
+    setCurrentTime, // 导出 setCurrentTime
+    setDuration // 导出 setDuration
   }
 })

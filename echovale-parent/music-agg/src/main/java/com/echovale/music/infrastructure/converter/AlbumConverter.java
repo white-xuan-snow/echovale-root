@@ -4,14 +4,23 @@ import com.echovale.music.api.vo.AlbumVO;
 import com.echovale.music.appliaction.dto.AlbumDTO;
 import com.echovale.music.domain.aggregate.Album;
 import com.echovale.music.domain.aggregate.Author;
-import com.echovale.music.infrastructure.config.MappingConfig;
+import com.echovale.music.domain.valueobject.AlbumId;
+import com.echovale.music.domain.valueobject.AuthorId;
+import com.echovale.music.domain.valueobject.NeteaseId;
+import com.echovale.common.domain.infrastructure.config.MappingConfig;
+import com.echovale.music.infrastructure.converter.qualifier.MusicQualifier;
+import com.echovale.music.infrastructure.po.AlbumAuthorsPO;
 import com.echovale.music.infrastructure.po.AlbumPO;
+import com.echovale.shared.domain.valueobject.ActivityStatus;
 import com.netease.music.api.autoconfigure.configuration.pojo.result.AlbumResult;
+import org.mapstruct.InheritConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 /**
@@ -21,77 +30,81 @@ import java.util.List;
  * @date 2025/11/19 19:16
  */
 
-@Mapper(config = MappingConfig.class,
-        componentModel = "spring",
-        imports = {
-                com.echovale.music.domain.valueobject.AlbumId.class,
-                com.echovale.music.domain.valueobject.NeteaseId.class,
-                java.time.LocalDateTime.class,
-                java.time.Instant.class,
-                java.time.ZoneId.class
+
+
+/**
+ * AlbumConverter是一个Mapper接口，用于处理不同实体类之间的转换
+ * 使用了MapStruct框架进行对象映射配置
+ */
+@Mapper(config = MappingConfig.class,        // 指定映射配置类
+        componentModel = "spring",           // 设置组件模型为Spring，自动生成Spring管理的bean
+        imports = {                          // 导入需要使用的类
+                AlbumId.class,
+                NeteaseId.class,
+                LocalDateTime.class,
+                Instant.class,
+                ZoneId.class,
+                ActivityStatus.class
+        },
+        uses = {                            // 指定自定义映射器
+                MusicQualifier.class
         }
 )
-public abstract class AlbumConverter {
+public interface AlbumConverter {
 
 
+    @Mapping(target = "id", source = "res.id", qualifiedByName = "mapAlbumId")
+    @Mapping(target = "neteaseId", source = "res.neteaseId", qualifiedByName = "mapNeteaseId")
+    @Mapping(target = "status", source = "res.status", qualifiedByName = "mapStatus")
+    Album byPO(AlbumPO res);
 
-
-    @Mapping(target = "id", expression = "java(new AlbumId(res.getId()))")
-    @Mapping(target = "neteaseId", expression = "java(new NeteaseId(res.getNeteaseId()))")
-    abstract Album autoMapping(AlbumPO res);
-
-
-    public Album byAlbumResult(AlbumPO albumPO) {
-        return autoMapping(albumPO);
-    }
-
-
-
-    public AlbumVO byAggregate(Album album, AlbumVO albumVO) {
-        return core(album, albumVO);
-    }
-
-    public AlbumVO byAggregate(Album album) {
-        return core(album, AlbumVO.builder().build());
-    }
 
     @Mapping(target = "id", source = "res.id")
     @Mapping(target = "neteaseId", source = "res.neteaseId")
     @Mapping(target = "name", source = "res.name")
 
-    abstract AlbumVO autoMapping(Album res, @MappingTarget AlbumVO target);
+    AlbumVO byAggregate(Album res, @MappingTarget AlbumVO target);
 
-
-    private AlbumVO core(Album album, AlbumVO albumVO) {
-        return autoMapping(album, albumVO);
-    }
-
-
-    public Album byAlbumResult(com.netease.music.api.autoconfigure.configuration.pojo.entity.Album apiAlbum) {
-        return autoMapping(apiAlbum);
-    }
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "neteaseId", expression = "java(new NeteaseId(res.getId()))")
-    abstract Album autoMapping(com.netease.music.api.autoconfigure.configuration.pojo.entity.Album res);
+    @Mapping(target = "neteaseId", source = "res.id", qualifiedByName = "mapNeteaseId")
+    Album byResult(com.netease.music.api.autoconfigure.configuration.pojo.entity.Album res);
 
-
-
-    public Album byAlbumResult(AlbumResult albumResult) {
-        return autoMapping(albumResult);
-    }
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "neteaseId", expression = "java(new NeteaseId(res.getId()))")
-    @Mapping(target = "publishTime", expression = "java(LocalDateTime.ofInstant(Instant.ofEpochMilli(res.getPublishTime()), ZoneId.systemDefault()))")
-    abstract Album autoMapping(AlbumResult res);
+    @Mapping(target = "neteaseId", source = "res.id", qualifiedByName = "mapNeteaseId")
+    @Mapping(target = "authorIds", source = "authorIds")
+    Album byResult(AlbumResult res, List<AuthorId> authorIds);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "neteaseId", source = "res.id", qualifiedByName = "mapNeteaseId")
+    Album byResult(AlbumResult res);
+
+    @InheritConfiguration(name = "byResult")
+    @Mapping(target = "status", expression = "java(ActivityStatus.HALF_FILLED)")
+    Album byInsufficientResult(AlbumResult res);
+
+    @InheritConfiguration(name = "byResult")
+    @Mapping(target = "status", expression = "java(ActivityStatus.FULL)")
+    Album bySufficientResult(AlbumResult res);
 
 
-    public AlbumDTO toDTO(Album album, List<Author> authors) {
-        return AlbumDTO.builder()
-                .album(album)
-                .authorList(authors)
-                .build();
+    @Mapping(target = "status", source = "res.status", qualifiedByName = "mapStatus")
+    AlbumPO byAggregate(Album res);
+
+
+    AlbumDTO byAggregate(Album res, List<Author> authors);
+
+    AlbumAuthorsPO toJoin(AlbumId albumId, AuthorId authorId);
+
+    default List<AlbumAuthorsPO> toJoin(Album album) {
+        if (album == null || album.getAuthorIds() == null) {
+            return List.of();
+        }
+        return album.getAuthorIds().stream()
+                .map(authorId -> toJoin(album.getId(), authorId))
+                .toList();
     }
 
+    List<Album> byPOList(List<AlbumPO> res);
 }

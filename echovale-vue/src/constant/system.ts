@@ -1,6 +1,5 @@
 const BACK_END = "http://localhost:8080"
 const PROXY = '/api'
-const REPLACE = '/^' + PROXY + '/'
 
 const SERVER= {
     Port: 5173,
@@ -10,10 +9,10 @@ const SERVER= {
     Cors: true,
     ChangeOrigin: true,
     Proxy: PROXY,
-    Rewrite: (path: string) => path.replace(REPLACE, ''),
+    Rewrite: (path: string) => path.replace(/^\/api/, ''),
 }
 
 
 export const System = {
     Server: SERVER,
-}
+} 

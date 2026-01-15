@@ -3,7 +3,10 @@ spring:
     name: echovale-root-app
 
   profiles:
-    active: music
+    active: music, login
+  config:
+    import:
+      - optional:classpath:/application-login.yml
 
   output:
     ansi:
@@ -17,6 +20,20 @@ spring:
     password: 248812
     url: jdbc:mysql://localhost:3306/echovale
     driver-class-name: com.mysql.cj.jdbc.Driver
+
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 0
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 10
+          max-idle: 5
+          min-idle: 1
+      password:
 
 
 server:

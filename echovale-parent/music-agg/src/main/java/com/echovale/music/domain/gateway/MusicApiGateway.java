@@ -17,18 +17,22 @@ import java.util.List;
 
 @Service
 public interface MusicApiGateway {
-    List<MusicUrlDetailVO> elicitMusicUrl(List<MusicId> musicIdList, List<NeteaseId> neteaseIdList, String level) throws Exception;
+    List<MusicUrlDetailVO> elicitMusicUrl(List<MusicId> musicIdList, List<NeteaseId> neteaseIdList, String level);
 
 
-    MusicDetailResult elicitMusic(NeteaseId neteaseId) throws Exception;
+    MusicDetailResult elicitMusic(NeteaseId neteaseId);
 
-    List<AuthorDetailResult> elicitMusicAuthors(NeteaseId neteaseId) throws Exception;
+    List<AuthorDetailResult> elicitMusicAuthors(NeteaseId neteaseId);
 
-    AlbumResult elicitAlbum(NeteaseId neteaseId) throws Exception;
+    AlbumResult elicitAlbum(NeteaseId neteaseId);
 
-    AlbumListResult elicitAlbumList(NeteaseId neteaseId) throws Exception;
+    AlbumListResult elicitAlbumList(NeteaseId neteaseId);
 
-    ChorusResult elicitChorus(NeteaseId neteaseId) throws Exception;
+    ChorusResult elicitChorus(NeteaseId neteaseId);
 
-    List<ChorusResult> elicitChoruses(List<NeteaseId> neteaseIdList) throws Exception;
+    List<ChorusResult> elicitChoruses(List<NeteaseId> neteaseIdList);
+
+    LyricsResult elicitLyrics(NeteaseId neteaseId);
+
+    List<MusicDetailResult> elicitMusics(List<NeteaseId> nonexistentMusicNeteaseIdList);
 }

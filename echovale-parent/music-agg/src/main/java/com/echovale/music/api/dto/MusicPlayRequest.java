@@ -1,10 +1,7 @@
 package com.echovale.music.api.dto;
 
-import com.echovale.music.api.constant.Message;
-import jakarta.validation.constraints.AssertTrue;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.NonNull;
 import lombok.Value;
 
 /**
@@ -19,9 +16,4 @@ import lombok.Value;
 public class MusicPlayRequest {
     Long id;
     Long neteaseId;
-
-    @AssertTrue(message = Message.Assert.AT_LEAST_ONE_ID_PRESENT)
-    public boolean isAtLeastOnIdPresent() {
-        return id != null || neteaseId != null;
-    }
 }

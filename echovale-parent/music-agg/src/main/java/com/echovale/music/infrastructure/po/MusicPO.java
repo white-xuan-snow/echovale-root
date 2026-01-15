@@ -30,4 +30,5 @@ public class MusicPO {
     private Long mvId;
     private Integer time;
     private String chorus;
+    private Integer status;
 }

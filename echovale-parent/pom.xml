@@ -27,6 +27,7 @@
     <module>login-agg</module>
     <module>music-agg</module>
     <module>playlist-agg</module>
+    <module>shared</module>
 
   </modules>
 
@@ -45,7 +46,7 @@
 
     <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
     <echovale.version>1.0.0</echovale.version>
-    <springboot.version>3.4.6</springboot.version>
+    <springboot.version>3.5.6</springboot.version>
     <mybatis-plus.version>3.5.10.1</mybatis-plus.version>
     <mybatisplus-plus.version>1.7.4-RELEASE</mybatisplus-plus.version>
     <mybatis-plus-join.version>1.5.2</mybatis-plus-join.version>
@@ -54,6 +55,9 @@
     <junit.version>3.8.1</junit.version>
     <mysql.version>8.2.0</mysql.version>
     <netease-music-api.version>release1.2</netease-music-api.version>
+    <guava.version>33.1.0-jre</guava.version>
+    <jjwt.version>0.9.1</jjwt.version>
+    <tianai-captcha.version>1.5.3</tianai-captcha.version>
   </properties>
 
 
@@ -74,9 +78,21 @@
       </dependency>
       <dependency>
         <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-aop</artifactId>
+        <version>${springboot.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-validation</artifactId>
         <version>${springboot.version}</version>
       </dependency>
+      <!-- spring security -->
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-security</artifactId>
+        <version>${springboot.version}</version>
+      </dependency>
+
 
       <!-- mysql -->
       <dependency>
@@ -104,6 +120,13 @@
         <groupId>com.github.jeffreyning</groupId>
         <artifactId>mybatisplus-plus</artifactId>
         <version>${mybatisplus-plus.version}</version>
+      </dependency>
+
+      <!-- PageHelper -->
+      <dependency>
+        <groupId>com.github.pagehelper</groupId>
+        <artifactId>pagehelper-spring-boot-starter</artifactId>
+        <version>2.0.0</version>
       </dependency>
 
       <!-- lombok -->
@@ -150,6 +173,42 @@
       </dependency>
 
 
+      <!-- google guava -->
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>${guava.version}</version>
+      </dependency>
+
+      <!-- redis -->
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-redis</artifactId>
+        <version>${springboot.version}</version>
+      </dependency>
+
+      <!-- redisson -->
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-pool2</artifactId>
+        <version>${commons-pool2.version}</version>
+      </dependency>
+
+
+      <!-- tianai-captcha -->
+      <dependency>
+        <groupId>cloud.tianai.captcha</groupId>
+        <artifactId>tianai-captcha-springboot-starter</artifactId>
+        <version>${tianai-captcha.version}</version>
+      </dependency>
+
+
+      <!-- jjwt -->
+      <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt</artifactId>
+        <version>${jjwt.version}</version>
+      </dependency>
 
     </dependencies>
   </dependencyManagement>

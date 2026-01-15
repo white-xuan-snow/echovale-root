@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.echovale.music.domain.valueobject.AlbumId;
 import com.echovale.music.domain.valueobject.AuthorId;
 import com.echovale.music.domain.valueobject.NeteaseId;
+import com.echovale.shared.domain.valueobject.ActivityStatus;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -22,6 +23,7 @@ import java.util.List;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Album {
+    public static final Album EMPTY = new Album();
     private AlbumId id;
     private String name;
     private NeteaseId neteaseId;
@@ -32,4 +34,5 @@ public class Album {
     private Integer size;
     private String subType;
     private List<AuthorId> authorIds;
+    private ActivityStatus status;
 }

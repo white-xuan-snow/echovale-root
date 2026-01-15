@@ -22,14 +22,10 @@ const artistText = computed(() => {
   return player.currentSong.artists.join(', ')
 })
 
-const progress = computed(() => {
-  return (player.currentTime / player.currentSong.duration) * 100
-})
-
 const goToPlayer = (e: MouseEvent) => {
   const target = e.target as HTMLElement
-  // 排除所有按钮和控制元素
-  if (target.closest('button, .play-controls, .right-controls, .progress-bar')) {
+  // 排除所有按钮、滑块和控制区域的点击事件
+  if (target.closest('button, .v-slider, .right-controls, .player-controls')) {
     return
   }
   router.push({ path: '/player' }).catch(err => {
@@ -39,56 +35,61 @@ const goToPlayer = (e: MouseEvent) => {
 </script>
 
 <template>
-  <div class="bottom-player elevation-4" @click="goToPlayer">
+  <div class="bottom-player" @click="goToPlayer">
+    <!-- 顶部进度条 -->
+    <div class="progress-bar-container">
+      <v-slider
+          class="top-progress-bar"
+          v-model="player.currentTime"
+          :max="player.currentSong.duration"
+          @update:modelValue="player.seek"
+          hide-details
+      />
+    </div>
+
     <div class="player-content">
-      <!-- 歌曲信息 -->
-      <div class="song-info">
+      <!-- 左侧：歌曲信息 -->
+      <div class="song-info d-flex align-center">
         <v-img
-          :src="player.currentSong.cover"
-          width="48"
-          height="48"
-          class="song-cover"
+            :src="player.currentSong.cover"
+            width="56"
+            height="56"
+            class="song-cover"
+            :rounded="8"
         />
-        <div class="song-text">
-          <div class="song-title">{{ player.currentSong.title }}</div>
-          <div class="song-artist">{{ artistText }}</div>
+        <div class="song-text-wrapper">
+          <div class="song-text">
+            <span class="song-title">{{ player.currentSong.title }}</span>
+            <span class="song-artist"> - {{ artistText }}</span>
+          </div>
         </div>
       </div>
 
-      <!-- 播放控制 -->
-      <div class="player-controls">
-        <div class="play-controls">
-          <v-btn variant="text" @click.stop="player.changePlayMode">
-            <font-awesome-icon 
-              :icon="player.playMode === 'random' ? faRandom : faRedo" 
+      <!-- 中间：播放控制 -->
+      <div class="player-controls d-flex align-center justify-center">
+        <v-btn variant="text" icon @click.stop="player.changePlayMode">
+          <font-awesome-icon
+              :icon="player.playMode === 'random' ? faRandom : faRedo"
               :class="{ 'active-mode': player.playMode !== 'order' }"
-            />
-          </v-btn>
-          <v-btn variant="text" @click.stop>
-            <font-awesome-icon :icon="faStepBackward" />
-          </v-btn>
-          <v-btn variant="text" @click.stop="player.togglePlay">
-            <font-awesome-icon :icon="player.isPlaying ? faPause : faPlay" size="lg" />
-          </v-btn>
-          <v-btn variant="text" @click.stop>
-            <font-awesome-icon :icon="faStepForward" />
-          </v-btn>
-          <v-btn variant="text" @click.stop>
-            <font-awesome-icon :icon="faHeart" />
-          </v-btn>
-        </div>
-        <div class="progress-bar">
-          <v-slider
-            v-model="player.currentTime"
-            :max="player.currentSong.duration"
-            @update:modelValue="player.seek"
-            hide-details
+              size="sm"
           />
-        </div>
+        </v-btn>
+        <v-btn variant="text" icon @click.stop>
+          <font-awesome-icon :icon="faStepBackward" />
+        </v-btn>
+        <v-btn variant="text" size="large" icon @click.stop="player.togglePlay">
+          <font-awesome-icon :icon="player.isPlaying ? faPause : faPlay" size="lg" />
+        </v-btn>
+        <v-btn variant="text" icon @click.stop>
+          <font-awesome-icon :icon="faStepForward" />
+        </v-btn>
+        <v-btn variant="text" icon @click.stop>
+          <font-awesome-icon :icon="faHeart" />
+        </v-btn>
       </div>
 
-      <!-- 右侧控制 -->
-      <div class="right-controls">
+      <!-- 右侧：功能选项 -->
+      <div class="right-controls d-flex align-center justify-end">
         <v-menu offset-y>
           <template v-slot:activator="{ props }">
             <v-btn variant="text" v-bind="props">
@@ -108,18 +109,19 @@ const goToPlayer = (e: MouseEvent) => {
           </v-list>
         </v-menu>
 
-        <div class="volume-control">
+        <div class="volume-control d-flex align-center">
           <font-awesome-icon :icon="faVolumeUp" />
           <v-slider
-            v-model="player.volume"
-            @update:modelValue="player.setVolume"
-            max="1"
-            step="0.01"
-            hide-details
+              v-model="player.volume"
+              @update:modelValue="player.setVolume"
+              max="1"
+              step="0.01"
+              hide-details
+              style="min-width: 80px"
           />
         </div>
 
-        <v-btn variant="text" @click.stop>
+        <v-btn variant="text" icon @click.stop>
           <font-awesome-icon :icon="faListUl" />
         </v-btn>
       </div>
@@ -130,103 +132,119 @@ const goToPlayer = (e: MouseEvent) => {
 <style scoped>
 .bottom-player {
   position: fixed;
-  bottom: 10px;
-  left: 10px;
+  bottom: 0;
+  left: 0;
   right: 0;
-  height: 80px;
-  width: calc(100% - 20px);
-  background-color: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px);
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  z-index: 100;
+  height: 72px;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  z-index: 1000;
   cursor: pointer;
-  transition: all 0.3s ease;
 }
 
-.bottom-player:hover {
-  background-color: rgba(230,230,250, 0.5);
+/* --- Progress Bar --- */
+.progress-bar-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  transform: translateY(-50%);
+  z-index: 1;
 }
 
+.top-progress-bar {
+  --v-slider-track-size: 2px;
+  --v-slider-thumb-size: 0;
+  transition: all 0.2s ease-in-out;
+}
+
+.bottom-player:hover .top-progress-bar {
+  --v-slider-track-size: 5px;
+  --v-slider-thumb-size: 14px;
+}
+
+/* --- Main Layout --- */
 .player-content {
+  height: 100%;
+  padding: 0 20px;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 100%;
-  padding: 0 20px;
-  max-width: 1200px;
-  margin: 0 auto;
+  gap: 16px;
 }
 
-.song-info {
-  display: flex;
-  align-items: center;
-  min-width: 200px;
+.song-info, .right-controls {
+  flex-grow: 0; /* Do not grow into the empty space */
+  flex-shrink: 1; /* Allow shrinking if the window is too narrow */
+  min-width: 0; /* Crucial for flex-shrink to work with text content */
+  /* Set a max width to prevent content from ever overlapping the center controls.
+     We estimate the center controls to be about 300px wide. */
+  max-width: calc(50% - 150px);
 }
 
+.player-controls {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  flex-shrink: 0; /* Prevent center controls from being squeezed */
+}
+
+/* --- Component Styling --- */
 .song-cover {
-  border-radius: 4px;
-  margin-right: 12px;
+  margin-right: 16px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Marquee Effect */
+.song-text-wrapper {
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .song-text {
-  overflow: hidden;
+  display: inline-block;
+  animation: marquee 12s linear infinite;
+  /* Scroll by default */
+  animation-play-state: running;
+}
+
+/* Pause on hover */
+.song-text-wrapper:hover .song-text {
+  animation-play-state: paused;
 }
 
 .song-title {
   font-weight: 500;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .song-artist {
-  font-size: 12px;
-  color: #666;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.player-controls {
-  flex: 1;
-  max-width: 500px;
-  padding: 0 20px;
-}
-
-.mode-controls {
-  text-align: center;
-  margin-bottom: 4px;
-}
-
-.play-controls {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 12px;
-  height: 100%;
-  padding: 10px 0 0 0;
-}
-
-.progress-bar {
-}
-
-.right-controls {
-  display: flex;
-  align-items: center;
-  min-width: 200px;
-  justify-content: flex-end;
-  gap: 16px;
+  font-size: 0.8rem;
+  color: #555;
+  margin-left: 4px;
 }
 
 .volume-control {
-  display: flex;
-  align-items: center;
-  gap: 8px;
   width: 120px;
+  gap: 8px;
 }
 
 .active-mode {
-  color: var(--v-primary);
+  color: rgb(var(--v-theme-primary));
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
 }
 </style>

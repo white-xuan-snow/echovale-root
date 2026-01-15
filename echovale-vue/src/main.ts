@@ -8,6 +8,7 @@ import ElementPlus from "element-plus";
 import { FontAwesomeIcon } from "./plugins/fontawesome.ts";
 import 'font-awesome/css/font-awesome.min.css';
 import router from "./router/index";
+import { useWindowStore } from "./stores/windowStore";
 
 import App from './App.vue'
 
@@ -21,7 +22,6 @@ app.component('font-awesome-icon', FontAwesomeIcon)
 app.use(router)
 
 app.mount("#app")
-
 
 const windowStore = useWindowStore()
 windowStore.init()

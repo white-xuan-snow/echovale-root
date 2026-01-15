@@ -1,13 +1,11 @@
 package com.echovale.music.domain.aggregate;
 
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.echovale.music.domain.entity.Lyric;
 import com.echovale.music.domain.entity.MusicEntertainment;
 import com.echovale.music.domain.entity.MusicQuality;
 import com.echovale.music.domain.valueobject.*;
-import com.echovale.music.infrastructure.po.*;
+import com.echovale.shared.domain.valueobject.ActivityStatus;
 import lombok.*;
-import lombok.experimental.Accessors;
-import org.mapstruct.ap.internal.util.accessor.Accessor;
 
 import java.util.List;
 
@@ -33,6 +31,7 @@ public class Music {
     private Long mvId;
     private Integer time;
     private String chorus;
+    private ActivityStatus status;
 
 
     private Lyric lyric;
@@ -80,4 +79,9 @@ public class Music {
     public Boolean isNull() {
         return id == null;
     }
+
+
+
+
+
 }

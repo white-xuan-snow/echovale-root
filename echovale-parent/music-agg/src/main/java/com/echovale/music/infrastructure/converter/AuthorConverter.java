@@ -2,12 +2,17 @@ package com.echovale.music.infrastructure.converter;
 
 import com.echovale.music.api.vo.AuthorVO;
 import com.echovale.music.domain.aggregate.Author;
-import com.echovale.music.infrastructure.config.MappingConfig;
+import com.echovale.common.domain.infrastructure.config.MappingConfig;
+import com.echovale.music.domain.valueobject.AuthorId;
+import com.echovale.music.domain.valueobject.NeteaseId;
+import com.echovale.music.infrastructure.converter.qualifier.MusicQualifier;
 import com.echovale.music.infrastructure.po.AuthorPO;
+import com.echovale.shared.domain.valueobject.ActivityStatus;
 import com.netease.music.api.autoconfigure.configuration.pojo.result.AuthorDetailResult;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
+import com.netease.music.api.autoconfigure.configuration.pojo.result.AuthorResult;
+import org.mapstruct.*;
+
+import java.util.List;
 
 /**
  * @author 30531
@@ -19,76 +24,48 @@ import org.mapstruct.MappingTarget;
 @Mapper(config = MappingConfig.class,
         componentModel = "spring",
         imports = {
-                com.echovale.music.domain.valueobject.NeteaseId.class,
-                com.echovale.music.domain.valueobject.AuthorId.class
+                NeteaseId.class,
+                AuthorId.class,
+                ActivityStatus.class
+        },
+        uses = {
+                MusicQualifier.class
         }
 )
-public abstract class AuthorConverter {
-
-    public Author byDetailResult(AuthorDetailResult res) {
-        return core(res);
-    }
-
-    public AuthorPO byAggregate(Author author) {
-        return core(author);
-    }
-
-    public Author byPO(AuthorPO authorPO) {
-        return core(authorPO);
-    }
+public interface AuthorConverter {
 
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "neteaseId", expression = "java(new NeteaseId(res.getId()))")
-    @Mapping(target = "alias", expression = "java(res.getAlias().toString())")
-    abstract Author autoMapping(AuthorDetailResult res);
+    @Mapping(target = "neteaseId", source = "res.id", qualifiedByName = "mapNeteaseId")
+    Author byDetailResult(AuthorDetailResult res);
+
+    @InheritConfiguration(name = "byDetailResult")
+    @Mapping(target = "status", expression = "java(ActivityStatus.HALF_FILLED)")
+    Author byInsufficientDetailResult(AuthorDetailResult res);
+
+    @InheritConfiguration(name = "byDetailResult")
+    @Mapping(target = "status", expression = "java(ActivityStatus.FULL)")
+    Author bySufficientDetailResult(AuthorDetailResult res);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "neteaseId", source = "res.id", qualifiedByName = "mapNeteaseId")
+    Author byResult(AuthorResult res);
 
 
-    @Mapping(target = "id", expression = "java(res.getIdValue())")
-    @Mapping(target = "neteaseId", expression = "java(res.getNeteaseIdValue())")
-    abstract AuthorPO autoMapping(Author res);
+    @Mapping(target = "status", source = "res.status", qualifiedByName = "mapStatus")
+    AuthorPO byAggregate(Author res);
 
-
-    @Mapping(target = "neteaseId", expression = "java(new NeteaseId(res.getNeteaseId()))")
-    @Mapping(target = "id", expression = "java(new AuthorId(res.getId()))")
-    abstract Author autoMapping(AuthorPO res);
-
-
-
-    private Author core(AuthorDetailResult res) {
-        return autoMapping(res);
-    }
-
-    private AuthorPO core(Author author) {
-        return autoMapping(author);
-    }
-
-    public Author core(AuthorPO res) {
-        return autoMapping(res);
-    }
-
-
-    public AuthorVO toVO(Author author) {
-        return core(author, AuthorVO.builder().build());
-    }
-
-    public AuthorVO toVO(Author author, AuthorVO authorVO) {
-        return core(author, authorVO);
-    }
+    @Mapping(target = "neteaseId", source = "res.neteaseId", qualifiedByName = "mapNeteaseId")
+    @Mapping(target = "id", source = "res.id", qualifiedByName = "mapAuthorId")
+    @Mapping(target = "status", source = "res.status", qualifiedByName = "mapStatus")
+    Author byPO(AuthorPO res);
 
 
     @Mapping(target = "id", source = "res.id")
-    @Mapping(target = "neteaseId", source = "res.neteaseId")
+    @Mapping(target = "neteaseId", source = "res.id", qualifiedByName = "mapNeteaseId")
     @Mapping(target = "name", source = "res.name")
-    abstract AuthorVO autoMapping(Author res, @MappingTarget AuthorVO target);
+    AuthorVO byAggregate(Author res, @MappingTarget AuthorVO target);
 
 
-
-    private AuthorVO core(Author author, AuthorVO authorVO) {
-        return autoMapping(author, authorVO);
-    }
-
-
-
-
+    List<Author> byPOList(List<AuthorPO> authorPOList);
 }

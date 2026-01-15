@@ -32,4 +32,5 @@ public class AuthorPO {
     private String avatarUrl;
     private String description;
     private String identify;
+    private Integer status;
 }

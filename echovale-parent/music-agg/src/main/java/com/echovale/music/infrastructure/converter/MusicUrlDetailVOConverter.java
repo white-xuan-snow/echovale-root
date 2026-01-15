@@ -2,7 +2,8 @@ package com.echovale.music.infrastructure.converter;
 
 import com.echovale.music.api.vo.MusicUrlDetailVO;
 import com.echovale.music.domain.valueobject.MusicId;
-import com.echovale.music.infrastructure.config.MappingConfig;
+import com.echovale.common.domain.infrastructure.config.MappingConfig;
+import com.echovale.music.infrastructure.converter.qualifier.MusicQualifier;
 import com.netease.music.api.autoconfigure.configuration.pojo.result.MusicUrlResult;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
@@ -15,20 +16,16 @@ import org.mapstruct.Mapping;
  * @date 2025/11/17 23:20
  */
 @Mapper(config = MappingConfig.class,
-        componentModel = "spring")
-public abstract class MusicUrlDetailVOConverter {
+        componentModel = "spring",
+        uses = {
+            MusicQualifier.class
+        }
+)
+public interface MusicUrlDetailVOConverter {
 
-    public MusicUrlDetailVO byApiResult(MusicUrlResult res, MusicId id) {
-        return core(res, id);
-    }
 
-    @Mapping(target = "id", expression = "java(id.getId())")
+    @Mapping(target = "id", source = "id")
     @Mapping(target = "neteaseId", source = "res.id")
-    abstract MusicUrlDetailVO toDetailVO(MusicUrlResult res, @Context MusicId id);
-
-
-    private MusicUrlDetailVO core(MusicUrlResult res, MusicId id) {
-        return toDetailVO(res, id);
-    }
+    MusicUrlDetailVO byResult(MusicUrlResult res, @Context MusicId id);
 
 }
