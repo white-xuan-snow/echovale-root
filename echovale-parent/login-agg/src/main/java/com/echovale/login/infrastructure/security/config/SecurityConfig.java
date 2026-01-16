@@ -47,6 +47,7 @@ public class SecurityConfig {
 
             @Override
             public boolean matches(CharSequence rawPassword, String encodedPassword) {
+
                 return rawPassword.toString().equals(encodedPassword);
             }
         };
@@ -66,7 +67,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // 认证豁免
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/login", "/public").permitAll()
+                        .requestMatchers("/auth/login", "/public", "/**").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS).permitAll()
                         .anyRequest()
                         .authenticated())

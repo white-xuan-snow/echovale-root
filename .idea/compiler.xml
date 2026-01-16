@@ -29,6 +29,7 @@
         <module name="common-infra" />
         <module name="playlist" />
         <module name="common-domain" />
+        <module name="root" />
         <module name="echovale-client" />
         <module name="echovale-web-api" />
         <module name="echovale-domain" />
@@ -45,18 +46,6 @@
           <entry name="$MAVEN_REPOSITORY$/org/mapstruct/mapstruct/1.5.5.Final/mapstruct-1.5.5.Final.jar" />
         </processorPath>
         <module name="login" />
-      </profile>
-      <profile name="Annotation profile for root" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <option name="mapstruct.suppressGeneratorVersion" value="" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.36/lombok-1.18.36.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/mapstruct/mapstruct-processor/1.5.5.Final/mapstruct-processor-1.5.5.Final.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/mapstruct/mapstruct/1.5.5.Final/mapstruct-1.5.5.Final.jar" />
-        </processorPath>
-        <module name="root" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

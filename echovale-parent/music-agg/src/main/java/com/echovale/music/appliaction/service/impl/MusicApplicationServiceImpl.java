@@ -145,9 +145,7 @@ public class MusicApplicationServiceImpl implements MusicApplicationService {
                     .toList();
 
         } else {
-
             musicIds = MusicId.getEmptyList(neteaseIds.size());
-
         }
 
         return  musicApiGatewayImpl.elicitMusicUrl(musicIds, neteaseIds, command.getLevel());
