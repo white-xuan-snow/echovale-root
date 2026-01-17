@@ -33,3 +33,5 @@ captcha:
     expire: 120000
     # 二次验证缓存key前缀，默认是 captcha:secondary
     keyPrefix: "captcha:secondary"
+
+

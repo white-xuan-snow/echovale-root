@@ -3,6 +3,7 @@ package com.echovale.login.domain.aggregate;
 import com.echovale.login.domain.entity.UserInfoExt;
 import com.echovale.login.domain.entity.UserMetaExt;
 import com.echovale.login.domain.valueobject.UserId;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 public class User {
     UserId id;
     String username;
+    @JsonIgnore
     String password;
     String email;
     String phone;

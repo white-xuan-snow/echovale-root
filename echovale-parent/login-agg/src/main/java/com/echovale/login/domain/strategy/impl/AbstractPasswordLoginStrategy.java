@@ -6,6 +6,7 @@ import com.echovale.login.application.command.LoginCommand;
 import com.echovale.login.domain.aggregate.User;
 import com.echovale.login.domain.strategy.LoginStrategy;
 import com.echovale.login.infrastructure.converter.LoginConverter;
+import com.echovale.login.infrastructure.security.jwt.JwtAuthTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -25,6 +26,9 @@ public abstract class AbstractPasswordLoginStrategy implements LoginStrategy {
 
     @Autowired
     private LoginConverter loginConverter;
+
+    @Autowired
+    private JwtAuthTokenUtil jwtAuthTokenUtil;
 
     @Override
     public void preValidate(LoginCommand command) {
@@ -46,7 +50,9 @@ public abstract class AbstractPasswordLoginStrategy implements LoginStrategy {
         }
 
         // TODO LoginResult转换逻辑
-        return loginConverter.byUser(user);
+        return LoginResult.builder()
+                .accessToken(jwtAuthTokenUtil.generateAccessToken(user))
+                .build();
     }
 
     private void handleLoginFailure(User user) {

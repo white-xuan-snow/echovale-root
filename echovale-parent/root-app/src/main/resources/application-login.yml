@@ -34,8 +34,17 @@ captcha:
     # 二次验证缓存key前缀，默认是 captcha:secondary
     keyPrefix: "captcha:secondary"
 
-security:
+login:
+  security:
     jwt:
       secret: "oD4oE1gQ8hI6jA0nG9gC2hJ1gE6dK4jA"
       issuer: "WHITEXUAN@2323"
-      expiration: 108000
+      access-expiration: 2h
+      refresh-expiration: 7d
+    image-captcha:
+      debug-secondary-token: "rhW1GZAOVlO5F3OhkU2RpOhUrnK1tIEKfPyQmLvZrh9Z9anRQGwcxpo2XMp7DXfRjf9YSywGEaWKxG8REuz7yXIbHIKafa02oBNGGfWt3qRyQFIeohLQIYhN0IawVKwV"
+      secondary-token-header-name: "Secondary-Token"
+
+  redis:
+    refresh-token-prefix: "refresh_token"
+    refresh-token-expire: 2m

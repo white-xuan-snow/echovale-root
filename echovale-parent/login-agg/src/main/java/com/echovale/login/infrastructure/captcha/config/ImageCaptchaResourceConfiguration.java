@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class CaptchaResourceConfiguration {
+public class ImageCaptchaResourceConfiguration {
 
     private final ResourceStore resourceStore;
     private final ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();

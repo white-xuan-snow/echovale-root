@@ -2,7 +2,9 @@ package com.echovale.login.infrastructure.security.config;
 
 import com.echovale.login.infrastructure.security.advice.CustomAccessDeniedHandler;
 import com.echovale.login.infrastructure.security.advice.CustomAuthenticationEntryPoint;
-import com.echovale.login.infrastructure.security.jwt.JwtAuthTokenFilter;
+import com.echovale.login.infrastructure.security.constant.PermitPaths;
+import com.echovale.login.infrastructure.security.filter.ImageCaptchaFilter;
+import com.echovale.login.infrastructure.security.filter.JwtAuthTokenFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +16,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -34,6 +35,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtAuthTokenFilter jwtAuthTokenFilter;
+    private final ImageCaptchaFilter imageCaptchaFilter;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
@@ -67,7 +69,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // 认证豁免
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/login", "/public", "/**").permitAll()
+                        .requestMatchers(PermitPaths.PERMIT_PATHS).permitAll()
                         .requestMatchers(HttpMethod.OPTIONS).permitAll()
                         .anyRequest()
                         .authenticated())
@@ -78,7 +80,10 @@ public class SecurityConfig {
                         // 权限异常
                         .accessDeniedHandler(customAccessDeniedHandler))
                 // JwtAuthToken过滤
-                .addFilterBefore(jwtAuthTokenFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthTokenFilter, UsernamePasswordAuthenticationFilter.class)
+                // LoginPaths.LOGIN二次验证
+                .addFilterBefore(imageCaptchaFilter, UsernamePasswordAuthenticationFilter.class);
+                // 后写先执行，类似栈
 
         return http.build();
     }

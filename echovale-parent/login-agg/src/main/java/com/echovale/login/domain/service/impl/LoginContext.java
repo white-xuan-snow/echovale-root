@@ -1,4 +1,4 @@
-package com.echovale.login.domain.service;
+package com.echovale.login.domain.service.impl;
 
 import com.echovale.common.domain.api.exception.NotImplementedException;
 import com.echovale.login.api.vo.LoginResult;

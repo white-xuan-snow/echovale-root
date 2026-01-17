@@ -13,10 +13,5 @@ import org.mapstruct.Mapper;
         componentModel = "spring"
 )
 public interface LoginConverter {
-
-
-    LoginResult byUser(User user);
-
-
     LoginCommand byRequest(LoginRequest loginRequest);
 }

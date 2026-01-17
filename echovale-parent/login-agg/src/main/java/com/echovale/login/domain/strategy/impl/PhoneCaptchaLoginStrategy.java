@@ -23,6 +23,6 @@ public class PhoneCaptchaLoginStrategy extends AbstractCaptchaLoginStrategy {
 
     @Override
     public LoginType getLoginType() {
-        return null;
+        return LoginType.CAPTCHA_PHONE;
     }
 }

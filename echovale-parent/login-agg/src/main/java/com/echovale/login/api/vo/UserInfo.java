@@ -1,8 +1,11 @@
 package com.echovale.login.api.vo;
 
+import com.echovale.login.domain.valueobject.UserId;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
+
+import java.util.List;
 
 /**
  * @author 30531
@@ -14,5 +17,9 @@ import lombok.Value;
 @Value
 @Builder
 @AllArgsConstructor
-public class UserVO {
+public class UserInfo {
+    UserId id;
+    String username;
+    String avatar;
+    List<String> roles;
 }

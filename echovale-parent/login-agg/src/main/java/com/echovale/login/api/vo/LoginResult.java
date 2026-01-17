@@ -1,5 +1,6 @@
 package com.echovale.login.api.vo;
 
+import com.echovale.login.domain.aggregate.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
@@ -15,7 +16,5 @@ import lombok.Value;
 @Builder
 @AllArgsConstructor
 public class LoginResult {
-    String token;
-    UserVO user;
-    Long loginTime;
+    String accessToken;
 }

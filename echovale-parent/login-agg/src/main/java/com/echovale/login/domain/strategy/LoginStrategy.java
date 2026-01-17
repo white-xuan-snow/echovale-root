@@ -7,6 +7,9 @@ import com.echovale.login.application.command.LoginCommand;
 import com.echovale.login.domain.entity.LoginType;
 
 
+/**
+ * @author 30531
+ */
 public interface LoginStrategy {
 
     LoginType getLoginType();

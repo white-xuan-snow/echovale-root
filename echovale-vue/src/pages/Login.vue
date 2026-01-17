@@ -12,27 +12,55 @@
           欢迎回来
         </v-card-title>
         <v-card-text class="py-6">
+          <!-- 登录方式切换 -->
+          <v-tabs v-model="activeTab" class="mb-4">
+            <v-tab value="password">密码登录</v-tab>
+            <v-tab value="captcha">验证码登录</v-tab>
+          </v-tabs>
+
           <v-form ref="form" v-model="isFormValid" @submit.prevent="handleLogin">
             <v-text-field
-              v-model="username"
-              label="用户名"
-              prepend-inner-icon="mdi-account"
-              :rules="[rules.required]"
+              v-model="identifier"
+              label="用户名/手机号/邮箱"
+              :rules="[rules.required, getIdentifierRules]"
               variant="outlined"
               density="compact"
+              @input="detectInputType"
             ></v-text-field>
 
+            <!-- 密码字段（仅密码登录方式显示） -->
             <v-text-field
-              v-model="password"
+              v-if="activeTab === 'password'"
+              v-model="credential"
               label="密码"
-              prepend-inner-icon="mdi-lock"
               :type="showPassword ? 'text' : 'password'"
-              :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
               :rules="[rules.required, rules.minLength(6)]"
               variant="outlined"
               density="compact"
               @click:append-inner="showPassword = !showPassword"
             ></v-text-field>
+
+            <!-- 验证码字段（仅验证码登录方式显示） -->
+            <div v-else class="d-flex gap-2">
+              <v-text-field
+                v-model="credential"
+                label="验证码"
+                :rules="[rules.required, rules.captchaLength]"
+                variant="outlined"
+                density="compact"
+                class="flex-grow-1"
+              ></v-text-field>
+              <v-btn
+                :disabled="countdown > 0"
+                color="primary"
+                variant="outlined"
+                density="compact"
+                @click="sendCaptcha"
+                class="align-self-center"
+              >
+                {{ countdown > 0 ? `${countdown}s后重发` : '发送验证码' }}
+              </v-btn>
+            </div>
 
             <v-btn
               type="submit"
@@ -77,13 +105,28 @@ gsap.registerPlugin(CSSPlugin);
 
 const loginCard = ref<any>(null);
 const form = ref<any>(null);
-const username = ref('');
-const password = ref('');
+const identifier = ref(''); // 用户名/手机号/邮箱
+const credential = ref(''); // 密码/验证码
 const showPassword = ref(false);
 const isFormValid = ref(false);
 // 步骤3: 重命名 state，用于控制新的验证码对话框
 const captchaDialog = ref(false);
 const router = useRouter();
+
+// 登录方式相关状态
+const activeTab = ref('password'); // 'password' 或 'captcha'
+
+// 输入类型检测相关状态
+const inputType = ref('username'); // 'username', 'phone', 'email'
+const detectTimeout = ref<number | null>(null); // 输入检测防抖定时器ID
+
+// 检测输入类型的正则表达式
+const phoneRegex = /^1[3-9]\d{9}$/;
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// 验证码发送相关状态
+const countdown = ref(0);
+const validToken = ref(''); // 滑块验证成功后的 Secondary-Token
 
 // -- 响应式计算属性 --
 const isMobileMode = computed(() => {
@@ -93,7 +136,10 @@ const isMobileMode = computed(() => {
 // -- 表单校验规则 --
 const rules = {
   required: (value: string) => !!value || '此项不能为空.',
-  minLength: (length: number) => (value: string) => (value && value.length >= length) || `密码长度至少为 ${length} 位.`,
+  minLength: (length: number) => (value: string) => (value && value.length >= length) || `长度至少为 ${length} 位.`,
+  phone: (value: string) => /^1[3-9]\d{9}$/.test(value) || '请输入有效的手机号.',
+  email: (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) || '请输入有效的邮箱地址.',
+  captchaLength: (value: string) => value.length === 6 || '验证码长度为6位.',
 };
 
 // -- GSAP 动画定义 --
@@ -131,6 +177,82 @@ const playExitAnimation = (onComplete: () => void) => {
   });
 };
 
+// -- 输入类型检测相关方法 --
+
+// 检测输入内容的类型
+const detectInputType = () => {
+  // 清除之前的定时器
+  if (detectTimeout.value) {
+    clearTimeout(detectTimeout.value);
+  }
+  
+  // 设置新的定时器，2秒后执行检测
+  detectTimeout.value = window.setTimeout(() => {
+    const value = identifier.value.trim();
+    
+    if (phoneRegex.test(value)) {
+      inputType.value = 'phone';
+    } else if (emailRegex.test(value)) {
+      inputType.value = 'email';
+    } else {
+      inputType.value = 'username';
+    }
+    
+    // 如果输入的是用户名，则不允许使用验证码登录
+    if (inputType.value === 'username' && activeTab.value === 'captcha') {
+      activeTab.value = 'password';
+    }
+    
+    // 清除定时器ID
+    detectTimeout.value = null;
+  }, 2000);
+};
+
+// 根据输入类型返回相应的验证规则
+const getIdentifierRules = (value: string) => {
+  if (!value) return true; // 必填规则已经处理
+  
+  switch (inputType.value) {
+    case 'phone':
+      return rules.phone(value);
+    case 'email':
+      return rules.email(value);
+    case 'username':
+    default:
+      return true; // 用户名没有额外的验证规则
+  }
+};
+
+// -- 验证码发送相关方法 --
+
+const sendCaptcha = () => {
+  // 验证 identifier 格式是否正确
+  let isValid = false;
+  if (activeTab.value === 'captcha') {
+    if (inputType.value === 'phone') {
+      isValid = Boolean(rules.phone(identifier.value));
+    } else if (inputType.value === 'email') {
+      isValid = Boolean(rules.email(identifier.value));
+    }
+  }
+
+  if (!isValid) {
+    playShakeAnimation();
+    return;
+  }
+
+  // 模拟发送验证码请求
+  console.log(`发送验证码到 ${identifier.value}`);
+  
+  // 开始倒计时
+  countdown.value = 60;
+  const timer = setInterval(() => {
+    countdown.value--;
+    if (countdown.value <= 0) {
+      clearInterval(timer);
+    }
+  }, 1000);
+};
 
 // -- 逻辑处理函数 --
 
@@ -148,18 +270,89 @@ const handleLogin = async () => {
 };
 
 // 步骤5: 此函数现在由 CaptchaDialog 的 'success' 事件触发
-const handleVerificationSuccess = () => {
+const handleVerificationSuccess = (token: string) => {
   // 确保对话框已关闭
   captchaDialog.value = false;
+  // 保存 Secondary-Token
+  validToken.value = token;
   
-  // 播放退出动画并执行后续操作
-  playExitAnimation(() => {
-    const fakeToken = 'fake_jwt_token_' + Date.now();
-    localStorage.setItem('token', fakeToken);
-    router.push('/home');
-  });
+  // 确定 loginType
+  let loginType = '';
+  if (activeTab.value === 'password') {
+    switch (inputType.value) {
+      case 'username':
+        loginType = 'PASSWORD_USERNAME';
+        break;
+      case 'phone':
+        loginType = 'PASSWORD_PHONE';
+        break;
+      case 'email':
+        loginType = 'PASSWORD_EMAIL';
+        break;
+    }
+  } else {
+    switch (inputType.value) {
+      case 'phone':
+        loginType = 'CAPTCHA_PHONE';
+        break;
+      case 'email':
+        loginType = 'CAPTCHA_EMAIL';
+        break;
+    }
+  }
+
+  // 发送登录请求
+  loginRequest(loginType);
 };
 
+// 登录请求函数
+const loginRequest = async (loginType: string) => {
+  try {
+    // 构建请求参数
+    const params = {
+      identifier: identifier.value,
+      credential: credential.value,
+      loginType: loginType,
+    };
+
+    // 构建请求头
+    const headers = {
+      'Secondary-Token': validToken.value,
+    };
+
+    // 将参数转换为URL查询字符串
+    const queryString = new URLSearchParams(params).toString();
+    const url = `/api/v1/auth/login?${queryString}`;
+
+    // 发送登录请求
+    console.log('登录请求URL:', url);
+    console.log('登录请求头:', headers);
+    
+    // 发送GET请求（使用URL参数）
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: headers,
+    });
+
+    // 检查响应状态
+    if (!response.ok) {
+      throw new Error(`登录失败: ${response.statusText}`);
+    }
+
+    // 解析响应数据
+    const responseData = await response.json();
+    console.log('登录响应:', responseData);
+
+    // 播放退出动画并执行后续操作
+    playExitAnimation(() => {
+      localStorage.setItem('token', responseData.data.token);
+      router.push('/home');
+    });
+  } catch (error) {
+    console.error('登录失败:', error);
+    playShakeAnimation();
+  }
+};
 
 // -- 生命周期钩子 --
 
@@ -231,5 +424,16 @@ onMounted(() => {
 
 :deep(.v-text-field .v-icon) {
   color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* 修复按钮聚焦时的白色边缘问题 */
+:deep(.v-btn:focus) {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+:deep(.v-tab:focus) {
+  outline: none !important;
+  box-shadow: none !important;
 }
 </style>

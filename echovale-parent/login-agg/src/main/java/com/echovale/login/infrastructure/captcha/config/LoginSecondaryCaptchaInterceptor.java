@@ -43,5 +43,4 @@ public class LoginSecondaryCaptchaInterceptor implements HandlerInterceptor {
         }
     }
 
-
 }

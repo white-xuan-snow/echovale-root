@@ -15,6 +15,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ComponentScan("com.echovale.login")
 @EnableMPP
-@MapperScan("com.echovale.login.domain.repository")
+@MapperScan("com.echovale.login.infrastructure.mapper")
 public class LoginContextConfig {
 }

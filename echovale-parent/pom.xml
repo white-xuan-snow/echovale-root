@@ -56,7 +56,7 @@
     <mysql.version>8.2.0</mysql.version>
     <netease-music-api.version>release1.2</netease-music-api.version>
     <guava.version>33.1.0-jre</guava.version>
-    <jjwt.version>0.9.1</jjwt.version>
+    <jjwt.version>0.11.5</jjwt.version>
     <tianai-captcha.version>1.5.3</tianai-captcha.version>
     <fastjson.version>2.0.52</fastjson.version>
   </properties>
@@ -214,7 +214,17 @@
       <!-- jjwt -->
       <dependency>
         <groupId>io.jsonwebtoken</groupId>
-        <artifactId>jjwt</artifactId>
+        <artifactId>jjwt-api</artifactId>
+        <version>${jjwt.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt-impl</artifactId>
+        <version>${jjwt.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt-jackson</artifactId>
         <version>${jjwt.version}</version>
       </dependency>
 

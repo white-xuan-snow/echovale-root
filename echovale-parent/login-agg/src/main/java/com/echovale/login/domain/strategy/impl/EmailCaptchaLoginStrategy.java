@@ -15,6 +15,8 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class EmailCaptchaLoginStrategy extends AbstractCaptchaLoginStrategy {
+
+
     @Override
     protected User findUser(String identifier) {
         return null;
@@ -22,6 +24,6 @@ public class EmailCaptchaLoginStrategy extends AbstractCaptchaLoginStrategy {
 
     @Override
     public LoginType getLoginType() {
-        return null;
+        return LoginType.CAPTCHA_EMAIL;
     }
 }

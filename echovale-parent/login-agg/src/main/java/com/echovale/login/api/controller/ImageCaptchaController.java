@@ -2,27 +2,19 @@ package com.echovale.login.api.controller;
 
 import cloud.tianai.captcha.application.ImageCaptchaApplication;
 import cloud.tianai.captcha.application.vo.ImageCaptchaVO;
-import cloud.tianai.captcha.cache.CacheStore;
-import cloud.tianai.captcha.cache.impl.LocalCacheStore;
-import cloud.tianai.captcha.common.AnyMap;
 import cloud.tianai.captcha.common.constant.CaptchaTypeConstant;
 import cloud.tianai.captcha.common.response.ApiResponse;
-import cloud.tianai.captcha.generator.impl.StandardConcatImageCaptchaGenerator;
 import cloud.tianai.captcha.validator.common.model.dto.ImageCaptchaTrack;
 import com.echovale.login.api.dto.GenerateCaptchaRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
 import java.util.Collections;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author 30531
@@ -35,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 @RestController
 @RequestMapping("/captcha")
 @CrossOrigin
-public class CaptchaController {
+public class ImageCaptchaController {
 
     @Autowired
     ImageCaptchaApplication application;
@@ -47,17 +39,9 @@ public class CaptchaController {
         if (request.isValid()) {
             ApiResponse<ImageCaptchaVO> apiResponse = application.generateCaptcha(CaptchaTypeConstant.SLIDER);
             return apiResponse;
-//            return CaptchaResponse.builder()
-//                    .captcha(apiResponse.getData())
-//                    .msg(apiResponse.getMsg())
-//                    .code(apiResponse.getCode())
-//                    .build();
         }
 
         // TODO 其余类型错误信息响应
-//        return CaptchaResponse.builder()
-//                .captcha("类型错误")
-//                .build();
         return ApiResponse.ofSuccess();
     }
 
@@ -66,14 +50,10 @@ public class CaptchaController {
 
         ApiResponse<?> response = application.matching(data.getId(), data.getData());
 
-
         if (response.isSuccess()) {
             // 验证码验证成功，此处应该进行自定义业务处理， 或者返回验证token进行二次验证等。
             return ApiResponse.ofSuccess(Collections.singletonMap("validToken", data.getId()));
         }
-
-
-
 
         return response;
     }
@@ -99,7 +79,4 @@ public class CaptchaController {
         private String msg;
         private T captcha;
     }
-
-
-
 }

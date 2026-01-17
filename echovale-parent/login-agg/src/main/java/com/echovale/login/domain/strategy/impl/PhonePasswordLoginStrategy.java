@@ -2,6 +2,7 @@ package com.echovale.login.domain.strategy.impl;
 
 import com.echovale.login.domain.aggregate.User;
 import com.echovale.login.domain.entity.LoginType;
+import com.echovale.login.infrastructure.query.UserQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -15,13 +16,16 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class PhonePasswordLoginStrategy extends AbstractPasswordLoginStrategy {
+
+    private final UserQueryService userQueryService;
+
     @Override
     protected User findUser(String identifier) {
-        return null;
+        return userQueryService.queryUserByPhone(identifier);
     }
 
     @Override
     public LoginType getLoginType() {
-        return null;
+        return LoginType.PASSWORD_PHONE;
     }
 }

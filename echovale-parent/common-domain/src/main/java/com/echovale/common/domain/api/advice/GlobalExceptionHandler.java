@@ -22,7 +22,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BaseException.class)
     public ResponseEntity<Result> handleBaseException(final BaseException ex, final HttpServletRequest request) {
-        log.info("[GlobalExceptionHandler].[handleBaseException]");
+        log.info("[handleBaseException]{}", ex.getMessage());
         return ResponseEntity
                 .status(ex.getCode())
                 .body(Result.fail(ex.getCode(), ex.getMessage()));
@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Result> handleFieldValidException(final MethodArgumentNotValidException ex, final HttpServletRequest request) {
-        log.info("[GlobalExceptionHandler].[handleFieldValidException]");
+        log.info("[handleFieldValidException]{}", ex.getMessage());
         BindingResult bindingResult = ex.getBindingResult();
 
         String errorMessage = "参数校验错误";
