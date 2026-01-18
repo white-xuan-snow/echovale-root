@@ -36,7 +36,7 @@ import com.echovale.music.infrastructure.converter.AlbumConverter;
 import com.echovale.music.infrastructure.converter.AuthorConverter;
 import com.echovale.music.infrastructure.converter.MusicConverter;
 import com.echovale.music.infrastructure.converter.MusicLyricConverter;
-import com.echovale.shared.utils.ListUtils;
+import com.echovale.shared.utils.ListUtil;
 import com.netease.music.api.autoconfigure.configuration.api.MusicApi;
 import com.netease.music.api.autoconfigure.configuration.pojo.result.AlbumResult;
 import com.netease.music.api.autoconfigure.configuration.pojo.result.AuthorDetailResult;
@@ -174,7 +174,7 @@ public class MusicApplicationServiceImpl implements MusicApplicationService {
 
             List<MusicVO> nonExistentMusicVOList = assembleMusicsExternal(musicIdGatherDTO.getNonexistentMusicNeteaseIdList());
 
-            return ListUtils.concat(existentMusicVOList, nonExistentMusicVOList);
+            return ListUtil.concat(existentMusicVOList, nonExistentMusicVOList);
         } else {
             List<MusicId> musicIds = MusicId.byPlayMusicsCommand(command);
 
@@ -329,7 +329,7 @@ public class MusicApplicationServiceImpl implements MusicApplicationService {
                 .flatMap(track -> track.getAr().stream())
                 .map(authorConverter::byDetailResult)
                 .toList();
-        List<Author> totalAuthors = ListUtils.concat(existentAuthors, persistentAuthors);
+        List<Author> totalAuthors = ListUtil.concat(existentAuthors, persistentAuthors);
 
         HashMap<Long, Author> authorLongNeteaseIdMap = new HashMap<>();
         for (Author author : totalAuthors) {
@@ -370,7 +370,7 @@ public class MusicApplicationServiceImpl implements MusicApplicationService {
                 .filter(track -> !nonexistentNeteaseIdSet.contains(NeteaseId.byLong(track)))
                 .map(musicConverter::byDetailResult)
                 .toList();
-        List<Music> totalMusics = ListUtils.concat(existMusics, persistentMusics);
+        List<Music> totalMusics = ListUtil.concat(existMusics, persistentMusics);
 
 
         List<AlbumResult> albumResults = persistentTracks.stream()
@@ -383,7 +383,7 @@ public class MusicApplicationServiceImpl implements MusicApplicationService {
 
         List<Album> persistentAlbums = albumApplicationService.saveAndQueryAlbumsByExternalResult(albumResults);
 
-        List<Album> totalAlbums = ListUtils.concat(existentAlbumResults, persistentAlbums);
+        List<Album> totalAlbums = ListUtil.concat(existentAlbumResults, persistentAlbums);
 
 
         HashMap<Long, Album> albumNeteaseLongIdMap = new HashMap<>();

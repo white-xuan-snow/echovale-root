@@ -48,3 +48,8 @@ login:
   redis:
     refresh-token-prefix: "refresh_token"
     refresh-token-expire: 2m
+
+  strategy:
+#    captcha-unauthorized-message:
+#    password-unauthorized-message:
+    dummy-credential: "dummy-pT1]hF1@cU2>"

@@ -9,7 +9,7 @@ import java.util.List;
  * @description: TODO
  * @date 2025/12/23 09:10
  */
-public class ListUtils {
+public class ListUtil {
 
 
 

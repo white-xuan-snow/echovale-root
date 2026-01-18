@@ -1,15 +1,16 @@
 package com.echovale.login.domain.strategy.impl;
 
-import com.echovale.common.domain.api.exception.UnauthorizedException;
-import com.echovale.login.api.vo.LoginResult;
 import com.echovale.login.application.command.LoginCommand;
 import com.echovale.login.domain.aggregate.User;
-import com.echovale.login.domain.strategy.LoginStrategy;
-import com.echovale.login.infrastructure.converter.LoginConverter;
-import com.echovale.login.infrastructure.security.jwt.JwtAuthTokenUtil;
+import com.echovale.login.domain.exception.BadCredentialsException;
+import com.echovale.login.domain.exception.BaseLoginException;
+import com.echovale.login.infrastructure.properties.LoginStrategyProperties;
+import com.echovale.shared.utils.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+
+import java.util.function.Supplier;
 
 /**
  * @author 30531
@@ -19,56 +20,26 @@ import org.springframework.stereotype.Component;
  */
 
 @Component
-public abstract class AbstractPasswordLoginStrategy implements LoginStrategy {
+public abstract class AbstractPasswordLoginStrategy extends AbstractLoginStrategy {
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private LoginConverter loginConverter;
-
-    @Autowired
-    private JwtAuthTokenUtil jwtAuthTokenUtil;
 
     @Override
-    public void preValidate(LoginCommand command) {
-
-
+    protected String getUnauthorizedMsg() {
+        return LoginStrategyProperties.PASSWORD_UNAUTHORIZED_MESSAGE;
     }
 
     @Override
-    public LoginResult authenticate(LoginCommand command) {
-        User user = findUser(command.getIdentifier());
-        if (user == null) {
-            throw new UnauthorizedException("用户名或密码错误");
-        }
-        boolean match = passwordEncoder.matches(command.getCredential(), user.getPassword());
-
-        if (!match) {
-            handleLoginFailure(user);
-            throw new UnauthorizedException("用户名或密码错误");
-        }
-
-        // TODO LoginResult转换逻辑
-        return LoginResult.builder()
-                .accessToken(jwtAuthTokenUtil.generateAccessToken(user))
-                .build();
+    protected boolean matcher(User user, String credential) {
+        return passwordEncoder.matches(credential, user.getPassword());
     }
 
-    private void handleLoginFailure(User user) {
-
-        // TODO Redis记录登录失败次数（使用Event推送任务）
-
-    }
-
-    protected abstract User findUser(String identifier);
 
     @Override
-    public void postProcess(LoginCommand command, LoginResult loginResult) {
-
-        // TODO 登录成功后处理
-
+    protected BaseLoginException buildLoginException(LoginCommand command) {
+        return new BadCredentialsException(command.getIdentifier());
     }
-
 
 }

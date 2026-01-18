@@ -1,6 +1,6 @@
 package com.echovale.music.appliaction.model;
 
-import com.echovale.shared.utils.ListUtils;
+import com.echovale.shared.utils.ListUtil;
 import com.netease.music.api.autoconfigure.configuration.pojo.result.AuthorDetailResult;
 import com.netease.music.api.autoconfigure.configuration.pojo.result.MusicDetailResult;
 import lombok.*;
@@ -28,7 +28,7 @@ public class ExternalMusicMapHolder {
             return new ExternalMusicMapHolder(Collections.emptyMap(), Collections.emptyMap());
         }
 
-        int capacity = ListUtils.getInitialCapacity(tracks.size());
+        int capacity = ListUtil.getInitialCapacity(tracks.size());
         Map<Long, Long> albumMap = new HashMap<>(capacity);
         Map<Long, List<Long>> authorMap = new HashMap<>(capacity);
 

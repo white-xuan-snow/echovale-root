@@ -20,7 +20,7 @@ import com.echovale.music.infrastructure.po.MusicAuthorsPO;
 import com.echovale.music.infrastructure.po.MusicPO;
 import com.echovale.music.infrastructure.po.MusicQualitiesPO;
 import com.echovale.music.infrastructure.query.wrapper.MusicWrapper;
-import com.echovale.shared.utils.ListUtils;
+import com.echovale.shared.utils.ListUtil;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -154,7 +154,7 @@ public class MusicQueryServiceImpl implements MusicQueryService {
         );
 
         // 方法一
-        HashMap<Long, List<MusicQualitiesPO>> musicQualitiesMap = new HashMap<>(ListUtils.getInitialCapacity(musicPOList.size()));
+        HashMap<Long, List<MusicQualitiesPO>> musicQualitiesMap = new HashMap<>(ListUtil.getInitialCapacity(musicPOList.size()));
         for (MusicQualitiesPO musicQualitiesPO : musicQualitiesPOList) {
             musicQualitiesMap.computeIfAbsent(musicQualitiesPO.getMusicId(), k -> new ArrayList<>()).add(musicQualitiesPO);
         }
@@ -186,7 +186,7 @@ public class MusicQueryServiceImpl implements MusicQueryService {
                 musicWrapper.queryAuthorIdsByMusicIdsWrapper(musicIds)
         );
 
-        Map<Long, List<Long>> musicLongIdToAuthorLongIdsMap = new HashMap<>(ListUtils.getInitialCapacity(musicIds.size()));
+        Map<Long, List<Long>> musicLongIdToAuthorLongIdsMap = new HashMap<>(ListUtil.getInitialCapacity(musicIds.size()));
 
         for (MusicAuthorsPO musicAuthorsPO : musicAuthorsPOList) {
             musicLongIdToAuthorLongIdsMap.computeIfAbsent(

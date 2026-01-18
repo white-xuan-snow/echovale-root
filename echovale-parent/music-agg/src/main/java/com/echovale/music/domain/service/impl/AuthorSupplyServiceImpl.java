@@ -10,7 +10,7 @@ import com.echovale.music.domain.valueobject.AuthorId;
 import com.echovale.music.domain.valueobject.MusicId;
 import com.echovale.music.domain.valueobject.NeteaseId;
 import com.echovale.music.infrastructure.converter.AuthorConverter;
-import com.echovale.shared.utils.ListUtils;
+import com.echovale.shared.utils.ListUtil;
 import com.netease.music.api.autoconfigure.configuration.pojo.result.AuthorDetailResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,6 +105,6 @@ public class AuthorSupplyServiceImpl implements AuthorSupplyService {
         List<Author> savedAuthors = authorRepository.save(persistentAuthors);
 
 
-        return ListUtils.concat(existentAuthors, savedAuthors);
+        return ListUtil.concat(existentAuthors, savedAuthors);
     }
 }

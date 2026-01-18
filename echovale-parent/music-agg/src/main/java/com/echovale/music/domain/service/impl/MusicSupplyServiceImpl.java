@@ -19,7 +19,7 @@ import com.echovale.music.infrastructure.converter.AuthorConverter;
 import com.echovale.music.infrastructure.converter.MusicConverter;
 import com.echovale.music.infrastructure.converter.MusicLyricConverter;
 import com.echovale.music.infrastructure.mapper.LyricMapper;
-import com.echovale.shared.utils.ListUtils;
+import com.echovale.shared.utils.ListUtil;
 import com.netease.music.api.autoconfigure.configuration.pojo.result.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -158,7 +158,7 @@ public class MusicSupplyServiceImpl implements MusicSupplyService {
                 .flatMap(track -> track.getAr().stream())
                 .map(authorConverter::byDetailResult)
                 .toList();
-        List<Author> totalAuthors = ListUtils.concat(existentAuthors, persistentAuthors);
+        List<Author> totalAuthors = ListUtil.concat(existentAuthors, persistentAuthors);
 
         HashMap<Long, Author> authorLongNeteaseIdMap = new HashMap<>();
         for (Author author : totalAuthors) {
@@ -195,7 +195,7 @@ public class MusicSupplyServiceImpl implements MusicSupplyService {
                 .filter(track -> !nonexistentNeteaseIdSet.contains(NeteaseId.byLong(track)))
                 .map(musicConverter::byDetailResult)
                 .toList();
-        List<Music> totalMusics = ListUtils.concat(existMusics, persistentMusics);
+        List<Music> totalMusics = ListUtil.concat(existMusics, persistentMusics);
 
 
         List<AlbumResult> albumResults = persistentTracks.stream()
@@ -209,7 +209,7 @@ public class MusicSupplyServiceImpl implements MusicSupplyService {
         List<Album> albums = albumSupplyService.createAndSaveAlbums(albumResults);
         List<Album> persistentAlbums = albumSupplyService.createAndSaveAlbums(albumResults);
 
-        List<Album> totalAlbums = ListUtils.concat(existentAlbumResults, persistentAlbums);
+        List<Album> totalAlbums = ListUtil.concat(existentAlbumResults, persistentAlbums);
 
 
         HashMap<Long, Album> albumNeteaseLongIdMap = new HashMap<>();

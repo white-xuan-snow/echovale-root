@@ -14,19 +14,5 @@ public interface LoginStrategy {
 
     LoginType getLoginType();
 
-    default LoginResult login(LoginCommand command) {
-        // 前置校验
-        preValidate(command);
-        // 核心认证
-        LoginResult result = authenticate(command);
-        // 后置处理
-        postProcess(command, result);
-        return result;
-    }
-
-    LoginResult authenticate(LoginCommand command);
-
-    void preValidate(LoginCommand command);
-
-    void postProcess(LoginCommand command, LoginResult result);
+    LoginResult login(LoginCommand command);
 }

@@ -12,7 +12,7 @@ import java.util.Date;
  */
 
 @Component
-public class TimeUtils {
+public class TimeUtil {
 
 
     public static Date millis(long increment) {

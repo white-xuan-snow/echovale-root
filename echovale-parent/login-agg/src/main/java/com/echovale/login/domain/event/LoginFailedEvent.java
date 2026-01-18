@@ -1,0 +1,30 @@
+package com.echovale.login.domain.event;
+
+import lombok.Getter;
+import lombok.Value;
+import org.springframework.context.ApplicationEvent;
+
+import java.time.LocalDateTime;
+
+/**
+ * @author 30531
+ * @version 1.0
+ * @description: TODO
+ * @date 2026/1/18 17:13
+ */
+
+@Getter
+public class LoginFailedEvent extends ApplicationEvent {
+    private final String username;
+    private final Long id;
+    private final String reason;
+    private final LocalDateTime occurredOn;
+
+    public LoginFailedEvent(Object source, String username, Long id, String reason) {
+        super(source);
+        this.username = username;
+        this.id = id;
+        this.reason = reason;
+        this.occurredOn = LocalDateTime.now();
+    }
+}
