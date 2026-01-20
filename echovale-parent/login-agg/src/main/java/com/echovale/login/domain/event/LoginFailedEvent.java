@@ -20,6 +20,7 @@ public class LoginFailedEvent extends ApplicationEvent {
     private final String reason;
     private final LocalDateTime occurredOn;
 
+    //
     public LoginFailedEvent(Object source, String username, Long id, String reason) {
         super(source);
         this.username = username;
