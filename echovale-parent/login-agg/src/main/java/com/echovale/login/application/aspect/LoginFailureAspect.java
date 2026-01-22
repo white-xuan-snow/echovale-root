@@ -36,16 +36,16 @@ public class LoginFailureAspect {
     )
     public void handleLoginFailure(JoinPoint joinPoint, BaseLoginException ex) {
         Object[] args = joinPoint.getArgs();
-        if (args.length == 0 || !(args[0] instanceof LoginCommand)) {
+        if (args.length == 0 || !(args[0] instanceof LoginCommand command)) {
             log.warn("无法发布登录失败事件：参数不匹配");
             return;
         }
-        LoginCommand command = (LoginCommand) args[0];
 
         LoginFailedEvent event = loginConverter.byCommand(command, ex.getMessage());
 
+        log.info("检测到登录失败，发布事件: id={}, reason={}", event.getId(), ex.getMessage());
 
-        log.error("Login failed: {}", ex.getMessage());
+        eventPublisher.publishEvent(event);
     }
 
 }

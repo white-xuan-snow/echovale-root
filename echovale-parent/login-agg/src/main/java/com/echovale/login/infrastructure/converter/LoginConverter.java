@@ -8,6 +8,7 @@ import com.echovale.login.application.command.LoginCommand;
 import com.echovale.login.domain.aggregate.User;
 import com.echovale.login.domain.event.LoginFailedEvent;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 @Mapper(
         config = MappingConfig.class,
@@ -16,5 +17,8 @@ import org.mapstruct.Mapper;
 public interface LoginConverter {
     LoginCommand byRequest(LoginRequest loginRequest);
 
+
+    @Mapping(target = "reason", source = "msg")
+    @Mapping(target = "id", source = "res.identifier")
     LoginFailedEvent byCommand(LoginCommand res, String msg);
 }

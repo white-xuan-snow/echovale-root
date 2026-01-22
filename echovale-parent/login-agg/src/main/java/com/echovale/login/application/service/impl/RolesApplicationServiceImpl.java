@@ -1,7 +1,7 @@
-package com.echovale.login.domain.service.impl;
+package com.echovale.login.application.service.impl;
 
 import com.echovale.login.application.command.ObtainUserRolesCommand;
-import com.echovale.login.domain.service.RolesApplicationService;
+import com.echovale.login.application.service.RolesApplicationService;
 import com.echovale.login.domain.valueobject.UserId;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

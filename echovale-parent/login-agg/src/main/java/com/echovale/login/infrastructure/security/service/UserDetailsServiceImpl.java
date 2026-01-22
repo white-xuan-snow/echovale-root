@@ -2,10 +2,9 @@ package com.echovale.login.infrastructure.security.service;
 
 import com.echovale.login.application.command.ObtainUserRolesCommand;
 import com.echovale.login.domain.aggregate.User;
-import com.echovale.login.domain.service.RolesApplicationService;
-import com.echovale.login.domain.service.UserApplicationService;
+import com.echovale.login.application.service.RolesApplicationService;
+import com.echovale.login.application.service.UserApplicationService;
 import com.echovale.login.infrastructure.security.entity.UserDetailsImpl;
-import com.echovale.shared.annotation.ApplicationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

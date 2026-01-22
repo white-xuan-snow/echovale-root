@@ -1,4 +1,4 @@
-package com.echovale.login.domain.service;
+package com.echovale.login.application.service;
 
 
 import com.echovale.login.application.command.ObtainUserRolesCommand;

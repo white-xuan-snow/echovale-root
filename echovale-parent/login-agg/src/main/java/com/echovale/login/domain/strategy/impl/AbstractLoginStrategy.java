@@ -3,7 +3,9 @@ package com.echovale.login.domain.strategy.impl;
 import com.echovale.login.api.vo.LoginResult;
 import com.echovale.login.application.command.LoginCommand;
 import com.echovale.login.domain.aggregate.User;
+import com.echovale.login.domain.exception.BadConditionsException;
 import com.echovale.login.domain.exception.BaseLoginException;
+import com.echovale.login.domain.service.LoginSecurityService;
 import com.echovale.login.domain.strategy.LoginStrategy;
 import com.echovale.login.infrastructure.properties.LoginStrategyProperties;
 import com.echovale.login.infrastructure.security.jwt.JwtAuthTokenUtil;
@@ -22,6 +24,8 @@ public abstract class AbstractLoginStrategy implements LoginStrategy {
 
     @Autowired
     private JwtAuthTokenUtil jwtAuthTokenUtil;
+    @Autowired
+    private LoginSecurityService loginSecurityService;
 
     @Override
     public LoginResult login(LoginCommand command) {
@@ -64,5 +68,10 @@ public abstract class AbstractLoginStrategy implements LoginStrategy {
 
     private void preValidate(LoginCommand command) {
         // TODO 预校验
+        boolean hasConditions = loginSecurityService.checkPreConditions(command.getIdentifier());
+
+        if (!hasConditions) {
+            throw new BadConditionsException(command.getIdentifier());
+        }
     }
 }

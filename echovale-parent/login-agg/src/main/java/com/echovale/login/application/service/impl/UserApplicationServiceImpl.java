@@ -1,7 +1,7 @@
-package com.echovale.login.domain.service.impl;
+package com.echovale.login.application.service.impl;
 
 import com.echovale.login.domain.aggregate.User;
-import com.echovale.login.domain.service.UserApplicationService;
+import com.echovale.login.application.service.UserApplicationService;
 import com.echovale.login.domain.valueobject.UserId;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

@@ -43,6 +43,12 @@ public abstract class AbstractRedisStore<V> implements RedisStore<V> {
     }
 
     @Override
+    public void increment(Object... args) {
+        String key = buildKey(args);
+        stringRedisTemplate.opsForValue().increment(key);
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public V get(Object... args) {
         String val = stringRedisTemplate.opsForValue().get(buildKey(args));
@@ -56,6 +62,6 @@ public abstract class AbstractRedisStore<V> implements RedisStore<V> {
 
     @Override
     public boolean hasKey(Object... args) {
-        return Boolean.TRUE.equals(stringRedisTemplate.hasKey(buildKey(args)));
+        return stringRedisTemplate.hasKey(buildKey(args));
     }
 }

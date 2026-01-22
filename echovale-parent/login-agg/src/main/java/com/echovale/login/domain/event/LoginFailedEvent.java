@@ -15,16 +15,17 @@ import java.time.LocalDateTime;
 
 @Getter
 public class LoginFailedEvent extends ApplicationEvent {
-    private final String username;
-    private final Long id;
+    private final String id;
+    private final String ipAddress;
     private final String reason;
+
     private final LocalDateTime occurredOn;
 
     //
-    public LoginFailedEvent(Object source, String username, Long id, String reason) {
+    public LoginFailedEvent(Object source, String id, String ipAddress, String reason) {
         super(source);
-        this.username = username;
         this.id = id;
+        this.ipAddress = ipAddress;
         this.reason = reason;
         this.occurredOn = LocalDateTime.now();
     }
