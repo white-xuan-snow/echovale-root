@@ -46,6 +46,7 @@ public abstract class AbstractRedisStore<V> implements RedisStore<V> {
     public void increment(Object... args) {
         String key = buildKey(args);
         stringRedisTemplate.opsForValue().increment(key);
+        stringRedisTemplate.expire(key, getExpire());
     }
 
     @Override

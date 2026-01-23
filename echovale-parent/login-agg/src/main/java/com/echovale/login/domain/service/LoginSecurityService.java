@@ -7,5 +7,7 @@ import org.springframework.stereotype.Service;
 public interface LoginSecurityService {
     void recordFailure(String id, String ipAddress);
 
-    boolean checkPreConditions(String identifier);
+    boolean checkIdConditions(String identifier);
+
+    boolean checkIpConditions(String ipAddress);
 }

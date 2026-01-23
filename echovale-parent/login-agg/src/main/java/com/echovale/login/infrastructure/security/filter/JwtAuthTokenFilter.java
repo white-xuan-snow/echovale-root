@@ -3,6 +3,7 @@ package com.echovale.login.infrastructure.security.filter;
 import com.echovale.common.domain.api.exception.BaseException;
 import com.echovale.common.domain.api.exception.UnauthorizedException;
 import com.echovale.login.domain.aggregate.User;
+import com.echovale.login.domain.service.LoginSecurityService;
 import com.echovale.login.domain.valueobject.UserId;
 import com.echovale.login.infrastructure.security.jwt.JwtAuthTokenUtil;
 import jakarta.servlet.FilterChain;

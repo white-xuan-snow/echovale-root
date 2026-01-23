@@ -68,7 +68,7 @@ public abstract class AbstractLoginStrategy implements LoginStrategy {
 
     private void preValidate(LoginCommand command) {
         // TODO 预校验
-        boolean hasConditions = loginSecurityService.checkPreConditions(command.getIdentifier());
+        boolean hasConditions = loginSecurityService.checkIdConditions(command.getIdentifier());
 
         if (!hasConditions) {
             throw new BadConditionsException(command.getIdentifier());

@@ -1,6 +1,8 @@
 package com.echovale.login.domain.service.impl;
 
 import com.echovale.login.domain.service.LoginSecurityService;
+import com.echovale.login.infrastructure.properties.LoginRedisProperties;
+import com.echovale.login.infrastructure.redis.LoginLockedRedisStore;
 import com.echovale.login.infrastructure.redis.LoginRecordRedisStore;
 import com.netease.music.api.autoconfigure.configuration.constant.Login;
 import lombok.RequiredArgsConstructor;
@@ -20,15 +22,27 @@ import org.springframework.stereotype.Service;
 public class LoginSecurityServiceImpl implements LoginSecurityService {
 
     private final LoginRecordRedisStore loginRecordRedisStore;
+    private final LoginLockedRedisStore loginLockedRedisStore;
 
     @Override
     public void recordFailure(String id, String ipAddress) {
         loginRecordRedisStore.increment(id);
         loginRecordRedisStore.increment(ipAddress);
+        if (loginRecordRedisStore.get(id) > LoginRedisProperties.LOGIN_ID_RECORD_MAX_TIMES) {
+            loginLockedRedisStore.set(id, LoginRedisProperties.LOGIN_LOCKED_EXPIRE);
+        }
+        if (loginRecordRedisStore.get(ipAddress) > LoginRedisProperties.LOGIN_IP_RECORD_MAX_TIMES) {
+            loginLockedRedisStore.set(ipAddress, LoginRedisProperties.LOGIN_LOCKED_EXPIRE);
+        }
     }
 
     @Override
-    public boolean checkPreConditions(String identifier) {
-        return loginRecordRedisStore.hasKey(identifier);
+    public boolean checkIdConditions(String identifier) {
+        return loginLockedRedisStore.hasKey(identifier);
+    }
+
+    @Override
+    public boolean checkIpConditions(String ipAddress) {
+        return loginLockedRedisStore.hasKey(ipAddress);
     }
 }
