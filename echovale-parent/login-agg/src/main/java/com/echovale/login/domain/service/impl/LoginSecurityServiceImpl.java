@@ -28,11 +28,12 @@ public class LoginSecurityServiceImpl implements LoginSecurityService {
     public void recordFailure(String id, String ipAddress) {
         loginRecordRedisStore.increment(id);
         loginRecordRedisStore.increment(ipAddress);
+
         if (loginRecordRedisStore.get(id) > LoginRedisProperties.LOGIN_ID_RECORD_MAX_TIMES) {
-            loginLockedRedisStore.set(id, LoginRedisProperties.LOGIN_LOCKED_EXPIRE);
+            loginLockedRedisStore.set(true, id);
         }
         if (loginRecordRedisStore.get(ipAddress) > LoginRedisProperties.LOGIN_IP_RECORD_MAX_TIMES) {
-            loginLockedRedisStore.set(ipAddress, LoginRedisProperties.LOGIN_LOCKED_EXPIRE);
+            loginLockedRedisStore.set(true, ipAddress);
         }
     }
 

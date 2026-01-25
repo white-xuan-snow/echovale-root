@@ -2,6 +2,7 @@ package com.echovale.login.infrastructure.security.filter;
 
 import com.echovale.common.domain.api.exception.UnauthorizedException;
 import com.echovale.login.domain.service.LoginSecurityService;
+import com.echovale.login.infrastructure.constant.LoginPaths;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,12 +32,13 @@ public class RemoteIpFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
-            String ip = request.getRemoteAddr();
+            if (LoginPaths.LOGIN.equals(request.getRequestURI())) {
+                String ip = request.getRemoteAddr();
 
-            if (!loginSecurityService.checkIpConditions(ip)) {
-                throw new UnauthorizedException("当前ip请求次数过多，请稍后尝试");
+                if (loginSecurityService.checkIpConditions(ip)) {
+                    throw new UnauthorizedException("当前ip请求次数过多，请稍后尝试");
+                }
             }
-
             filterChain.doFilter(request, response);
         } catch (UnauthorizedException e) {
             handlerExceptionResolver.resolveException(request, response, null, e);

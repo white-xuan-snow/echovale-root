@@ -14,7 +14,7 @@ import java.time.Duration;
  */
 
 @Component
-public class LoginLockedRedisStore extends AbstractRedisStore<String>  {
+public class LoginLockedRedisStore extends AbstractRedisStore<Boolean>  {
     @Override
     protected String getKeyFormat() {
         return LoginRedisProperties.LOGIN_LOCKED_KEY_FORMAT;
@@ -23,5 +23,10 @@ public class LoginLockedRedisStore extends AbstractRedisStore<String>  {
     @Override
     protected Duration getExpire() {
         return LoginRedisProperties.LOGIN_LOCKED_EXPIRE;
+    }
+
+    @Override
+    protected Boolean toV(String val) {
+        return Boolean.parseBoolean(val);
     }
 }

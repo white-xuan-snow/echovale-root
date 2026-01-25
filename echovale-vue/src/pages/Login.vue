@@ -81,7 +81,7 @@
       </v-card>
     </div>
 
-    <!-- 步骤2: 替换为新的滑块验证组件 -->
+    <!-- 滑块验证组件 -->
     <captcha-dialog 
       v-model="captchaDialog" 
       @success="handleVerificationSuccess"
@@ -96,7 +96,6 @@ import { useRouter } from 'vue-router';
 import { gsap } from 'gsap';
 import { CSSPlugin } from 'gsap/CSSPlugin';
 import isMobile from 'ismobilejs';
-// 步骤1: 导入新的验证码组件
 import CaptchaDialog from '../components/CaptchaDialog.vue';
 
 gsap.registerPlugin(CSSPlugin);
@@ -109,7 +108,6 @@ const identifier = ref(''); // 用户名/手机号/邮箱
 const credential = ref(''); // 密码/验证码
 const showPassword = ref(false);
 const isFormValid = ref(false);
-// 步骤3: 重命名 state，用于控制新的验证码对话框
 const captchaDialog = ref(false);
 const router = useRouter();
 
@@ -256,7 +254,6 @@ const sendCaptcha = () => {
 
 // -- 逻辑处理函数 --
 
-// 步骤4: 更新 handleLogin 逻辑
 const handleLogin = async () => {
   const { valid } = await form.value.validate();
 
@@ -269,7 +266,6 @@ const handleLogin = async () => {
   }
 };
 
-// 步骤5: 此函数现在由 CaptchaDialog 的 'success' 事件触发
 const handleVerificationSuccess = (token: string) => {
   // 确保对话框已关闭
   captchaDialog.value = false;
@@ -333,6 +329,9 @@ const loginRequest = async (loginType: string) => {
       method: 'GET',
       headers: headers,
     });
+
+    // 无论成功与否，单次验证 token 通常失效
+    validToken.value = '';
 
     // 检查响应状态
     if (!response.ok) {

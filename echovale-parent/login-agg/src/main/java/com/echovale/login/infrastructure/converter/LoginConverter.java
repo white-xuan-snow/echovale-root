@@ -10,6 +10,9 @@ import com.echovale.login.domain.event.LoginFailedEvent;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+/**
+ * @author 30531
+ */
 @Mapper(
         config = MappingConfig.class,
         componentModel = "spring"

@@ -11,6 +11,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -25,6 +26,7 @@ import java.io.IOException;
  * @date 2026/1/17 16:29
  */
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class ImageCaptchaFilter extends OncePerRequestFilter {
@@ -59,6 +61,8 @@ public class ImageCaptchaFilter extends OncePerRequestFilter {
             return;
         }
         boolean isValid = ((SecondaryVerificationApplication) imageCaptchaApplication).secondaryVerification(secondaryToken);
+
+        log.info("二次验证结果：{}", isValid);
         if (!isValid) {
             throw new UnauthorizedException("二次验证失败");
         }

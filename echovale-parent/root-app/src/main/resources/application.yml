@@ -3,7 +3,7 @@ spring:
     name: echovale-root-app
 
   profiles:
-    active: music, login
+    active: music, login, shared
   config:
     import:
       - optional:classpath:/application-login.yml

@@ -1,5 +1,6 @@
 package com.echovale.login.domain.event;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Value;
 import org.springframework.context.ApplicationEvent;
@@ -22,6 +23,7 @@ public class LoginFailedEvent extends ApplicationEvent {
     private final LocalDateTime occurredOn;
 
     //
+    @Builder
     public LoginFailedEvent(Object source, String id, String ipAddress, String reason) {
         super(source);
         this.id = id;

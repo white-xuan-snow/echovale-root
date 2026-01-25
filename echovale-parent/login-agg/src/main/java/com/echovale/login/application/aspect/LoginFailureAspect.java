@@ -41,7 +41,15 @@ public class LoginFailureAspect {
             return;
         }
 
-        LoginFailedEvent event = loginConverter.byCommand(command, ex.getMessage());
+        LoginFailedEvent event = LoginFailedEvent.builder()
+                .id(command.getIdentifier())
+                .reason(ex.getMessage())
+                .source(this)
+                .ipAddress(command.getIpAddress())
+                .build();
+
+
+
 
         log.info("检测到登录失败，发布事件: id={}, reason={}", event.getId(), ex.getMessage());
 

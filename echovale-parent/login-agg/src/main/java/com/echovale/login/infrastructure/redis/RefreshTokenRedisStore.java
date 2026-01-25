@@ -27,4 +27,9 @@ public class RefreshTokenRedisStore extends AbstractRedisStore<String> {
     protected Duration getExpire() {
         return LoginRedisProperties.REFRESH_TOKEN_EXPIRE;
     }
+
+    @Override
+    protected String toV(String val) {
+        return val;
+    }
 }

@@ -26,4 +26,9 @@ public class LoginRecordRedisStore extends AbstractRedisStore<Integer> {
     protected Duration getExpire() {
         return LoginRedisProperties.LOGIN_RECORD_EXPIRE;
     }
+
+    @Override
+    protected Integer toV(String val) {
+        return Integer.parseInt(val);
+    }
 }

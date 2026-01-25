@@ -42,7 +42,7 @@ public abstract class AbstractLoginStrategy implements LoginStrategy {
         User user = findUser(command.getIdentifier());
 
         String credential = user == null ? LoginStrategyProperties.DUMMY_CREDENTIAL : command.getCredential();
-
+        user = user == null ? User.builder().password(LoginStrategyProperties.DUMMY_CREDENTIAL + "a").build() : user;
         boolean match = matcher(user, credential);
         if (user == null || !match) {
             throw buildLoginException(command);
@@ -70,7 +70,7 @@ public abstract class AbstractLoginStrategy implements LoginStrategy {
         // TODO 预校验
         boolean hasConditions = loginSecurityService.checkIdConditions(command.getIdentifier());
 
-        if (!hasConditions) {
+        if (hasConditions) {
             throw new BadConditionsException(command.getIdentifier());
         }
     }

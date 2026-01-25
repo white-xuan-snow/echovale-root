@@ -3,6 +3,7 @@ package com.echovale.login.infrastructure.properties;
 import com.echovale.shared.properties.ProjectProperties;
 import jakarta.annotation.PostConstruct;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +16,7 @@ import java.time.Duration;
  * @date 2026/1/17 22:20
  */
 
+@Slf4j
 @Component
 @ConfigurationProperties(prefix = "login.redis")
 @Data
@@ -77,6 +79,20 @@ public class LoginRedisProperties {
                 "login:" +
                 loginLockedPrefix + ":" +
                 "%s";
+
+
+        log.info("初始化 Refresh Token Expire: {}", REFRESH_TOKEN_EXPIRE);
+        log.info("初始化 Refresh Token Prefix: {}", REFRESH_TOKEN_PREFIX);
+        log.info("初始化 Refresh Token Key Format: {}", REFRESH_TOKEN_KEY_FORMAT);
+        log.info("初始化 Login Record Expire: {}", LOGIN_RECORD_EXPIRE);
+        log.info("初始化 Login Record Prefix: {}", LOGIN_RECORD_PREFIX);
+        log.info("初始化 Login Record Key Format: {}", LOGIN_RECORD_KEY_FORMAT);
+        log.info("初始化 Login Locked Expire: {}", LOGIN_LOCKED_EXPIRE);
+        log.info("初始化 Login Locked Prefix: {}", LOGIN_LOCKED_PREFIX);
+        log.info("初始化 Login Locked Key Format: {}", LOGIN_LOCKED_KEY_FORMAT);
+        log.info("初始化 Login Id Record Max Times: {}", LOGIN_ID_RECORD_MAX_TIMES);
+        log.info("初始化 Login Ip Record Max Times: {}", LOGIN_IP_RECORD_MAX_TIMES);
+
     }
 
 }

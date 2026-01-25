@@ -81,13 +81,15 @@ public class SecurityConfig {
                         .authenticationEntryPoint(customAuthenticationEntryPoint)
                         // 权限异常
                         .accessDeniedHandler(customAccessDeniedHandler))
-                // JwtAuthToken过滤
+                // AccessToken 拦截器
                 .addFilterBefore(jwtAuthTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 // LoginPaths.LOGIN二次验证
                 .addFilterBefore(imageCaptchaFilter, UsernamePasswordAuthenticationFilter.class)
-                // ip拦截
+                // 远程 ip 地址拦截
                 .addFilterBefore(remoteIpFilter, UsernamePasswordAuthenticationFilter.class);
+
                 // 后写先执行，类似栈
+
 
         return http.build();
     }

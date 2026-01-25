@@ -2,7 +2,7 @@ const BACK_END = "http://localhost:8080"
 const PROXY = '/api'
 
 const SERVER= {
-    Port: 5173,
+    Port: 51731,
     Host: '0.0.0.0',
     Target: BACK_END,
     BackEnd: BACK_END,

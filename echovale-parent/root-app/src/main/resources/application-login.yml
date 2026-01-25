@@ -52,10 +52,14 @@ login:
     login-record-expire: 5m
     login-locked-prefix: "login_locked"
     login-locked-expire: 2h
-    login-max-record-times: 5
+    login-id-record-max-times: 5
+    login-ip-record-max-times: 30
 
   strategy:
 #    captcha-unauthorized-message:
 #    password-unauthorized-message:
     dummy-credential: "dummy-pT1]hF1@cU2>"
+    bad-conditions-message: "登录次数过多，请稍后重新尝试"
+    password-unauthorized-message: "用户名或密码错误"
+    captcha-unauthorized-message: "用户名或验证码错误"
 
