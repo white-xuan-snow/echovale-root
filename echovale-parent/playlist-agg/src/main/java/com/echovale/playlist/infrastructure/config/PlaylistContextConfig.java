@@ -1,6 +1,5 @@
 package com.echovale.playlist.infrastructure.config;
 
-import com.echovale.common.domain.infrastructure.config.CommonDomainContextConfig;
 import com.echovale.music.infrastructure.config.MusicContextConfig;
 import com.github.jeffreyning.mybatisplus.conf.EnableMPP;
 import org.mybatis.spring.annotation.MapperScan;

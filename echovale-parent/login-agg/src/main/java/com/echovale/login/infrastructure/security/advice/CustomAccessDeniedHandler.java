@@ -1,7 +1,7 @@
 package com.echovale.login.infrastructure.security.advice;
 
 import com.alibaba.fastjson.JSONObject;
-import com.echovale.common.domain.infrastructure.presistence.Result;
+import com.echovale.shared.infrastructure.presistence.Result;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

@@ -1,6 +1,5 @@
 package com.echovale.playlist.application.dto;
 
-import com.echovale.common.domain.infrastructure.presistence.PageResult;
 import com.echovale.music.domain.aggregate.Music;
 import com.echovale.playlist.domain.aggregate.Playlist;
 import lombok.*;

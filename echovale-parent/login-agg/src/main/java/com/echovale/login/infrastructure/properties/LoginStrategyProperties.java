@@ -1,6 +1,6 @@
 package com.echovale.login.infrastructure.properties;
 
-import com.echovale.shared.utils.StringUtil;
+import com.echovale.shared.infrastructure.utils.StringUtil;
 import jakarta.annotation.PostConstruct;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;

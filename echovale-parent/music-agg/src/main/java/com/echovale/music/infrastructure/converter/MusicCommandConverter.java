@@ -3,7 +3,7 @@ package com.echovale.music.infrastructure.converter;
 
 import com.echovale.music.api.dto.MusicLyricRequest;
 import com.echovale.music.appliaction.command.ElicitMusicLyricCommand;
-import com.echovale.common.domain.infrastructure.config.MappingConfig;
+import com.echovale.shared.infrastructure.config.MappingConfig;
 import com.echovale.music.infrastructure.converter.qualifier.MusicQualifier;
 import org.mapstruct.Mapper;
 

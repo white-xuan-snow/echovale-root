@@ -1,9 +1,7 @@
 package com.echovale.login.infrastructure.security.filter;
 
-import com.echovale.common.domain.api.exception.BaseException;
-import com.echovale.common.domain.api.exception.UnauthorizedException;
+import com.echovale.shared.domain.exception.UnauthorizedException;
 import com.echovale.login.domain.aggregate.User;
-import com.echovale.login.domain.service.LoginSecurityService;
 import com.echovale.login.domain.valueobject.UserId;
 import com.echovale.login.infrastructure.constant.LoginPaths;
 import com.echovale.login.infrastructure.security.jwt.JwtAuthTokenUtil;
@@ -56,7 +54,7 @@ public class JwtAuthTokenFilter extends OncePerRequestFilter {
                 }
             }
             filterChain.doFilter(request, response);
-        } catch (Exception e) {
+        } catch (UnauthorizedException e) {
             resolver.resolveException(request, response, null, new UnauthorizedException("Jwt验证失败"));
         }
 

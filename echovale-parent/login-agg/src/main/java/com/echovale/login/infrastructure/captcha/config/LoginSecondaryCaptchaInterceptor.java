@@ -2,7 +2,7 @@ package com.echovale.login.infrastructure.captcha.config;
 
 import cloud.tianai.captcha.application.ImageCaptchaApplication;
 import cloud.tianai.captcha.spring.plugins.secondary.SecondaryVerificationApplication;
-import com.echovale.common.domain.api.exception.UnauthorizedException;
+import com.echovale.shared.domain.exception.UnauthorizedException;
 import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

@@ -1,6 +1,6 @@
 package com.echovale.login.api.controller;
 
-import com.echovale.common.domain.infrastructure.presistence.Result;
+import com.echovale.shared.infrastructure.presistence.Result;
 import com.echovale.login.api.dto.LoginRequest;
 import com.echovale.login.api.vo.LoginResult;
 import com.echovale.login.application.command.LoginCommand;
@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 

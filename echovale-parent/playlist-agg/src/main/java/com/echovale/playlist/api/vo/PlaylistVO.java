@@ -1,8 +1,7 @@
 package com.echovale.playlist.api.vo;
 
-import com.echovale.common.domain.infrastructure.presistence.PageResult;
+import com.echovale.shared.infrastructure.presistence.PageResult;
 import com.echovale.music.api.vo.MusicVO;
-import com.echovale.music.domain.valueobject.MusicId;
 import com.echovale.music.domain.valueobject.NeteaseId;
 import com.echovale.playlist.domain.valueobject.PlaylistId;
 import lombok.AllArgsConstructor;

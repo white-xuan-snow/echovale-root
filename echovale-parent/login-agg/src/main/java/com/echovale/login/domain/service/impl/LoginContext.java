@@ -1,6 +1,6 @@
 package com.echovale.login.domain.service.impl;
 
-import com.echovale.common.domain.api.exception.NotImplementedException;
+import com.echovale.shared.domain.exception.NotImplementedException;
 import com.echovale.login.api.vo.LoginResult;
 import com.echovale.login.application.command.LoginCommand;
 import com.echovale.login.domain.entity.LoginType;

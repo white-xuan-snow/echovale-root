@@ -1,7 +1,7 @@
 package com.echovale.login.infrastructure.redis;
 
 import com.echovale.login.infrastructure.properties.LoginRedisProperties;
-import com.echovale.shared.redis.AbstractRedisStore;
+import com.echovale.shared.infrastructure.redis.AbstractRedisStore;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;

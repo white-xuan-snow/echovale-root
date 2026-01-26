@@ -5,12 +5,9 @@ import com.echovale.login.domain.aggregate.User;
 import com.echovale.login.domain.exception.BadCredentialsException;
 import com.echovale.login.domain.exception.BaseLoginException;
 import com.echovale.login.infrastructure.properties.LoginStrategyProperties;
-import com.echovale.shared.utils.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-
-import java.util.function.Supplier;
 
 /**
  * @author 30531

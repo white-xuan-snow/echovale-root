@@ -1,6 +1,6 @@
 package com.echovale.playlist.infrastructure.converter;
 
-import com.echovale.common.domain.infrastructure.config.MappingConfig;
+import com.echovale.shared.infrastructure.config.MappingConfig;
 import com.echovale.playlist.api.dto.PlaylistRequest;
 import com.echovale.playlist.application.command.ElicitPlaylistCommand;
 import org.mapstruct.Mapper;

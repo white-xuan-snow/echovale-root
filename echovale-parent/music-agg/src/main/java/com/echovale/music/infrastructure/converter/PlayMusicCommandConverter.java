@@ -2,7 +2,7 @@ package com.echovale.music.infrastructure.converter;
 
 import com.echovale.music.api.dto.MusicPlayRequest;
 import com.echovale.music.appliaction.command.PlayMusicCommand;
-import com.echovale.common.domain.infrastructure.config.MappingConfig;
+import com.echovale.shared.infrastructure.config.MappingConfig;
 import org.mapstruct.Mapper;
 
 /**

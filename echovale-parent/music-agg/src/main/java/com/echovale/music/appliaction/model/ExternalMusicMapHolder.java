@@ -1,6 +1,6 @@
 package com.echovale.music.appliaction.model;
 
-import com.echovale.shared.utils.ListUtil;
+import com.echovale.shared.infrastructure.utils.ListUtil;
 import com.netease.music.api.autoconfigure.configuration.pojo.result.AuthorDetailResult;
 import com.netease.music.api.autoconfigure.configuration.pojo.result.MusicDetailResult;
 import lombok.*;

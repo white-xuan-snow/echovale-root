@@ -61,12 +61,25 @@
 			<version>release1.3</version>
 		</dependency>
 
+
+
+
+		<!--        mapstruct-->
 		<dependency>
-			<groupId>com.echovale</groupId>
-			<artifactId>common-domain</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-			<scope>compile</scope>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct-processor</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct-jdk8</artifactId>
+		</dependency>
+
 
 	</dependencies>
 

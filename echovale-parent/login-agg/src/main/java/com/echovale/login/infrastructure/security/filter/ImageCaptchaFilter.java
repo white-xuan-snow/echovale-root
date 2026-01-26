@@ -2,7 +2,7 @@ package com.echovale.login.infrastructure.security.filter;
 
 import cloud.tianai.captcha.application.ImageCaptchaApplication;
 import cloud.tianai.captcha.spring.plugins.secondary.SecondaryVerificationApplication;
-import com.echovale.common.domain.api.exception.UnauthorizedException;
+import com.echovale.shared.domain.exception.UnauthorizedException;
 import com.echovale.login.infrastructure.constant.LoginPaths;
 import com.echovale.login.infrastructure.properties.ImageCaptchaProperties;
 import io.micrometer.common.util.StringUtils;
@@ -45,7 +45,7 @@ public class ImageCaptchaFilter extends OncePerRequestFilter {
                 validate(secondaryToken);
             }
             filterChain.doFilter(request, response);
-        } catch (Exception e) {
+        } catch (UnauthorizedException e) {
             resolver.resolveException(request, response, null, new UnauthorizedException("二次验证失败"));
         }
     }

@@ -5,7 +5,7 @@ import com.echovale.music.domain.gateway.MusicApiGateway;
 import com.echovale.music.domain.valueobject.MusicId;
 import com.echovale.music.domain.valueobject.NeteaseId;
 import com.echovale.music.infrastructure.converter.MusicUrlDetailVOConverter;
-import com.echovale.shared.external.gateway.MusicNeteaseApiGateway;
+import com.echovale.shared.infrastructure.gateway.MusicNeteaseApiGateway;
 import com.netease.music.api.autoconfigure.configuration.pojo.result.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

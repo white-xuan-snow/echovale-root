@@ -22,8 +22,6 @@
 
     <!-- ddd -->
     <module>root-app</module>
-    <module>common-domain</module>
-    <module>common-infra</module>
     <module>login-agg</module>
     <module>music-agg</module>
     <module>playlist-agg</module>

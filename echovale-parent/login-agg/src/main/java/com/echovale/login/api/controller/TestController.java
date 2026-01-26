@@ -1,6 +1,6 @@
 package com.echovale.login.api.controller;
 
-import com.echovale.common.domain.infrastructure.presistence.Result;
+import com.echovale.shared.infrastructure.presistence.Result;
 import com.echovale.login.infrastructure.constant.LoginPaths;
 import com.echovale.login.infrastructure.redis.RefreshTokenRedisStore;
 import lombok.RequiredArgsConstructor;

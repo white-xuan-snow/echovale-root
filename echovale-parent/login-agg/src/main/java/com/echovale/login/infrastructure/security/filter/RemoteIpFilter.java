@@ -1,6 +1,6 @@
 package com.echovale.login.infrastructure.security.filter;
 
-import com.echovale.common.domain.api.exception.UnauthorizedException;
+import com.echovale.shared.domain.exception.UnauthorizedException;
 import com.echovale.login.domain.service.LoginSecurityService;
 import com.echovale.login.infrastructure.constant.LoginPaths;
 import jakarta.servlet.FilterChain;

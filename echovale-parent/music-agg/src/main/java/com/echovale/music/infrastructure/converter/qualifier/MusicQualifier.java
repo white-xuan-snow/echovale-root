@@ -1,6 +1,5 @@
 package com.echovale.music.infrastructure.converter.qualifier;
 
-import com.echovale.common.domain.api.constant.Common;
 import com.echovale.music.api.vo.LyricVO;
 import com.echovale.music.domain.entity.MusicQuality;
 import com.echovale.music.domain.valueobject.AlbumId;
@@ -26,7 +25,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.echovale.common.domain.api.constant.Common.LONG_EMPTY;
+import static com.echovale.shared.domain.constant.Common.LONG_EMPTY;
 
 /**
  * @author 30531

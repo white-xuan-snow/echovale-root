@@ -1,7 +1,6 @@
 package com.echovale.login.domain.exception;
 
 import com.echovale.login.infrastructure.properties.LoginStrategyProperties;
-import com.echovale.shared.utils.StringUtil;
 
 /**
  * @author 30531

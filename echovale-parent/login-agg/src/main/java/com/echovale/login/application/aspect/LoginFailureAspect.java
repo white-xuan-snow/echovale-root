@@ -1,5 +1,6 @@
 package com.echovale.login.application.aspect;
 
+import com.echovale.shared.domain.exception.UnauthorizedException;
 import com.echovale.login.application.command.LoginCommand;
 import com.echovale.login.domain.event.LoginFailedEvent;
 import com.echovale.login.domain.exception.BaseLoginException;
@@ -54,6 +55,8 @@ public class LoginFailureAspect {
         log.info("检测到登录失败，发布事件: id={}, reason={}", event.getId(), ex.getMessage());
 
         eventPublisher.publishEvent(event);
+
+        throw new UnauthorizedException(ex.getMessage());
     }
 
 }

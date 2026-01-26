@@ -1,6 +1,6 @@
 package com.echovale.playlist.api.controller;
 
-import com.echovale.common.domain.infrastructure.presistence.Result;
+import com.echovale.shared.infrastructure.presistence.Result;
 import com.echovale.playlist.api.dto.PlaylistRequest;
 import com.echovale.playlist.api.vo.PlaylistVO;
 import com.echovale.playlist.application.command.ElicitPlaylistCommand;

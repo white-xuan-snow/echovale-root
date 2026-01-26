@@ -4,7 +4,7 @@ package com.echovale.music.infrastructure.converter;
 import com.echovale.music.api.vo.LyricVO;
 import com.echovale.music.domain.entity.Lyric;
 import com.echovale.music.domain.valueobject.MusicId;
-import com.echovale.common.domain.infrastructure.config.MappingConfig;
+import com.echovale.shared.infrastructure.config.MappingConfig;
 import com.echovale.music.infrastructure.converter.qualifier.MusicQualifier;
 import com.echovale.music.infrastructure.po.LyricPO;
 import com.netease.music.api.autoconfigure.configuration.pojo.result.LyricsResult;

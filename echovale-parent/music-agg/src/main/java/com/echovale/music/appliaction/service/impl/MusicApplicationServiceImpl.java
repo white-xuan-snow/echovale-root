@@ -1,6 +1,6 @@
 package com.echovale.music.appliaction.service.impl;
 
-import com.echovale.common.domain.api.utils.StreamUtils;
+import com.echovale.shared.infrastructure.utils.StreamUtils;
 import com.echovale.music.api.vo.LyricVO;
 import com.echovale.music.api.vo.MusicUrlDetailVO;
 import com.echovale.music.api.vo.MusicUrlVO;
@@ -36,7 +36,7 @@ import com.echovale.music.infrastructure.converter.AlbumConverter;
 import com.echovale.music.infrastructure.converter.AuthorConverter;
 import com.echovale.music.infrastructure.converter.MusicConverter;
 import com.echovale.music.infrastructure.converter.MusicLyricConverter;
-import com.echovale.shared.utils.ListUtil;
+import com.echovale.shared.infrastructure.utils.ListUtil;
 import com.netease.music.api.autoconfigure.configuration.api.MusicApi;
 import com.netease.music.api.autoconfigure.configuration.pojo.result.AlbumResult;
 import com.netease.music.api.autoconfigure.configuration.pojo.result.AuthorDetailResult;

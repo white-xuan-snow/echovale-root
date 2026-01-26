@@ -1,7 +1,7 @@
 package com.echovale.login.infrastructure.security.constant;
 
 import com.echovale.login.infrastructure.constant.LoginPaths;
-import com.echovale.shared.constant.GlobalPaths;
+import com.echovale.shared.domain.constant.GlobalPaths;
 
 /**
  * @author 30531

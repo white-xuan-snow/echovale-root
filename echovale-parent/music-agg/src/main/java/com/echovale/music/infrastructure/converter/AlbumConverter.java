@@ -7,7 +7,7 @@ import com.echovale.music.domain.aggregate.Author;
 import com.echovale.music.domain.valueobject.AlbumId;
 import com.echovale.music.domain.valueobject.AuthorId;
 import com.echovale.music.domain.valueobject.NeteaseId;
-import com.echovale.common.domain.infrastructure.config.MappingConfig;
+import com.echovale.shared.infrastructure.config.MappingConfig;
 import com.echovale.music.infrastructure.converter.qualifier.MusicQualifier;
 import com.echovale.music.infrastructure.po.AlbumAuthorsPO;
 import com.echovale.music.infrastructure.po.AlbumPO;

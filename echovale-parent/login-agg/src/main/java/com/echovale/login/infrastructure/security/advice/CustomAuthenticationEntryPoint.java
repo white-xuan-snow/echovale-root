@@ -1,7 +1,7 @@
 package com.echovale.login.infrastructure.security.advice;
 
 import com.alibaba.fastjson.JSONObject;
-import com.echovale.common.domain.infrastructure.presistence.Result;
+import com.echovale.shared.infrastructure.presistence.Result;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import jakarta.servlet.ServletException;

@@ -1,9 +1,9 @@
 package com.echovale.playlist.infrastructure.converter;
 
 
-import com.echovale.common.domain.infrastructure.config.MappingConfig;
-import com.echovale.common.domain.infrastructure.converter.BaseConverter;
-import com.echovale.common.domain.infrastructure.converter.PageConverter;
+import com.echovale.shared.infrastructure.config.MappingConfig;
+import com.echovale.shared.infrastructure.converter.BaseConverter;
+import com.echovale.shared.infrastructure.converter.PageConverter;
 import com.echovale.music.domain.aggregate.Music;
 import com.echovale.music.domain.valueobject.MusicId;
 import com.echovale.music.infrastructure.converter.qualifier.MusicQualifier;

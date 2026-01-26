@@ -1,7 +1,7 @@
 package com.echovale.music.api.controller;
 
 
-import com.echovale.common.domain.infrastructure.presistence.Result;
+import com.echovale.shared.infrastructure.presistence.Result;
 import com.echovale.music.api.dto.MusicLyricRequest;
 import com.echovale.music.api.dto.MusicPlayRequest;
 import com.echovale.music.api.vo.LyricVO;

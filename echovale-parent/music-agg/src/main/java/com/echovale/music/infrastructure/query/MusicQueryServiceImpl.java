@@ -20,7 +20,7 @@ import com.echovale.music.infrastructure.po.MusicAuthorsPO;
 import com.echovale.music.infrastructure.po.MusicPO;
 import com.echovale.music.infrastructure.po.MusicQualitiesPO;
 import com.echovale.music.infrastructure.query.wrapper.MusicWrapper;
-import com.echovale.shared.utils.ListUtil;
+import com.echovale.shared.infrastructure.utils.ListUtil;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

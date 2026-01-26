@@ -1,6 +1,6 @@
 package com.echovale.music.domain.service.impl;
 
-import com.echovale.common.domain.api.utils.StreamUtils;
+import com.echovale.shared.infrastructure.utils.StreamUtils;
 import com.echovale.music.appliaction.dto.MusicDTO;
 import com.echovale.music.appliaction.query.MusicQueryService;
 import com.echovale.music.domain.aggregate.Album;
@@ -19,7 +19,7 @@ import com.echovale.music.infrastructure.converter.AuthorConverter;
 import com.echovale.music.infrastructure.converter.MusicConverter;
 import com.echovale.music.infrastructure.converter.MusicLyricConverter;
 import com.echovale.music.infrastructure.mapper.LyricMapper;
-import com.echovale.shared.utils.ListUtil;
+import com.echovale.shared.infrastructure.utils.ListUtil;
 import com.netease.music.api.autoconfigure.configuration.pojo.result.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,6 +1,5 @@
 package com.echovale.login.domain.exception;
 
-import com.echovale.common.domain.api.exception.BaseException;
 import lombok.Getter;
 
 /**

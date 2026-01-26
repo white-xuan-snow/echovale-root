@@ -1,6 +1,6 @@
 package com.echovale.login.infrastructure.security.jwt;
 
-import com.echovale.common.domain.api.exception.UnauthorizedException;
+import com.echovale.shared.domain.exception.UnauthorizedException;
 import com.echovale.login.domain.aggregate.User;
 import com.echovale.login.domain.valueobject.UserId;
 import io.jsonwebtoken.Claims;

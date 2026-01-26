@@ -29,6 +29,4 @@ public class LoginFailureListener {
         log.info("开始处理登录失败事件：{}", event.getId());
         loginSecurityService.recordFailure(event.getId(), event.getIpAddress());
     }
-
-
 }

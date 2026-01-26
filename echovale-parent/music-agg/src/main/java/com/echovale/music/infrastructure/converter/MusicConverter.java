@@ -5,7 +5,7 @@ import com.echovale.music.appliaction.dto.MusicDTO;
 import com.echovale.music.domain.aggregate.Album;
 import com.echovale.music.domain.aggregate.Author;
 import com.echovale.music.domain.aggregate.Music;
-import com.echovale.common.domain.infrastructure.config.MappingConfig;
+import com.echovale.shared.infrastructure.config.MappingConfig;
 import com.echovale.music.domain.valueobject.AlbumId;
 import com.echovale.music.domain.valueobject.MusicId;
 import com.echovale.music.domain.valueobject.NeteaseId;
