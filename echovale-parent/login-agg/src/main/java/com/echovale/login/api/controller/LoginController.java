@@ -1,5 +1,6 @@
 package com.echovale.login.api.controller;
 
+import com.echovale.login.application.service.LoginApplicationService;
 import com.echovale.shared.infrastructure.presistence.Result;
 import com.echovale.login.api.dto.LoginRequest;
 import com.echovale.login.api.vo.LoginResult;
@@ -29,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class LoginController {
 
     private final LoginConverter loginConverter;
-    private final LoginContext loginContext;
+    private final LoginApplicationService loginApplicationService;
 
 
     @GetMapping()
@@ -41,9 +42,9 @@ public class LoginController {
 
         LoginCommand command = loginConverter.byRequest(loginRequest);
 
-        LoginResult result = loginContext.execute(command);
+        LoginResult res = loginApplicationService.checkAndLogin(command);
 
-        return ResponseEntity.ok(Result.success(result));
+        return ResponseEntity.ok(Result.success(res));
     }
 
 

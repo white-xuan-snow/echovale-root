@@ -31,27 +31,32 @@ public abstract class AbstractLoginStrategy implements LoginStrategy {
     public LoginResult login(LoginCommand command) {
         preValidate(command);
 
-        LoginResult result = authenticate(command);
+        User user = authenticate(command);
 
-        postProcess(command, result);
+        String accessToken = jwtAuthTokenUtil.generateAccessToken(user);
+        String refreshToken = jwtAuthTokenUtil.generateRefreshToken(user);
 
-        return result;
+        postProcess(user, command);
+
+        return LoginResult.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .user(user)
+                .build();
     }
 
-    private LoginResult authenticate(LoginCommand command) {
+    private User authenticate(LoginCommand command) {
         User user = findUser(command.getIdentifier());
 
         String credential = user == null ? LoginStrategyProperties.DUMMY_CREDENTIAL : command.getCredential();
         user = user == null ? User.builder().password(LoginStrategyProperties.DUMMY_CREDENTIAL + "a").build() : user;
         boolean match = matcher(user, credential);
+
         if (user == null || !match) {
             throw buildLoginException(command);
         }
 
-        // TODO LoginResult转换逻辑
-        return LoginResult.builder()
-                .accessToken(jwtAuthTokenUtil.generateAccessToken(user))
-                .build();
+        return user;
     }
 
     protected abstract BaseLoginException buildLoginException(LoginCommand command);
@@ -62,7 +67,7 @@ public abstract class AbstractLoginStrategy implements LoginStrategy {
 
     protected abstract User findUser(String identifier);
 
-    private void postProcess(LoginCommand command, LoginResult result) {
+    private void postProcess(User user, LoginCommand command) {
         // TODO 登录成功后处理
     }
 

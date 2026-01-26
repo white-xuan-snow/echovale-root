@@ -16,5 +16,7 @@ import lombok.Value;
 @Builder
 @AllArgsConstructor
 public class LoginResult {
+    User user;
     String accessToken;
+    String refreshToken;
 }

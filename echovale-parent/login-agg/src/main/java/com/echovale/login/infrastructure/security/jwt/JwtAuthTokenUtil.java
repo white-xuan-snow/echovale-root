@@ -37,12 +37,19 @@ public class JwtAuthTokenUtil {
 
     public String generateAccessToken(User user) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("type", "access");
         // 注意：Subject 习惯上存放唯一的 UserId
         claims.put("username", user.getUsername());
         claims.put("email", user.getEmail());
         claims.put("phone", user.getPhone());
         // TODO 权限信息
         return createToken(claims, user.getId().getStringValue(), accessExpiration);
+    }
+
+    public String generateRefreshToken(User user) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("type", "refresh");
+        return createToken(claims, user.getId().getStringValue(), refreshExpiration);
     }
 
     private String createToken(Map<String, Object> claims, String subject, Duration expiration) {
@@ -58,11 +65,16 @@ public class JwtAuthTokenUtil {
                 .compact();
     }
 
-    public Boolean validateToken(String token, User user) {
+    public Boolean validateAccessToken(String token, User user) {
         try {
             Claims claims = extractAllClaims(token);
 
             if (isTokenExpired(claims) || isNotIssued(claims)) {
+                return false;
+            }
+
+            String type = claims.get("type", String.class);
+            if (!"access".equals(type)) {
                 return false;
             }
 
@@ -72,6 +84,31 @@ public class JwtAuthTokenUtil {
                 user.setUsername(claims.get("username", String.class));
                 user.setEmail(claims.get("email", String.class));
                 user.setPhone(claims.get("phone", String.class));
+            }
+            return true;
+        } catch (Exception e) {
+            // TODO 异常处理与抛出异常
+            // 解析失败（签名错误、格式错误等）直接判定无效
+            throw new UnauthorizedException("Token错误");
+        }
+    }
+
+    public Boolean validateRefreshToken(String token, User user) {
+        try {
+            Claims claims = extractAllClaims(token);
+
+            if (isTokenExpired(claims) || isNotIssued(claims)) {
+                return false;
+            }
+
+            String type = claims.get("type", String.class);
+            if (!"refresh".equals(type)) {
+                return false;
+            }
+
+            if (user != null) {
+                // 从 sub (Subject) 中恢复 UserId
+                user.setId(UserId.of(claims.getSubject()));
             }
             return true;
         } catch (Exception e) {
