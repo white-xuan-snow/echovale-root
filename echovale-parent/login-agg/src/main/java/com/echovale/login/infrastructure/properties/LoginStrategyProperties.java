@@ -1,5 +1,6 @@
 package com.echovale.login.infrastructure.properties;
 
+import com.echovale.shared.infrastructure.properties.AbstractInitProperties;
 import com.echovale.shared.infrastructure.utils.StringUtil;
 import jakarta.annotation.PostConstruct;
 import lombok.Data;
@@ -14,11 +15,10 @@ import org.springframework.stereotype.Component;
  * @date 2026/1/18 15:46
  */
 
-@Slf4j
 @Component
 @ConfigurationProperties(prefix = "login.strategy")
 @Data
-public class LoginStrategyProperties {
+public class LoginStrategyProperties extends AbstractInitProperties {
     /**
      * @description: 假凭据，防止在登录策略中用户不存在时，过快的抛出异常（密码校验会更加耗时）
      */
@@ -37,21 +37,8 @@ public class LoginStrategyProperties {
     private String badConditionsMessage;
 
     public static String DUMMY_CREDENTIAL;
-    public static String PASSWORD_UNAUTHORIZED_MESSAGE;
-    public static String CAPTCHA_UNAUTHORIZED_MESSAGE;
-    public static String BAD_CONDITIONS_MESSAGE;
+    public static String PASSWORD_UNAUTHORIZED_MESSAGE = "用户名或密码错误";
+    public static String CAPTCHA_UNAUTHORIZED_MESSAGE = "用户名或验证码错误";
+    public static String BAD_CONDITIONS_MESSAGE = "登录次数过多，请稍后重新尝试";
 
-
-    @PostConstruct
-    private void init() {
-        DUMMY_CREDENTIAL = this.dummyCredential;
-        PASSWORD_UNAUTHORIZED_MESSAGE = StringUtil.oneOf(this.passwordUnauthorizedMessage, "用户名或密码错误");
-        CAPTCHA_UNAUTHORIZED_MESSAGE = StringUtil.oneOf(this.captchaUnauthorizedMessage, "用户名或验证码错误");
-        BAD_CONDITIONS_MESSAGE = StringUtil.oneOf(this.badConditionsMessage, "登录次数过多，请稍后重新尝试");
-
-        log.info("初始化：Dummy Credential: {}", DUMMY_CREDENTIAL);
-        log.info("初始化：Password Unauthorized Message: {}", PASSWORD_UNAUTHORIZED_MESSAGE);
-        log.info("初始化：Captcha Unauthorized Message: {}", CAPTCHA_UNAUTHORIZED_MESSAGE);
-        log.info("初始化：Bad Conditions Message: {}", BAD_CONDITIONS_MESSAGE);
-    }
 }

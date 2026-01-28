@@ -18,6 +18,7 @@ public class LoginPaths {
     public static final String LOGOUT = V1 + "/auth/logout";
 
     public static final String REGISTER = V1 + "/auth/register";
+    public static final String REFRESH = V1 + "/auth/refresh";
 
 
     public static class Test {

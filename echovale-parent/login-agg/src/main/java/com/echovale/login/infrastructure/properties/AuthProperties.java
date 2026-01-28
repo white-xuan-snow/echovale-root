@@ -1,8 +1,9 @@
-package com.echovale.shared.infrastructure.properties;
+package com.echovale.login.infrastructure.properties;
 
+import com.echovale.shared.infrastructure.properties.AbstractInitProperties;
 import jakarta.annotation.PostConstruct;
 import lombok.Data;
-import lombok.Value;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -10,14 +11,14 @@ import org.springframework.stereotype.Component;
  * @author 30531
  * @version 1.0
  * @description: TODO
- * @date 2026/1/23 21:16
+ * @date 2026/1/28 16:42
  */
 
 
 @Component
-@ConfigurationProperties("echovale")
+@ConfigurationProperties(prefix = "login")
 @Data
-public class ProjectProperties extends AbstractInitProperties {
+public class AuthProperties extends AbstractInitProperties {
 
     private String name;
 

@@ -113,6 +113,12 @@
 			<artifactId>fastjson</artifactId>
 		</dependency>
 
+		<!-- NanoID -->
+		<dependency>
+			<groupId>com.aventrix.jnanoid</groupId>
+			<artifactId>jnanoid</artifactId>
+		</dependency>
+
 
 		<dependency>
 			<groupId>com.echovale</groupId>

@@ -1,5 +1,6 @@
 package com.echovale.login.infrastructure.properties;
 
+import com.echovale.shared.infrastructure.properties.AbstractInitProperties;
 import com.echovale.shared.infrastructure.properties.ProjectProperties;
 import jakarta.annotation.PostConstruct;
 import lombok.Data;
@@ -20,7 +21,7 @@ import java.time.Duration;
 @Component
 @ConfigurationProperties(prefix = "login.redis")
 @Data
-public class LoginRedisProperties {
+public class LoginRedisProperties extends AbstractInitProperties {
 
     private Duration refreshTokenExpire;
     private String refreshTokenPrefix;
@@ -50,49 +51,20 @@ public class LoginRedisProperties {
     public static String LOGIN_LOCKED_PREFIX;
     public static String LOGIN_LOCKED_KEY_FORMAT;
 
-
-
-    @PostConstruct
-    private void init() {
-        REFRESH_TOKEN_EXPIRE = this.refreshTokenExpire;
-        REFRESH_TOKEN_PREFIX = this.refreshTokenPrefix;
-        REFRESH_TOKEN_KEY_FORMAT =
-                ProjectProperties.NAME + ":" +
-                "login:" +
+    @Override
+    protected void manualSyncCustomStaticFields() {
+        REFRESH_TOKEN_KEY_FORMAT = ProjectProperties.NAME + ":" +
+                AuthProperties.NAME + ":" +
                 refreshTokenPrefix + ":" +
                 "%s";
-
-        LOGIN_RECORD_EXPIRE = this.loginRecordExpire;
-        LOGIN_RECORD_PREFIX = this.loginRecordPrefix;
-        LOGIN_ID_RECORD_MAX_TIMES = this.loginIdRecordMaxTimes;
-        LOGIN_IP_RECORD_MAX_TIMES = this.loginIpRecordMaxTimes;
-        LOGIN_RECORD_KEY_FORMAT =
-                ProjectProperties.NAME + ":" +
-                "login:" +
+        LOGIN_RECORD_KEY_FORMAT = ProjectProperties.NAME + ":" +
+                AuthProperties.NAME + ":" +
                 loginRecordPrefix + ":" +
                 "%s";
-
-        LOGIN_LOCKED_EXPIRE = this.loginLockedExpire;
-        LOGIN_LOCKED_PREFIX = this.loginLockedPrefix;
-        LOGIN_LOCKED_KEY_FORMAT =
-                ProjectProperties.NAME + ":" +
-                "login:" +
+        LOGIN_LOCKED_KEY_FORMAT = ProjectProperties.NAME + ":" +
+                AuthProperties.NAME + ":" +
                 loginLockedPrefix + ":" +
                 "%s";
-
-
-        log.info("初始化 Refresh Token Expire: {}", REFRESH_TOKEN_EXPIRE);
-        log.info("初始化 Refresh Token Prefix: {}", REFRESH_TOKEN_PREFIX);
-        log.info("初始化 Refresh Token Key Format: {}", REFRESH_TOKEN_KEY_FORMAT);
-        log.info("初始化 Login Record Expire: {}", LOGIN_RECORD_EXPIRE);
-        log.info("初始化 Login Record Prefix: {}", LOGIN_RECORD_PREFIX);
-        log.info("初始化 Login Record Key Format: {}", LOGIN_RECORD_KEY_FORMAT);
-        log.info("初始化 Login Locked Expire: {}", LOGIN_LOCKED_EXPIRE);
-        log.info("初始化 Login Locked Prefix: {}", LOGIN_LOCKED_PREFIX);
-        log.info("初始化 Login Locked Key Format: {}", LOGIN_LOCKED_KEY_FORMAT);
-        log.info("初始化 Login Id Record Max Times: {}", LOGIN_ID_RECORD_MAX_TIMES);
-        log.info("初始化 Login Ip Record Max Times: {}", LOGIN_IP_RECORD_MAX_TIMES);
-
     }
 
 }

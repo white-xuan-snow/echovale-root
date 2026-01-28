@@ -57,6 +57,7 @@
     <jjwt.version>0.11.5</jjwt.version>
     <tianai-captcha.version>1.5.3</tianai-captcha.version>
     <fastjson.version>2.0.52</fastjson.version>
+    <nanoid.version>2.0.0</nanoid.version>
   </properties>
 
 
@@ -148,13 +149,11 @@
         <artifactId>mapstruct</artifactId>
         <version>${mapstruct.version}</version>
       </dependency>
-
       <dependency>
         <groupId>org.mapstruct</groupId>
         <artifactId>mapstruct-jdk8</artifactId>
         <version>${mapstruct.version}</version>
       </dependency>
-
       <dependency>
         <groupId>org.mapstruct</groupId>
         <artifactId>mapstruct-processor</artifactId>
@@ -224,6 +223,14 @@
         <groupId>io.jsonwebtoken</groupId>
         <artifactId>jjwt-jackson</artifactId>
         <version>${jjwt.version}</version>
+      </dependency>
+
+
+      <!-- NanoID -->
+      <dependency>
+        <groupId>com.aventrix.jnanoid</groupId>
+        <artifactId>jnanoid</artifactId>
+        <version>${nanoid.version}</version>
       </dependency>
 
     </dependencies>

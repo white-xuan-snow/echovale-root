@@ -35,6 +35,7 @@ captcha:
     keyPrefix: "captcha:secondary"
 
 login:
+  name: auth
   security:
     jwt:
       secret: "oD4oE1gQ8hI6jA0nG9gC2hJ1gE6dK4jA"

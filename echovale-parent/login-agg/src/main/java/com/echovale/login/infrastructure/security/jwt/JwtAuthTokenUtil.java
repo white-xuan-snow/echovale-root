@@ -1,5 +1,6 @@
 package com.echovale.login.infrastructure.security.jwt;
 
+import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import com.echovale.shared.domain.exception.UnauthorizedException;
 import com.echovale.login.domain.aggregate.User;
 import com.echovale.login.domain.valueobject.UserId;
@@ -38,6 +39,7 @@ public class JwtAuthTokenUtil {
     public String generateAccessToken(User user) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("type", "access");
+        claims.put("jti", NanoIdUtils.randomNanoId());
         // 注意：Subject 习惯上存放唯一的 UserId
         claims.put("username", user.getUsername());
         claims.put("email", user.getEmail());
@@ -49,6 +51,7 @@ public class JwtAuthTokenUtil {
     public String generateRefreshToken(User user) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("type", "refresh");
+        claims.put("jti", NanoIdUtils.randomNanoId());
         return createToken(claims, user.getId().getStringValue(), refreshExpiration);
     }
 
@@ -133,5 +136,10 @@ public class JwtAuthTokenUtil {
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
+    }
+
+
+    private String generateJti() {
+        return NanoIdUtils.randomNanoId();
     }
 }

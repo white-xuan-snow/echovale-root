@@ -5,6 +5,7 @@ import com.echovale.login.infrastructure.security.advice.CustomAuthenticationEnt
 import com.echovale.login.infrastructure.security.constant.PermitPaths;
 import com.echovale.login.infrastructure.security.filter.ImageCaptchaFilter;
 import com.echovale.login.infrastructure.security.filter.JwtAuthTokenFilter;
+import com.echovale.login.infrastructure.security.filter.RefreshFilter;
 import com.echovale.login.infrastructure.security.filter.RemoteIpFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -40,6 +41,7 @@ public class SecurityConfig {
     private final RemoteIpFilter remoteIpFilter;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    private final RefreshFilter refreshFilter;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -83,11 +85,12 @@ public class SecurityConfig {
                         .accessDeniedHandler(customAccessDeniedHandler))
                 // AccessToken 拦截器
                 .addFilterBefore(jwtAuthTokenFilter, UsernamePasswordAuthenticationFilter.class)
+                // 刷新 token 验证
+//                .addFilterBefore(refreshFilter, UsernamePasswordAuthenticationFilter.class)
                 // LoginPaths.LOGIN二次验证
                 .addFilterBefore(imageCaptchaFilter, UsernamePasswordAuthenticationFilter.class)
                 // 远程 ip 地址拦截
                 .addFilterBefore(remoteIpFilter, UsernamePasswordAuthenticationFilter.class);
-
                 // 后写先执行，类似栈
 
 
