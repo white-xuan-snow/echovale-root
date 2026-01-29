@@ -4,7 +4,7 @@ import com.echovale.login.infrastructure.security.advice.CustomAccessDeniedHandl
 import com.echovale.login.infrastructure.security.advice.CustomAuthenticationEntryPoint;
 import com.echovale.login.infrastructure.security.constant.PermitPaths;
 import com.echovale.login.infrastructure.security.filter.ImageCaptchaFilter;
-import com.echovale.login.infrastructure.security.filter.JwtAuthTokenFilter;
+import com.echovale.login.infrastructure.security.filter.AccessTokenFilter;
 import com.echovale.login.infrastructure.security.filter.RefreshFilter;
 import com.echovale.login.infrastructure.security.filter.RemoteIpFilter;
 import lombok.RequiredArgsConstructor;
@@ -36,13 +36,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtAuthTokenFilter jwtAuthTokenFilter;
+    private final AccessTokenFilter accessTokenFilter;
     private final ImageCaptchaFilter imageCaptchaFilter;
     private final RemoteIpFilter remoteIpFilter;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
-    private final RefreshFilter refreshFilter;
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new PasswordEncoder() {
@@ -84,9 +82,7 @@ public class SecurityConfig {
                         // 权限异常
                         .accessDeniedHandler(customAccessDeniedHandler))
                 // AccessToken 拦截器
-                .addFilterBefore(jwtAuthTokenFilter, UsernamePasswordAuthenticationFilter.class)
-                // 刷新 token 验证
-//                .addFilterBefore(refreshFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(accessTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 // LoginPaths.LOGIN二次验证
                 .addFilterBefore(imageCaptchaFilter, UsernamePasswordAuthenticationFilter.class)
                 // 远程 ip 地址拦截

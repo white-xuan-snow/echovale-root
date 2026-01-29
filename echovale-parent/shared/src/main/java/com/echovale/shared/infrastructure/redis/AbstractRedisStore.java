@@ -5,6 +5,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author 30531
@@ -67,5 +68,8 @@ public abstract class AbstractRedisStore<V> implements RedisStore<V> {
         return stringRedisTemplate.hasKey(buildKey(args));
     }
 
-
+    @Override
+    public Long getRemainingTtl(Object... args) {
+        return stringRedisTemplate.getExpire(buildKey(args), TimeUnit.SECONDS);
+    }
 }

@@ -17,12 +17,6 @@ import org.springframework.stereotype.Component;
 @Component
 public abstract class AbstractCaptchaLoginStrategy extends AbstractLoginStrategy {
 
-
-    @Override
-    protected String getUnauthorizedMsg() {
-        return LoginStrategyProperties.CAPTCHA_UNAUTHORIZED_MESSAGE;
-    }
-
     @Override
     protected boolean matcher(User user, String credential) {
         // TODO 接入验证码平台

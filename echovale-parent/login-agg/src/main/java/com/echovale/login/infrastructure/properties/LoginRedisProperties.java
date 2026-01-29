@@ -35,6 +35,8 @@ public class LoginRedisProperties extends AbstractInitProperties {
     private Duration loginLockedExpire;
     private String loginLockedPrefix;
 
+    private Duration tokenRefreshThreshold;
+
 
     public static Duration REFRESH_TOKEN_EXPIRE;
     public static String REFRESH_TOKEN_PREFIX;
@@ -50,6 +52,8 @@ public class LoginRedisProperties extends AbstractInitProperties {
     public static Duration LOGIN_LOCKED_EXPIRE;
     public static String LOGIN_LOCKED_PREFIX;
     public static String LOGIN_LOCKED_KEY_FORMAT;
+
+    public static Duration TOKEN_REFRESH_THRESHOLD = Duration.ofDays(2);
 
     @Override
     protected void manualSyncCustomStaticFields() {

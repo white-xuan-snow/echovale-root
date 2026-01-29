@@ -28,8 +28,10 @@ public class UserId {
     }
 
     public static UserId of(Object obj) {
-        if (obj instanceof Long) {
-            return new UserId((Long) obj);
+        if (obj instanceof Long userIdLong) {
+            return new UserId(userIdLong);
+        } else if (obj instanceof String userIdString) {
+            return new UserId(Long.valueOf(userIdString));
         } else {
             log.info("初始化失败，不支持的类型：{}", obj.getClass());
             return new UserId();

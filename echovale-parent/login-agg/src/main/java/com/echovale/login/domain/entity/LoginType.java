@@ -5,5 +5,6 @@ public enum LoginType {
     PASSWORD_PHONE,
     PASSWORD_EMAIL,
     CAPTCHA_PHONE,
-    CAPTCHA_EMAIL;
+    CAPTCHA_EMAIL,
+    REFRESH;
 }

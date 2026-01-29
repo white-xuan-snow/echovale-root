@@ -34,4 +34,10 @@ public class User {
     public static boolean isNull(User user) {
         return user == null;
     }
+
+    public static User onlySetPassword(String s) {
+        return User.builder()
+                .id(new UserId())
+                .password(s).build();
+    }
 }

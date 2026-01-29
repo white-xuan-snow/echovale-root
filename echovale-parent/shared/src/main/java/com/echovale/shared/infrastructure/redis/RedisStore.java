@@ -10,4 +10,5 @@ public interface RedisStore<V> {
     V get(Object... args);
     void delete(Object... args);
     boolean hasKey(Object... args);
+    Long getRemainingTtl(Object... args);
 }

@@ -36,9 +36,12 @@ public class LoginStrategyProperties extends AbstractInitProperties {
      */
     private String badConditionsMessage;
 
+    private String tokenUnauthorizedMessage;
+
     public static String DUMMY_CREDENTIAL;
     public static String PASSWORD_UNAUTHORIZED_MESSAGE = "用户名或密码错误";
     public static String CAPTCHA_UNAUTHORIZED_MESSAGE = "用户名或验证码错误";
     public static String BAD_CONDITIONS_MESSAGE = "登录次数过多，请稍后重新尝试";
+    public static String TOKEN_UNAUTHORIZED_MESSAGE = "登录凭证错误，请重新登录";
 
 }

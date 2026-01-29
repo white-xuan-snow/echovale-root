@@ -45,7 +45,6 @@ public class LoginFailureAspect {
         LoginFailedEvent event = LoginFailedEvent.builder()
                 .id(command.getIdentifier())
                 .reason(ex.getMessage())
-                .source(this)
                 .ipAddress(command.getIpAddress())
                 .build();
 

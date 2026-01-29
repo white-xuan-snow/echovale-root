@@ -42,13 +42,15 @@ login:
       issuer: "WHITEXUAN@2323"
       access-expiration: 2h
       refresh-expiration: 7d
+      jwt-jti-prefix: "jti"
+      jwt-jti-expire: 7d
     image-captcha:
       debug-secondary-token: "rhW1GZAOVlO5F3OhkU2RpOhUrnK1tIEKfPyQmLvZrh9Z9anRQGwcxpo2XMp7DXfRjf9YSywGEaWKxG8REuz7yXIbHIKafa02oBNGGfWt3qRyQFIeohLQIYhN0IawVKwV"
       secondary-token-header-name: "Secondary-Token"
 
   redis:
-    refresh-token-prefix: "refresh_token"
-    refresh-token-expire: 2m
+    refresh-token-prefix: "refresh"
+    refresh-token-expire: 7d
     login-record-prefix: "login_record"
     login-record-expire: 5m
     login-locked-prefix: "login_locked"

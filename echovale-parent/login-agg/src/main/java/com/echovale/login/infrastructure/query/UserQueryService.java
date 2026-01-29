@@ -2,6 +2,7 @@ package com.echovale.login.infrastructure.query;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.echovale.login.domain.aggregate.User;
+import com.echovale.login.domain.valueobject.UserId;
 import com.echovale.login.infrastructure.converter.UserConverter;
 import com.echovale.login.infrastructure.mapper.UserMapper;
 import com.echovale.login.infrastructure.po.UserPO;
@@ -49,6 +50,14 @@ public class UserQueryService {
 
     public User queryUserByEmail(String email) {
         LambdaQueryWrapper<UserPO> wrapper = userWrapper.queryUserByEmailWrapper(email);
+
+        UserPO userPO = userMapper.selectOne(wrapper);
+
+        return userConverter.byPO(userPO);
+    }
+
+    public User queryUserById(UserId userId) {
+        LambdaQueryWrapper<UserPO> wrapper = userWrapper.queryUserByIdWrapper(userId);
 
         UserPO userPO = userMapper.selectOne(wrapper);
 

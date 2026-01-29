@@ -8,7 +8,7 @@ import com.echovale.login.domain.exception.BaseLoginException;
 import com.echovale.login.domain.service.LoginSecurityService;
 import com.echovale.login.domain.strategy.LoginStrategy;
 import com.echovale.login.infrastructure.properties.LoginStrategyProperties;
-import com.echovale.login.infrastructure.security.jwt.JwtAuthTokenUtil;
+import com.echovale.login.infrastructure.security.jwt.JwtAuthTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 public abstract class AbstractLoginStrategy implements LoginStrategy {
 
     @Autowired
-    private JwtAuthTokenUtil jwtAuthTokenUtil;
+    private JwtAuthTokenService jwtAuthTokenService;
     @Autowired
     private LoginSecurityService loginSecurityService;
 
@@ -33,8 +33,8 @@ public abstract class AbstractLoginStrategy implements LoginStrategy {
 
         User user = authenticate(command);
 
-        String accessToken = jwtAuthTokenUtil.generateAccessToken(user);
-        String refreshToken = jwtAuthTokenUtil.generateRefreshToken(user);
+        String accessToken = jwtAuthTokenService.generateAccessToken(user);
+        String refreshToken = jwtAuthTokenService.generateRefreshToken(user);
 
         postProcess(user, command);
 
@@ -45,11 +45,13 @@ public abstract class AbstractLoginStrategy implements LoginStrategy {
                 .build();
     }
 
+
+
     private User authenticate(LoginCommand command) {
         User user = findUser(command.getIdentifier());
 
         String credential = user == null ? LoginStrategyProperties.DUMMY_CREDENTIAL : command.getCredential();
-        user = user == null ? User.builder().password(LoginStrategyProperties.DUMMY_CREDENTIAL + "a").build() : user;
+        user = user == null ? User.onlySetPassword(LoginStrategyProperties.DUMMY_CREDENTIAL + "a") : user;
         boolean match = matcher(user, credential);
 
         if (user == null || !match) {
@@ -60,8 +62,6 @@ public abstract class AbstractLoginStrategy implements LoginStrategy {
     }
 
     protected abstract BaseLoginException buildLoginException(LoginCommand command);
-
-    protected abstract String getUnauthorizedMsg();
 
     protected abstract boolean matcher(User user, String credential);
 

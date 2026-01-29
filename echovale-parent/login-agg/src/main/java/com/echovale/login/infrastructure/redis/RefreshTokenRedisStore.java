@@ -16,7 +16,6 @@ import java.time.Duration;
 
 
 @Component
-@RequiredArgsConstructor
 public class RefreshTokenRedisStore extends AbstractRedisStore<String> {
     @Override
     protected String getKeyFormat() {

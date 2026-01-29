@@ -96,6 +96,7 @@ import { useRouter } from 'vue-router';
 import { gsap } from 'gsap';
 import { CSSPlugin } from 'gsap/CSSPlugin';
 import isMobile from 'ismobilejs';
+import { ElMessage } from 'element-plus';
 import CaptchaDialog from '../components/CaptchaDialog.vue';
 
 gsap.registerPlugin(CSSPlugin);
@@ -333,22 +334,36 @@ const loginRequest = async (loginType: string) => {
     // 无论成功与否，单次验证 token 通常失效
     validToken.value = '';
 
-    // 检查响应状态
-    if (!response.ok) {
-      throw new Error(`登录失败: ${response.statusText}`);
+    // 解析响应数据
+    let responseData;
+    try {
+      responseData = await response.json();
+    } catch (e) {
+      throw new Error(`请求失败: ${response.statusText}`);
     }
 
-    // 解析响应数据
-    const responseData = await response.json();
     console.log('登录响应:', responseData);
 
-    // 播放退出动画并执行后续操作
-    playExitAnimation(() => {
-      localStorage.setItem('token', responseData.data.token);
-      router.push('/home');
-    });
-  } catch (error) {
+    // 检查响应状态和业务状态 (适配后端返回的 code: 200)
+    if (response.ok && (responseData.code === 200 || responseData.success)) {
+      // 播放退出动画并执行后续操作
+      playExitAnimation(() => {
+        // 保存 Token (适配后端返回的 accessToken 字段)
+        const token = responseData.data.accessToken || responseData.data.token;
+        if (token) {
+          localStorage.setItem('token', token);
+        }
+        router.push('/home');
+      });
+    } else {
+      // 优先使用后端返回的 msg
+      const errorMsg = responseData.msg || response.statusText || '登录失败';
+      ElMessage.error(errorMsg);
+      playShakeAnimation();
+    }
+  } catch (error: any) {
     console.error('登录失败:', error);
+    ElMessage.error(error.message || '网络请求失败');
     playShakeAnimation();
   }
 };

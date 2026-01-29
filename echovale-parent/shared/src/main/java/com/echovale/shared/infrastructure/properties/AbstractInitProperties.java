@@ -19,7 +19,7 @@ public abstract class AbstractInitProperties {
 
 
     @PostConstruct
-    protected void init() {
+    private void init() {
         autoSyncFixedStaticFields();
         manualSyncCustomStaticFields();
         logStaticFields();

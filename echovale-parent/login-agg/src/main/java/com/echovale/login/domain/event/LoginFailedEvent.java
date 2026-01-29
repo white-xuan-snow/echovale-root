@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
  */
 
 @Getter
-public class LoginFailedEvent extends ApplicationEvent {
+public class LoginFailedEvent {
     private final String id;
     private final String ipAddress;
     private final String reason;
@@ -24,8 +24,7 @@ public class LoginFailedEvent extends ApplicationEvent {
 
     //
     @Builder
-    public LoginFailedEvent(Object source, String id, String ipAddress, String reason) {
-        super(source);
+    public LoginFailedEvent(String id, String ipAddress, String reason) {
         this.id = id;
         this.ipAddress = ipAddress;
         this.reason = reason;

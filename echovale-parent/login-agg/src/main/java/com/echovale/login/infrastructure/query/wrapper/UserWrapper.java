@@ -1,6 +1,7 @@
 package com.echovale.login.infrastructure.query.wrapper;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.echovale.login.domain.valueobject.UserId;
 import com.echovale.login.infrastructure.po.UserPO;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import org.springframework.stereotype.Component;
@@ -42,5 +43,10 @@ public class UserWrapper {
     public LambdaQueryWrapper<UserPO> queryUserByEmailWrapper(String email) {
         return baseUserQueryWrapper()
                 .eq(UserPO::getEmail, email);
+    }
+
+    public LambdaQueryWrapper<UserPO> queryUserByIdWrapper(UserId userId) {
+        return baseUserQueryWrapper()
+                .eq(UserPO::getId, userId.getId());
     }
 }

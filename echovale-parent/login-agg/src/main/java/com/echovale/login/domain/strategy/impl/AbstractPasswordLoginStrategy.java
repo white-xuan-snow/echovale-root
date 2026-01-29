@@ -22,12 +22,6 @@ public abstract class AbstractPasswordLoginStrategy extends AbstractLoginStrateg
     @Autowired
     PasswordEncoder passwordEncoder;
 
-
-    @Override
-    protected String getUnauthorizedMsg() {
-        return LoginStrategyProperties.PASSWORD_UNAUTHORIZED_MESSAGE;
-    }
-
     @Override
     protected boolean matcher(User user, String credential) {
         return passwordEncoder.matches(credential, user.getPassword());

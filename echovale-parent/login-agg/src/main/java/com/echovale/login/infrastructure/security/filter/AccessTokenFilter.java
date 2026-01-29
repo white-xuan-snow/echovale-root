@@ -1,11 +1,10 @@
 package com.echovale.login.infrastructure.security.filter;
 
-import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import com.echovale.shared.domain.exception.UnauthorizedException;
 import com.echovale.login.domain.aggregate.User;
 import com.echovale.login.domain.valueobject.UserId;
 import com.echovale.login.infrastructure.constant.LoginPaths;
-import com.echovale.login.infrastructure.security.jwt.JwtAuthTokenUtil;
+import com.echovale.login.infrastructure.security.jwt.JwtAuthTokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,7 +20,6 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.UUID;
 
 /**
  * @author 30531
@@ -32,9 +30,9 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class JwtAuthTokenFilter extends OncePerRequestFilter {
+public class AccessTokenFilter extends OncePerRequestFilter {
 
-    private final JwtAuthTokenUtil jwtAuthTokenUtil;
+    private final JwtAuthTokenService jwtAuthTokenService;
     @Qualifier("handlerExceptionResolver")
     private final HandlerExceptionResolver resolver;
 
@@ -47,7 +45,7 @@ public class JwtAuthTokenFilter extends OncePerRequestFilter {
 
                 User user = new User();
 
-                if (token != null && jwtAuthTokenUtil.validateAccessToken(token, user)) {
+                if (token != null && jwtAuthTokenService.validateAccessToken(token, user)) {
                     UserId userId = user.getId();
                     if (userId.isNotNull() && SecurityContextHolder.getContext().getAuthentication() == null) {
                         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userId, null, new ArrayList<>());
