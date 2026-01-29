@@ -84,9 +84,9 @@ public class SecurityConfig {
                 // AccessToken 拦截器
                 .addFilterBefore(accessTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 // LoginPaths.LOGIN二次验证
-                .addFilterBefore(imageCaptchaFilter, UsernamePasswordAuthenticationFilter.class)
-                // 远程 ip 地址拦截
-                .addFilterBefore(remoteIpFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(imageCaptchaFilter, UsernamePasswordAuthenticationFilter.class);
+//                // 远程 ip 地址拦截
+//                .addFilterBefore(remoteIpFilter, UsernamePasswordAuthenticationFilter.class);
                 // 后写先执行，类似栈
 
 

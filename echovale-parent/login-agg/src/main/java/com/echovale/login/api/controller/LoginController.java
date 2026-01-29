@@ -9,6 +9,7 @@ import com.echovale.login.domain.service.impl.LoginContext;
 import com.echovale.login.infrastructure.constant.LoginPaths;
 import com.echovale.login.infrastructure.converter.LoginConverter;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -36,13 +37,14 @@ public class LoginController {
     @GetMapping()
     public ResponseEntity<?> login(LoginRequest loginRequest,
                                    HttpServletRequest httpServletRequest,
+                                   HttpServletResponse response,
                                    BindingResult bindingResult) {
         loginRequest.setIpAddress(httpServletRequest.getRemoteAddr());
 //        loginRequest.setDeviceId();
 
         LoginCommand command = loginConverter.byRequest(loginRequest);
 
-        LoginResult res = loginApplicationService.checkAndLogin(command);
+        LoginResult res = loginApplicationService.checkAndLogin(command, response);
 
         return ResponseEntity.ok(Result.success(res));
     }

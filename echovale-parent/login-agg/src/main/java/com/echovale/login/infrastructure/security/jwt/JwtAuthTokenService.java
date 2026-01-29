@@ -1,6 +1,7 @@
 package com.echovale.login.infrastructure.security.jwt;
 
 import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
+import com.echovale.login.application.command.LoginCommand;
 import com.echovale.login.domain.service.TokenStoreService;
 import com.echovale.login.infrastructure.properties.JwtAuthProperties;
 import com.echovale.login.infrastructure.properties.LoginRedisProperties;
@@ -50,7 +51,7 @@ public class JwtAuthTokenService {
         return createToken(claims, user.getId().getStringValue(), JwtAuthProperties.ACCESS_EXPIRATION);
     }
 
-    public String generateRefreshToken(User user) {
+    public String generateRefreshToken(User user, LoginCommand command) {
         long remainingTtl = tokenStoreService.getRemainingTtl(user.getId());
         long threshold = LoginRedisProperties.TOKEN_REFRESH_THRESHOLD.toSeconds();
 
@@ -63,7 +64,7 @@ public class JwtAuthTokenService {
         claims.put("type", "refresh");
         claims.put("jti", jti);
         String refreshToken = createToken(claims, user.getId().getStringValue(), JwtAuthProperties.REFRESH_EXPIRATION);
-        tokenStoreService.recordRefresh(user.getId(), jti);
+        tokenStoreService.recordRefresh(user.getId(), command.getClientId(), command.getDeviceId(), jti);
         return refreshToken;
     }
 

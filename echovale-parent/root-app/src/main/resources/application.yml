@@ -2,6 +2,10 @@ spring:
   application:
     name: echovale-root-app
 
+  threads:
+    virtual:
+      enabled: true
+
   profiles:
     active: music, login, shared
   config:

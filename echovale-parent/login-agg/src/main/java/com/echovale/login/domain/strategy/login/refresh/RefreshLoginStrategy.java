@@ -1,10 +1,11 @@
-package com.echovale.login.domain.strategy.impl;
+package com.echovale.login.domain.strategy.login.refresh;
 
 import com.echovale.login.application.command.LoginCommand;
 import com.echovale.login.domain.aggregate.User;
 import com.echovale.login.domain.entity.LoginType;
 import com.echovale.login.domain.exception.BaseLoginException;
 import com.echovale.login.domain.exception.BadRefreshTokenException;
+import com.echovale.login.domain.strategy.login.AbstractLoginStrategy;
 import com.echovale.login.infrastructure.query.UserQueryService;
 import com.echovale.login.infrastructure.security.jwt.JwtAuthTokenService;
 import lombok.RequiredArgsConstructor;

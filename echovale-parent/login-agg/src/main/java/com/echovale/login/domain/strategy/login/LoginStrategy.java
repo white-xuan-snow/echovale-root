@@ -1,10 +1,10 @@
-package com.echovale.login.domain.strategy;
+package com.echovale.login.domain.strategy.login;
 
 
-import com.echovale.login.api.dto.LoginRequest;
 import com.echovale.login.api.vo.LoginResult;
 import com.echovale.login.application.command.LoginCommand;
 import com.echovale.login.domain.entity.LoginType;
+import jakarta.servlet.http.HttpServletResponse;
 
 
 /**
@@ -14,5 +14,5 @@ public interface LoginStrategy {
 
     LoginType getLoginType();
 
-    LoginResult login(LoginCommand command);
+    LoginResult login(LoginCommand command, HttpServletResponse response);
 }

@@ -1,4 +1,4 @@
-package com.echovale.login.domain.strategy.impl;
+package com.echovale.login.domain.strategy.login;
 
 import com.echovale.login.api.vo.LoginResult;
 import com.echovale.login.application.command.LoginCommand;
@@ -6,10 +6,13 @@ import com.echovale.login.domain.aggregate.User;
 import com.echovale.login.domain.exception.BadConditionsException;
 import com.echovale.login.domain.exception.BaseLoginException;
 import com.echovale.login.domain.service.LoginSecurityService;
-import com.echovale.login.domain.strategy.LoginStrategy;
+import com.echovale.login.infrastructure.properties.JwtAuthProperties;
 import com.echovale.login.infrastructure.properties.LoginStrategyProperties;
 import com.echovale.login.infrastructure.security.jwt.JwtAuthTokenService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 
 /**
@@ -28,21 +31,23 @@ public abstract class AbstractLoginStrategy implements LoginStrategy {
     private LoginSecurityService loginSecurityService;
 
     @Override
-    public LoginResult login(LoginCommand command) {
+    public LoginResult login(LoginCommand command, HttpServletResponse response) {
         preValidate(command);
 
         User user = authenticate(command);
 
         String accessToken = jwtAuthTokenService.generateAccessToken(user);
-        String refreshToken = jwtAuthTokenService.generateRefreshToken(user);
+        String refreshToken = jwtAuthTokenService.generateRefreshToken(user, command);
 
-        postProcess(user, command);
-
-        return LoginResult.builder()
+        LoginResult res = LoginResult.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .user(user)
                 .build();
+
+        postProcess(command, res, response);
+
+        return res;
     }
 
 
@@ -67,8 +72,22 @@ public abstract class AbstractLoginStrategy implements LoginStrategy {
 
     protected abstract User findUser(String identifier);
 
-    private void postProcess(User user, LoginCommand command) {
-        // TODO 登录成功后处理
+    private void postProcess(LoginCommand command, LoginResult res, HttpServletResponse response) {
+        String refreshToken = res.getRefreshToken();
+
+        setRefreshTokenCookie(refreshToken, response);
+
+    }
+
+    private void setRefreshTokenCookie(String refreshToken, HttpServletResponse response) {
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(JwtAuthProperties.REFRESH_EXPIRATION)
+                .sameSite("Lax")
+                .build();
+        response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 
     private void preValidate(LoginCommand command) {

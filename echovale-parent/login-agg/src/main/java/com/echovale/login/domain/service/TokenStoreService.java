@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface TokenStoreService {
-    void recordRefresh(UserId userId, String jti);
+    void recordRefresh(UserId userId, String clientId, String deviceId, String jti);
 
     Boolean isRefreshValid(UserId userid, String jti);
 

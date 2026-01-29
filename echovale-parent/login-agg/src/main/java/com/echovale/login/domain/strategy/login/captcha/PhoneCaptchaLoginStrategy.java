@@ -1,4 +1,4 @@
-package com.echovale.login.domain.strategy.impl;
+package com.echovale.login.domain.strategy.login.captcha;
 
 import com.echovale.login.domain.aggregate.User;
 import com.echovale.login.domain.entity.LoginType;
@@ -9,14 +9,13 @@ import org.springframework.stereotype.Component;
  * @author 30531
  * @version 1.0
  * @description: TODO
- * @date 2026/1/17 02:24
+ * @date 2026/1/17 02:23
  */
+
 
 @Component
 @RequiredArgsConstructor
-public class EmailCaptchaLoginStrategy extends AbstractCaptchaLoginStrategy {
-
-
+public class PhoneCaptchaLoginStrategy extends AbstractCaptchaLoginStrategy {
     @Override
     protected User findUser(String identifier) {
         return null;
@@ -24,6 +23,6 @@ public class EmailCaptchaLoginStrategy extends AbstractCaptchaLoginStrategy {
 
     @Override
     public LoginType getLoginType() {
-        return LoginType.CAPTCHA_EMAIL;
+        return LoginType.CAPTCHA_PHONE;
     }
 }

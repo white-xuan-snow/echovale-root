@@ -60,7 +60,7 @@ public class LoginRedisProperties extends AbstractInitProperties {
         REFRESH_TOKEN_KEY_FORMAT = ProjectProperties.NAME + ":" +
                 AuthProperties.NAME + ":" +
                 refreshTokenPrefix + ":" +
-                "%s";
+                "%s:%s:%s";
         LOGIN_RECORD_KEY_FORMAT = ProjectProperties.NAME + ":" +
                 AuthProperties.NAME + ":" +
                 loginRecordPrefix + ":" +

@@ -1,4 +1,4 @@
-package com.echovale.login.domain.strategy.impl;
+package com.echovale.login.domain.strategy.login.password;
 
 import com.echovale.login.domain.aggregate.User;
 import com.echovale.login.domain.entity.LoginType;
@@ -10,22 +10,23 @@ import org.springframework.stereotype.Component;
  * @author 30531
  * @version 1.0
  * @description: TODO
- * @date 2026/1/17 02:22
+ * @date 2026/1/17 02:14
  */
 
 @Component
 @RequiredArgsConstructor
-public class EmailPasswordLoginStrategy extends AbstractPasswordLoginStrategy {
+public class UsernamePasswordLoginStrategy extends AbstractPasswordLoginStrategy {
 
     private final UserQueryService userQueryService;
 
+
     @Override
     protected User findUser(String identifier) {
-        return userQueryService.queryUserByEmail(identifier);
+        return userQueryService.queryUserByUsername(identifier);
     }
 
     @Override
     public LoginType getLoginType() {
-        return LoginType.PASSWORD_EMAIL;
+        return LoginType.PASSWORD_USERNAME;
     }
 }

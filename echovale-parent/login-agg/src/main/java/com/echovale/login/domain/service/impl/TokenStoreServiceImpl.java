@@ -22,8 +22,8 @@ public class TokenStoreServiceImpl implements TokenStoreService {
     private final RefreshTokenRedisStore refreshTokenRedisStore;
 
     @Override
-    public void recordRefresh(UserId userId, String jti) {
-        refreshTokenRedisStore.set(jti, userId.getStringValue());
+    public void recordRefresh(UserId userId, String clientId, String deviceId, String jti) {
+        refreshTokenRedisStore.set(jti, userId.getStringValue(), clientId, deviceId);
     }
 
     @Override

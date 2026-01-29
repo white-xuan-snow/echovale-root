@@ -4,8 +4,9 @@ import com.echovale.shared.domain.exception.NotImplementedException;
 import com.echovale.login.api.vo.LoginResult;
 import com.echovale.login.application.command.LoginCommand;
 import com.echovale.login.domain.entity.LoginType;
-import com.echovale.login.domain.strategy.LoginStrategy;
+import com.echovale.login.domain.strategy.login.LoginStrategy;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -36,7 +37,7 @@ public class LoginContext {
     }
 
 
-    public LoginResult execute(LoginCommand command)  {
+    public LoginResult execute(LoginCommand command, HttpServletResponse response)  {
 
         LoginStrategy strategy = loginStrategyMap.get(command.getLoginType());
 
@@ -45,6 +46,6 @@ public class LoginContext {
             throw new NotImplementedException("不支持的登录类型: " + command.getLoginType());
         }
 
-        return strategy.login(command);
+        return strategy.login(command, response);
     }
 }

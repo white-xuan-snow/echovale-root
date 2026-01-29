@@ -58,6 +58,7 @@
     <tianai-captcha.version>1.5.3</tianai-captcha.version>
     <fastjson.version>2.0.52</fastjson.version>
     <nanoid.version>2.0.0</nanoid.version>
+    <springdoc.version>2.3.0</springdoc.version>
   </properties>
 
 
@@ -231,6 +232,13 @@
         <groupId>com.aventrix.jnanoid</groupId>
         <artifactId>jnanoid</artifactId>
         <version>${nanoid.version}</version>
+      </dependency>
+
+      <!-- springdoc -->
+      <dependency>
+        <groupId>org.springdoc</groupId>
+        <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+        <version>${springdoc.version}</version>
       </dependency>
 
     </dependencies>

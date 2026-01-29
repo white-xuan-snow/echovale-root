@@ -1,4 +1,4 @@
-package com.echovale.login.domain.strategy.impl;
+package com.echovale.login.domain.strategy.login.password;
 
 import com.echovale.login.domain.aggregate.User;
 import com.echovale.login.domain.entity.LoginType;

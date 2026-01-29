@@ -4,6 +4,7 @@ import com.echovale.login.api.vo.LoginResult;
 import com.echovale.login.application.command.LoginCommand;
 import com.echovale.login.application.service.LoginApplicationService;
 import com.echovale.login.domain.service.impl.LoginContext;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,8 +25,8 @@ public class LoginApplicationServiceImpl implements LoginApplicationService {
 
 
     @Override
-    public LoginResult checkAndLogin(LoginCommand command) {
+    public LoginResult checkAndLogin(LoginCommand command, HttpServletResponse response) {
 
-        return loginContext.execute(command);
+        return loginContext.execute(command, response);
     }
 }

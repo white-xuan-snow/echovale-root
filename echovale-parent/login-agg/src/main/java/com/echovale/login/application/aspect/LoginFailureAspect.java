@@ -32,7 +32,7 @@ public class LoginFailureAspect {
 
 
     @AfterThrowing(
-            pointcut = "execution(* com.echovale.login.domain.strategy.LoginStrategy.login(..))",
+            pointcut = "execution(* com.echovale.login.domain.strategy.login.LoginStrategy.login(..))",
             throwing = "ex"
     )
     public void handleLoginFailure(JoinPoint joinPoint, BaseLoginException ex) {

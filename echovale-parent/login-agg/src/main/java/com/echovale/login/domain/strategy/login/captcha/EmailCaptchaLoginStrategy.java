@@ -1,8 +1,7 @@
-package com.echovale.login.domain.strategy.impl;
+package com.echovale.login.domain.strategy.login.captcha;
 
 import com.echovale.login.domain.aggregate.User;
 import com.echovale.login.domain.entity.LoginType;
-import com.echovale.login.infrastructure.query.UserQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -10,23 +9,21 @@ import org.springframework.stereotype.Component;
  * @author 30531
  * @version 1.0
  * @description: TODO
- * @date 2026/1/17 02:14
+ * @date 2026/1/17 02:24
  */
 
 @Component
 @RequiredArgsConstructor
-public class UsernamePasswordLoginStrategy extends AbstractPasswordLoginStrategy {
-
-    private final UserQueryService userQueryService;
+public class EmailCaptchaLoginStrategy extends AbstractCaptchaLoginStrategy {
 
 
     @Override
     protected User findUser(String identifier) {
-        return userQueryService.queryUserByUsername(identifier);
+        return null;
     }
 
     @Override
     public LoginType getLoginType() {
-        return LoginType.PASSWORD_USERNAME;
+        return LoginType.CAPTCHA_EMAIL;
     }
 }
