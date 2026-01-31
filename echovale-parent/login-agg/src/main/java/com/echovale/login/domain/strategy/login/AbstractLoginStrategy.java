@@ -6,13 +6,9 @@ import com.echovale.login.domain.aggregate.User;
 import com.echovale.login.domain.exception.BadConditionsException;
 import com.echovale.login.domain.exception.BaseLoginException;
 import com.echovale.login.domain.service.LoginSecurityService;
-import com.echovale.login.infrastructure.properties.JwtAuthProperties;
 import com.echovale.login.infrastructure.properties.LoginStrategyProperties;
 import com.echovale.login.infrastructure.security.jwt.JwtAuthTokenService;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 
 /**
@@ -31,7 +27,7 @@ public abstract class AbstractLoginStrategy implements LoginStrategy {
     private LoginSecurityService loginSecurityService;
 
     @Override
-    public LoginResult login(LoginCommand command, HttpServletResponse response) {
+    public LoginResult login(LoginCommand command) {
         preValidate(command);
 
         User user = authenticate(command);
@@ -45,15 +41,19 @@ public abstract class AbstractLoginStrategy implements LoginStrategy {
                 .user(user)
                 .build();
 
-        postProcess(command, res, response);
+        postProcess(command, res);
 
         return res;
     }
 
 
-
     private User authenticate(LoginCommand command) {
-        User user = findUser(command.getIdentifier());
+        User user = findUser(command);
+
+        // 旧刷新令牌验证成功直接结束调用，无需进行凭证匹配验证
+        if (command.getOldRefreshToken() != null && (isFindUserHasValidation() || jwtAuthTokenService.validateRefreshToken(command, user))) {
+            return user;
+        }
 
         String credential = user == null ? LoginStrategyProperties.DUMMY_CREDENTIAL : command.getCredential();
         user = user == null ? User.onlySetPassword(LoginStrategyProperties.DUMMY_CREDENTIAL + "a") : user;
@@ -66,31 +66,25 @@ public abstract class AbstractLoginStrategy implements LoginStrategy {
         return user;
     }
 
+    protected boolean isFindUserHasValidation() {
+        return false;
+    }
+
     protected abstract BaseLoginException buildLoginException(LoginCommand command);
 
     protected abstract boolean matcher(User user, String credential);
 
-    protected abstract User findUser(String identifier);
+    protected abstract User findUser(LoginCommand command);
 
-    private void postProcess(LoginCommand command, LoginResult res, HttpServletResponse response) {
-        String refreshToken = res.getRefreshToken();
+    private void postProcess(LoginCommand command, LoginResult res) {
 
-        setRefreshTokenCookie(refreshToken, response);
-
-    }
-
-    private void setRefreshTokenCookie(String refreshToken, HttpServletResponse response) {
-        ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
-                .httpOnly(true)
-                .secure(false)
-                .path("/")
-                .maxAge(JwtAuthProperties.REFRESH_EXPIRATION)
-                .sameSite("Lax")
-                .build();
-        response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        // TODO 后处理
     }
 
     private void preValidate(LoginCommand command) {
+        if (!LoginStrategyProperties.PRE_VALIDATE) {
+            return;
+        }
         // TODO 预校验
         boolean hasConditions = loginSecurityService.checkIdConditions(command.getIdentifier());
 

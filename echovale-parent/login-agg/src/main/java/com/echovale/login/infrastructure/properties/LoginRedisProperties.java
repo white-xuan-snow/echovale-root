@@ -17,7 +17,6 @@ import java.time.Duration;
  * @date 2026/1/17 22:20
  */
 
-@Slf4j
 @Component
 @ConfigurationProperties(prefix = "login.redis")
 @Data

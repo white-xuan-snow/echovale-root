@@ -1,10 +1,13 @@
 package com.echovale.login.api.dto;
 
 import com.alibaba.fastjson.annotation.JSONType;
+import com.echovale.login.domain.entity.ClientType;
 import com.echovale.login.domain.entity.LoginType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Value;
+import lombok.experimental.SuperBuilder;
 
 /**
  * @author 30531
@@ -14,14 +17,11 @@ import lombok.Data;
  */
 
 
-@Data
-@Builder
+@Value
+@SuperBuilder
 @AllArgsConstructor
-public class LoginRequest {
-    private String clientId;
-    private String deviceId;
-    private String ipAddress;
-    private String identifier;
-    private String credential;
-    private LoginType loginType;
+public class LoginRequest extends BaseRequest {
+    String identifier;
+    String credential;
+    LoginType loginType;
 }

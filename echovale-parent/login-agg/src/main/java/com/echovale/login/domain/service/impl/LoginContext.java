@@ -37,7 +37,7 @@ public class LoginContext {
     }
 
 
-    public LoginResult execute(LoginCommand command, HttpServletResponse response)  {
+    public LoginResult execute(LoginCommand command)  {
 
         LoginStrategy strategy = loginStrategyMap.get(command.getLoginType());
 
@@ -46,6 +46,6 @@ public class LoginContext {
             throw new NotImplementedException("不支持的登录类型: " + command.getLoginType());
         }
 
-        return strategy.login(command, response);
+        return strategy.login(command);
     }
 }

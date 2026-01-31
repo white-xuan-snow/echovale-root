@@ -1,5 +1,6 @@
 package com.echovale.login.domain.strategy.login.password;
 
+import com.echovale.login.application.command.LoginCommand;
 import com.echovale.login.domain.aggregate.User;
 import com.echovale.login.domain.entity.LoginType;
 import com.echovale.login.infrastructure.query.UserQueryService;
@@ -20,8 +21,8 @@ public class PhonePasswordLoginStrategy extends AbstractPasswordLoginStrategy {
     private final UserQueryService userQueryService;
 
     @Override
-    protected User findUser(String identifier) {
-        return userQueryService.queryUserByPhone(identifier);
+    protected User findUser(LoginCommand command) {
+        return userQueryService.queryUserByPhone(command.getIdentifier());
     }
 
     @Override

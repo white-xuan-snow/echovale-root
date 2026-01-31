@@ -2,8 +2,8 @@ package com.echovale.login.infrastructure.security.filter;
 
 import cloud.tianai.captcha.application.ImageCaptchaApplication;
 import cloud.tianai.captcha.spring.plugins.secondary.SecondaryVerificationApplication;
+import com.echovale.login.infrastructure.constant.Auth;
 import com.echovale.shared.domain.exception.UnauthorizedException;
-import com.echovale.login.infrastructure.constant.LoginPaths;
 import com.echovale.login.infrastructure.properties.ImageCaptchaProperties;
 import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.FilterChain;
@@ -40,7 +40,7 @@ public class ImageCaptchaFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
-            if (LoginPaths.LOGIN.equals(request.getRequestURI())) {
+            if (Auth.LOGIN.equals(request.getRequestURI())) {
                 String secondaryToken = request.getHeader(ImageCaptchaProperties.SECONDARY_TOKEN_HEADER_NAME);
                 validate(secondaryToken);
             }

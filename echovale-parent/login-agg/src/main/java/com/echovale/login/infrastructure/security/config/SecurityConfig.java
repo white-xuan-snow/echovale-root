@@ -5,7 +5,6 @@ import com.echovale.login.infrastructure.security.advice.CustomAuthenticationEnt
 import com.echovale.login.infrastructure.security.constant.PermitPaths;
 import com.echovale.login.infrastructure.security.filter.ImageCaptchaFilter;
 import com.echovale.login.infrastructure.security.filter.AccessTokenFilter;
-import com.echovale.login.infrastructure.security.filter.RefreshFilter;
 import com.echovale.login.infrastructure.security.filter.RemoteIpFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -83,10 +82,10 @@ public class SecurityConfig {
                         .accessDeniedHandler(customAccessDeniedHandler))
                 // AccessToken 拦截器
                 .addFilterBefore(accessTokenFilter, UsernamePasswordAuthenticationFilter.class)
-                // LoginPaths.LOGIN二次验证
-                .addFilterBefore(imageCaptchaFilter, UsernamePasswordAuthenticationFilter.class);
+                // Auth.LOGIN二次验证
+                .addFilterBefore(imageCaptchaFilter, UsernamePasswordAuthenticationFilter.class)
 //                // 远程 ip 地址拦截
-//                .addFilterBefore(remoteIpFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(remoteIpFilter, UsernamePasswordAuthenticationFilter.class);
                 // 后写先执行，类似栈
 
 

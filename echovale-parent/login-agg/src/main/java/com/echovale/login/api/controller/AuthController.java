@@ -1,18 +1,22 @@
 package com.echovale.login.api.controller;
 
+import com.echovale.login.api.dto.RefreshRequest;
 import com.echovale.login.application.service.LoginApplicationService;
+import com.echovale.login.infrastructure.constant.Auth;
+import com.echovale.login.infrastructure.properties.JwtAuthProperties;
 import com.echovale.shared.infrastructure.presistence.Result;
 import com.echovale.login.api.dto.LoginRequest;
 import com.echovale.login.api.vo.LoginResult;
 import com.echovale.login.application.command.LoginCommand;
-import com.echovale.login.domain.service.impl.LoginContext;
-import com.echovale.login.infrastructure.constant.LoginPaths;
 import com.echovale.login.infrastructure.converter.LoginConverter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,28 +30,24 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping(LoginPaths.LOGIN)
+@RequestMapping(Auth.PREFIX)
 @RequiredArgsConstructor
-public class LoginController {
+public class AuthController {
 
     private final LoginConverter loginConverter;
     private final LoginApplicationService loginApplicationService;
 
 
-    @GetMapping()
+    @GetMapping({Auth.LOGIN_SUFFIX, Auth.REFRESH_SUFFIX})
     public ResponseEntity<?> login(LoginRequest loginRequest,
-                                   HttpServletRequest httpServletRequest,
+                                   HttpServletRequest request,
                                    HttpServletResponse response,
-                                   BindingResult bindingResult) {
-        loginRequest.setIpAddress(httpServletRequest.getRemoteAddr());
-//        loginRequest.setDeviceId();
+                                   @CookieValue(name = "Refresh-Token", required = false) String refreshToken) {
 
-        LoginCommand command = loginConverter.byRequest(loginRequest);
+        LoginCommand command = loginConverter.byRequest(loginRequest, refreshToken, request.getRemoteAddr());
 
         LoginResult res = loginApplicationService.checkAndLogin(command, response);
 
         return ResponseEntity.ok(Result.success(res));
     }
-
-
 }

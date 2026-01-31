@@ -1,7 +1,7 @@
 package com.echovale.login.api.controller;
 
+import com.echovale.login.infrastructure.constant.Auth;
 import com.echovale.shared.infrastructure.presistence.Result;
-import com.echovale.login.infrastructure.constant.LoginPaths;
 import com.echovale.login.infrastructure.redis.RefreshTokenRedisStore;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,14 +18,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping(LoginPaths.Test.TEST)
+@RequestMapping(Auth.Test.TEST)
 @RequiredArgsConstructor
 public class TestController {
 
     private final RefreshTokenRedisStore refreshTokenRedisStore;
 
 
-    @GetMapping(LoginPaths.Test.REFRESH_TOKEN)
+    @GetMapping(Auth.Test.REFRESH_TOKEN)
     public ResponseEntity<?> test() {
         refreshTokenRedisStore.set("aaaaaa", "0001");
         String s = refreshTokenRedisStore.get("0001");

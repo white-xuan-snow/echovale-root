@@ -47,6 +47,7 @@ login:
     image-captcha:
       debug-secondary-token: "rhW1GZAOVlO5F3OhkU2RpOhUrnK1tIEKfPyQmLvZrh9Z9anRQGwcxpo2XMp7DXfRjf9YSywGEaWKxG8REuz7yXIbHIKafa02oBNGGfWt3qRyQFIeohLQIYhN0IawVKwV"
       secondary-token-header-name: "Secondary-Token"
+    remote-ip-filter: true
 
   redis:
     refresh-token-prefix: "refresh"
@@ -65,4 +66,5 @@ login:
     bad-conditions-message: "登录次数过多，请稍后重新尝试"
     password-unauthorized-message: "用户名或密码错误"
     captcha-unauthorized-message: "用户名或验证码错误"
+    pre-validate: true
 

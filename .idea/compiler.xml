@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
+    <option name="BUILD_PROCESS_HEAP_SIZE" value="2048" />
     <annotationProcessing>
       <profile default="true" name="Default" enabled="true" />
       <profile name="Maven default annotation processors profile" enabled="true">
@@ -14,8 +15,6 @@
         <outputRelativeToContentRoot value="true" />
         <option name="mapstruct.suppressGeneratorVersion" value="" />
         <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.36/lombok-1.18.36.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/mapstruct/mapstruct-processor/1.5.5.Final/mapstruct-processor-1.5.5.Final.jar" />
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.36/lombok-1.18.36.jar" />
           <entry name="$MAVEN_REPOSITORY$/org/mapstruct/mapstruct-processor/1.5.5.Final/mapstruct-processor-1.5.5.Final.jar" />
         </processorPath>
@@ -36,7 +35,6 @@
     <bytecodeTargetLevel>
       <module name="common-domain" target="17" />
       <module name="common-infra" target="17" />
-      <module name="purchase" target="17" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
@@ -53,7 +51,6 @@
       <module name="login" options="-parameters -Amapstruct.suppressGeneratorVersion" />
       <module name="music" options="-parameters -Amapstruct.suppressGeneratorVersion" />
       <module name="playlist" options="-parameters -Amapstruct.suppressGeneratorVersion" />
-      <module name="purchase" options="-parameters -Amapstruct.suppressGeneratorVersion" />
       <module name="root" options="-parameters -Amapstruct.suppressGeneratorVersion" />
       <module name="search" options="-parameters -Amapstruct.suppressGeneratorVersion" />
       <module name="shared" options="-parameters -Amapstruct.suppressGeneratorVersion" />

@@ -1,6 +1,6 @@
 package com.echovale.login.infrastructure.security.constant;
 
-import com.echovale.login.infrastructure.constant.LoginPaths;
+import com.echovale.login.infrastructure.constant.Auth;
 import com.echovale.shared.domain.constant.GlobalPaths;
 
 /**
@@ -12,8 +12,8 @@ import com.echovale.shared.domain.constant.GlobalPaths;
 public class PermitPaths {
 
     public final static String[] PERMIT_PATHS = {
-            LoginPaths.LOGIN,
-            LoginPaths.REGISTER,
+            Auth.LOGIN,
+            Auth.REGISTER,
             GlobalPaths.PUBLIC,
             // TODO 已开启全局路径
             GlobalPaths.ALL

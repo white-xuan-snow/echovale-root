@@ -8,12 +8,12 @@ import com.echovale.login.infrastructure.properties.LoginRedisProperties;
 import com.echovale.shared.domain.exception.UnauthorizedException;
 import com.echovale.login.domain.aggregate.User;
 import com.echovale.login.domain.valueobject.UserId;
+import com.echovale.shared.infrastructure.utils.StringUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -52,11 +52,12 @@ public class JwtAuthTokenService {
     }
 
     public String generateRefreshToken(User user, LoginCommand command) {
-        long remainingTtl = tokenStoreService.getRemainingTtl(user.getId());
+        long remainingTtl = tokenStoreService.getRemainingTtl(user.getId(), command.getClientType(), command.getDeviceId());
         long threshold = LoginRedisProperties.TOKEN_REFRESH_THRESHOLD.toSeconds();
 
+        // 如果剩余 TTL 大于阈值，则直接返回旧的 RefreshToken
         if (remainingTtl > threshold) {
-            return null;
+            return command.getOldRefreshToken();
         }
 
         Map<String, Object> claims = new HashMap<>();
@@ -64,7 +65,7 @@ public class JwtAuthTokenService {
         claims.put("type", "refresh");
         claims.put("jti", jti);
         String refreshToken = createToken(claims, user.getId().getStringValue(), JwtAuthProperties.REFRESH_EXPIRATION);
-        tokenStoreService.recordRefresh(user.getId(), command.getClientId(), command.getDeviceId(), jti);
+        tokenStoreService.recordRefresh(user.getId(), command.getClientType(), command.getDeviceId(), jti);
         return refreshToken;
     }
 
@@ -109,9 +110,9 @@ public class JwtAuthTokenService {
         }
     }
 
-    public Boolean validateRefreshToken(String token, User user) {
+    public Boolean validateRefreshToken(LoginCommand command, User user) {
         try {
-            Claims claims = extractAllClaims(token);
+            Claims claims = extractAllClaims(command.getOldRefreshToken());
 
             if (isTokenExpired(claims) || isNotIssued(claims)) {
                 return false;
@@ -128,7 +129,7 @@ public class JwtAuthTokenService {
 
                 String jti = claims.get("jti", String.class);
 
-                return tokenStoreService.isRefreshValid(user.getId(), jti);
+                return tokenStoreService.isRefreshValid(user.getId(), command.getClientType(), command.getDeviceId(), jti);
             }
             return true;
         } catch (Exception e) {

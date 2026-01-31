@@ -14,5 +14,5 @@ public interface LoginStrategy {
 
     LoginType getLoginType();
 
-    LoginResult login(LoginCommand command, HttpServletResponse response);
+    LoginResult login(LoginCommand command);
 }

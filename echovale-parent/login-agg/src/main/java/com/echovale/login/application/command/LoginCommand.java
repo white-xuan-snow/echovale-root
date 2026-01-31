@@ -1,9 +1,11 @@
 package com.echovale.login.application.command;
 
+import com.echovale.login.domain.entity.ClientType;
 import com.echovale.login.domain.entity.LoginType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Value;
 
 /**
  * @author 30531
@@ -12,14 +14,16 @@ import lombok.Data;
  * @date 2026/1/17 01:37
  */
 
-@Data
+@Value
 @Builder
 @AllArgsConstructor
 public class LoginCommand {
-    private String clientId;
-    private String deviceId;
-    private String ipAddress;
-    private String identifier;
-    private String credential;
-    private LoginType loginType;
+    ClientType clientType;
+    String deviceId;
+    String ipAddress;
+    String identifier;
+    String credential;
+    String oldRefreshToken;
+    LoginType loginType;
+    Boolean isValidate;
 }

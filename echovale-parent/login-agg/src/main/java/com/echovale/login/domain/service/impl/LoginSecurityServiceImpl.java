@@ -31,10 +31,10 @@ public class LoginSecurityServiceImpl implements LoginSecurityService {
         loginRecordRedisStore.increment(id);
         loginRecordRedisStore.increment(ipAddress);
 
-        if (loginRecordRedisStore.get(id) > LoginRedisProperties.LOGIN_ID_RECORD_MAX_TIMES) {
+        if (loginRecordRedisStore.get(id) >= LoginRedisProperties.LOGIN_ID_RECORD_MAX_TIMES) {
             loginLockedRedisStore.set(true, id);
         }
-        if (loginRecordRedisStore.get(ipAddress) > LoginRedisProperties.LOGIN_IP_RECORD_MAX_TIMES) {
+        if (loginRecordRedisStore.get(ipAddress) >= LoginRedisProperties.LOGIN_IP_RECORD_MAX_TIMES) {
             loginLockedRedisStore.set(true, ipAddress);
         }
     }

@@ -4,9 +4,12 @@ import com.echovale.login.api.vo.LoginResult;
 import com.echovale.login.application.command.LoginCommand;
 import com.echovale.login.application.service.LoginApplicationService;
 import com.echovale.login.domain.service.impl.LoginContext;
+import com.echovale.login.infrastructure.properties.JwtAuthProperties;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 
 /**
@@ -26,7 +29,21 @@ public class LoginApplicationServiceImpl implements LoginApplicationService {
 
     @Override
     public LoginResult checkAndLogin(LoginCommand command, HttpServletResponse response) {
+        LoginResult res = loginContext.execute(command);
+        setRefreshTokenCookie(res.refreshToken(), response);
+        return res;
+    }
 
-        return loginContext.execute(command, response);
+
+
+    private void setRefreshTokenCookie(String refreshToken, HttpServletResponse response) {
+        ResponseCookie cookie = ResponseCookie.from("Refresh-Token", refreshToken)
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(JwtAuthProperties.REFRESH_EXPIRATION)
+                .sameSite("Lax")
+                .build();
+        response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 }

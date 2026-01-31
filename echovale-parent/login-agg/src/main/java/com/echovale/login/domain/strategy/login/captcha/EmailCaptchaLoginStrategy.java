@@ -1,5 +1,6 @@
 package com.echovale.login.domain.strategy.login.captcha;
 
+import com.echovale.login.application.command.LoginCommand;
 import com.echovale.login.domain.aggregate.User;
 import com.echovale.login.domain.entity.LoginType;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ public class EmailCaptchaLoginStrategy extends AbstractCaptchaLoginStrategy {
 
 
     @Override
-    protected User findUser(String identifier) {
+    protected User findUser(LoginCommand command) {
         return null;
     }
 

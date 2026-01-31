@@ -1,9 +1,9 @@
 package com.echovale.login.infrastructure.security.filter;
 
+import com.echovale.login.infrastructure.constant.Auth;
 import com.echovale.shared.domain.exception.UnauthorizedException;
 import com.echovale.login.domain.aggregate.User;
 import com.echovale.login.domain.valueobject.UserId;
-import com.echovale.login.infrastructure.constant.LoginPaths;
 import com.echovale.login.infrastructure.security.jwt.JwtAuthTokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -40,7 +40,7 @@ public class AccessTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         try {
-            if (!LoginPaths.LOGIN.equals(request.getRequestURI())) {
+            if (!Auth.LOGIN.equals(request.getRequestURI())) {
                 String token = getTokenFromRequest(request);
 
                 User user = new User();

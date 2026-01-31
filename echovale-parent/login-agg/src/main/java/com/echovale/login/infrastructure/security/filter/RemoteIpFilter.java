@@ -1,8 +1,9 @@
 package com.echovale.login.infrastructure.security.filter;
 
+import com.echovale.login.infrastructure.constant.Auth;
+import com.echovale.login.infrastructure.properties.SecurityFilterProperties;
 import com.echovale.shared.domain.exception.UnauthorizedException;
 import com.echovale.login.domain.service.LoginSecurityService;
-import com.echovale.login.infrastructure.constant.LoginPaths;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,7 +33,7 @@ public class RemoteIpFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
-            if (LoginPaths.LOGIN.equals(request.getRequestURI())) {
+            if (SecurityFilterProperties.REMOTE_IP_FILTER && Auth.LOGIN.equals(request.getRequestURI())) {
                 String ip = request.getRemoteAddr();
 
                 if (loginSecurityService.checkIpConditions(ip)) {

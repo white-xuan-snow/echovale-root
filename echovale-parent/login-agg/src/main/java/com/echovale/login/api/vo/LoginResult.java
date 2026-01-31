@@ -1,9 +1,9 @@
 package com.echovale.login.api.vo;
 
 import com.echovale.login.domain.aggregate.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Value;
 
 /**
  * @author 30531
@@ -12,11 +12,6 @@ import lombok.Value;
  * @date 2026/1/17 01:08
  */
 
-@Value
 @Builder
-@AllArgsConstructor
-public class LoginResult {
-    User user;
-    String accessToken;
-    String refreshToken;
+public record LoginResult(User user, String accessToken, @JsonIgnore String refreshToken) {
 }
