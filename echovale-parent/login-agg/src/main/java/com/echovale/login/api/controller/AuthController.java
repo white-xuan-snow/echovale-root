@@ -37,7 +37,6 @@ public class AuthController {
     private final LoginConverter loginConverter;
     private final LoginApplicationService loginApplicationService;
 
-
     @GetMapping({Auth.LOGIN_SUFFIX, Auth.REFRESH_SUFFIX})
     public ResponseEntity<?> login(LoginRequest loginRequest,
                                    HttpServletRequest request,
