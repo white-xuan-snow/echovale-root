@@ -5,6 +5,10 @@ import com.echovale.login.application.command.LoginCommand;
 import com.echovale.login.domain.service.TokenStoreService;
 import com.echovale.login.infrastructure.properties.JwtAuthProperties;
 import com.echovale.login.infrastructure.properties.LoginRedisProperties;
+import com.echovale.login.infrastructure.security.exception.AccessTokenExpiredException;
+import com.echovale.login.infrastructure.security.exception.AccessTokenInvalidException;
+import com.echovale.login.infrastructure.security.exception.RefreshTokenExpiredException;
+import com.echovale.login.infrastructure.security.exception.RefreshTokenInvalidException;
 import com.echovale.shared.domain.exception.UnauthorizedException;
 import com.echovale.login.domain.aggregate.User;
 import com.echovale.login.domain.valueobject.UserId;
@@ -86,13 +90,16 @@ public class JwtAuthTokenService {
         try {
             Claims claims = extractAllClaims(token);
 
-            if (isTokenExpired(claims) || isNotIssued(claims)) {
-                return false;
+            if (isTokenExpired(claims)) {
+                throw new AccessTokenExpiredException();
+            }
+            if (isNotIssued(claims)) {
+                throw new AccessTokenInvalidException();
             }
 
             String type = claims.get("type", String.class);
             if (!"access".equals(type)) {
-                return false;
+                throw new AccessTokenInvalidException();
             }
 
             if (user != null) {
@@ -106,7 +113,7 @@ public class JwtAuthTokenService {
         } catch (Exception e) {
             // TODO 异常处理与抛出异常
             // 解析失败（签名错误、格式错误等）直接判定无效
-            throw new UnauthorizedException("Token 错误");
+            throw new AccessTokenInvalidException();
         }
     }
 
@@ -114,13 +121,16 @@ public class JwtAuthTokenService {
         try {
             Claims claims = extractAllClaims(command.getOldRefreshToken());
 
-            if (isTokenExpired(claims) || isNotIssued(claims)) {
-                return false;
+            if (isTokenExpired(claims)) {
+                throw new RefreshTokenExpiredException();
+            }
+            if (isNotIssued(claims)) {
+                throw new RefreshTokenInvalidException();
             }
 
             String type = claims.get("type", String.class);
             if (!"refresh".equals(type)) {
-                return false;
+                throw new RefreshTokenInvalidException();
             }
 
             if (user != null) {
@@ -135,7 +145,7 @@ public class JwtAuthTokenService {
         } catch (Exception e) {
             // TODO 异常处理与抛出异常
             // 解析失败（签名错误、格式错误等）直接判定无效
-            throw new UnauthorizedException("Token 错误");
+            throw new RefreshTokenInvalidException();
         }
     }
 

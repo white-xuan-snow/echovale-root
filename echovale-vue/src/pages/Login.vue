@@ -351,7 +351,8 @@ const loginRequest = async (loginType: string) => {
         // 保存 Token (适配后端返回的 accessToken 字段)
         const token = responseData.data.accessToken || responseData.data.token;
         if (token) {
-          localStorage.setItem('token', token);
+          // 在 token 开头加入 Bearer 前缀，符合 Authorization Header 规范
+          localStorage.setItem('token', `Bearer ${token}`);
         }
         router.push('/home');
       });

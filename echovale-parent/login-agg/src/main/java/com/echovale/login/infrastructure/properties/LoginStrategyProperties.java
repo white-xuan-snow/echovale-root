@@ -1,10 +1,7 @@
 package com.echovale.login.infrastructure.properties;
 
 import com.echovale.shared.infrastructure.properties.AbstractInitProperties;
-import com.echovale.shared.infrastructure.utils.StringUtil;
-import jakarta.annotation.PostConstruct;
 import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -38,6 +35,8 @@ public class LoginStrategyProperties extends AbstractInitProperties {
 
     private String tokenUnauthorizedMessage;
     private Boolean preValidate;
+    private String secondaryCaptchaUnauthorizedMessage;
+    private String accountStatusErrorMessage;
 
     public static String DUMMY_CREDENTIAL;
     public static String PASSWORD_UNAUTHORIZED_MESSAGE = "用户名或密码错误";
@@ -45,5 +44,8 @@ public class LoginStrategyProperties extends AbstractInitProperties {
     public static String BAD_CONDITIONS_MESSAGE = "登录次数过多，请稍后重新尝试";
     public static String TOKEN_UNAUTHORIZED_MESSAGE = "登录凭证错误，请重新登录";
     public static Boolean PRE_VALIDATE;
+    public static final String SECONDARY_CAPTCHA_UNAUTHORIZED_MESSAGE ="二次验证失败";
+    public static final String ACCOUNT_STATUS_ERROR_MESSAGE = "账户状态存在问题";
+
 
 }

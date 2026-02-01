@@ -68,7 +68,7 @@
 
 1.  **登录流程**：
     *   **业务状态码**：适配后端返回的 `code: 200` 作为成功标志，同时也兼容 `success: true`。
-    *   **Token 存储**：优先读取 `data.accessToken`，兜底读取 `data.token`，存储于 `localStorage`。
+    *   **Token 存储**：优先读取 `data.accessToken`，存储时自动添加 `Bearer ` 前缀，以便后续请求放入 `Authorization` Header。
     *   **错误反馈**：优先使用后端返回的 `msg` 字段进行 `ElMessage.error` 提示。
     *   支持 HTTP 状态码（如 401 Unauthorized）的捕获与展示。
     *   登录失败时自动触发抖动动画（GSAP）增强视觉反馈。

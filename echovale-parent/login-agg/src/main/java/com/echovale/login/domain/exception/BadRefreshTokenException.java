@@ -1,5 +1,6 @@
 package com.echovale.login.domain.exception;
 
+import com.echovale.login.domain.entity.AuthErrorCode;
 import com.echovale.login.infrastructure.properties.LoginStrategyProperties;
 
 /**
@@ -10,6 +11,6 @@ import com.echovale.login.infrastructure.properties.LoginStrategyProperties;
  */
 public class BadRefreshTokenException extends BaseLoginException {
     public BadRefreshTokenException(String identifier) {
-        super(LoginStrategyProperties.TOKEN_UNAUTHORIZED_MESSAGE, identifier);
+        super(AuthErrorCode.REFRESH_TOKEN_INVALID, identifier);
     }
 }

@@ -1,5 +1,6 @@
 package com.echovale.login.domain.exception;
 
+import com.echovale.login.domain.entity.AuthErrorCode;
 import com.echovale.login.infrastructure.properties.LoginStrategyProperties;
 
 /**
@@ -10,6 +11,6 @@ import com.echovale.login.infrastructure.properties.LoginStrategyProperties;
  */
 public class BadCredentialsException extends BaseLoginException {
     public BadCredentialsException(String identifier) {
-        super(LoginStrategyProperties.PASSWORD_UNAUTHORIZED_MESSAGE, identifier);
+        super(AuthErrorCode.BAD_CREDENTIALS, identifier);
     }
 }

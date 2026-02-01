@@ -3,7 +3,7 @@ package com.echovale.login.domain.strategy.login.captcha;
 import com.echovale.login.application.command.LoginCommand;
 import com.echovale.login.domain.aggregate.User;
 import com.echovale.login.domain.exception.BaseLoginException;
-import com.echovale.login.domain.exception.CaptchaException;
+import com.echovale.login.domain.exception.BadCaptchaException;
 import com.echovale.login.domain.strategy.login.AbstractLoginStrategy;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +26,6 @@ public abstract class AbstractCaptchaLoginStrategy extends AbstractLoginStrategy
 
     @Override
     protected BaseLoginException buildLoginException(LoginCommand command) {
-        return new CaptchaException(command.getIdentifier());
+        return new BadCaptchaException(command.getIdentifier());
     }
 }

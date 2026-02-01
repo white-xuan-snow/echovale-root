@@ -37,6 +37,17 @@ public class JwtAuthProperties extends AbstractInitProperties {
     public static String JWT_JTI_PREFIX;
 
 
+    private String accessTokenExpiredMessage;
+    private String refreshTokenExpiredMessage;
+    private String accessTokenInvalidMessage;
+    private String refreshTokenInvalidMessage;
+
+    public static String ACCESS_TOKEN_EXPIRED_MESSAGE = "Access Token 已过期";
+    public static String REFRESH_TOKEN_EXPIRED_MESSAGE = "Refresh Token 已过期";
+    public static String ACCESS_TOKEN_INVALID_MESSAGE = "Access Token 无效";
+    public static String REFRESH_TOKEN_INVALID_MESSAGE = "Refresh Token 无效";
+
+
     @Override
     protected void manualSyncCustomStaticFields() {
         JWT_JTI_KEY_FORMAT = ProjectProperties.NAME + ":" +

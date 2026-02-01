@@ -1,5 +1,7 @@
 package com.echovale.login.domain.exception;
 
+import com.echovale.login.domain.entity.AuthErrorCode;
+
 /**
  * @author 30531
  * @version 1.0
@@ -9,7 +11,7 @@ package com.echovale.login.domain.exception;
 
 
 public class AccountStatusException extends BaseLoginException {
-    public AccountStatusException(String message, String identifier) {
-        super(message, identifier);
+    public AccountStatusException(String identifier) {
+        super(AuthErrorCode.ACCOUNT_STATUS_ERROR, identifier);
     }
 }

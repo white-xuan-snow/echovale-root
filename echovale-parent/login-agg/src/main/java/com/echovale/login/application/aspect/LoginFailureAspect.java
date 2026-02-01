@@ -55,7 +55,7 @@ public class LoginFailureAspect {
 
         eventPublisher.publishEvent(event);
 
-        throw new UnauthorizedException(ex.getMessage());
+        throw new UnauthorizedException(ex.getAuthErrorCode().getCode(), ex.getMessage());
     }
 
 }

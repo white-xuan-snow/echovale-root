@@ -3,6 +3,7 @@ package com.echovale.login.infrastructure.security.filter;
 import cloud.tianai.captcha.application.ImageCaptchaApplication;
 import cloud.tianai.captcha.spring.plugins.secondary.SecondaryVerificationApplication;
 import com.echovale.login.infrastructure.constant.Auth;
+import com.echovale.login.infrastructure.security.exception.SecondaryCaptchaFailedException;
 import com.echovale.shared.domain.exception.UnauthorizedException;
 import com.echovale.login.infrastructure.properties.ImageCaptchaProperties;
 import io.micrometer.common.util.StringUtils;
@@ -45,16 +46,15 @@ public class ImageCaptchaFilter extends OncePerRequestFilter {
                 validate(secondaryToken);
             }
             filterChain.doFilter(request, response);
-        } catch (UnauthorizedException e) {
-            resolver.resolveException(request, response, null, new UnauthorizedException("二次验证失败"));
+        } catch (SecondaryCaptchaFailedException e) {
+            resolver.resolveException(request, response, null, e);
         }
     }
 
 
-
     private void validate(String secondaryToken) {
         if (StringUtils.isBlank(secondaryToken)) {
-            throw new UnauthorizedException("二次验证Token为空，请先完成验证码校验");
+            throw new SecondaryCaptchaFailedException();
         }
         // debug模式，跳过二次验证
         if (secondaryToken.equals(ImageCaptchaProperties.DEBUG_SECONDARY_TOKEN)) {
@@ -64,7 +64,7 @@ public class ImageCaptchaFilter extends OncePerRequestFilter {
 
         log.info("二次验证结果：{}", isValid);
         if (!isValid) {
-            throw new UnauthorizedException("二次验证失败");
+            throw new SecondaryCaptchaFailedException();
         }
     }
 }
