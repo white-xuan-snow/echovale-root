@@ -64,4 +64,5 @@ public class GlobalExceptionHandler {
             return HttpStatus.OK;
         }
     }
+
 }
