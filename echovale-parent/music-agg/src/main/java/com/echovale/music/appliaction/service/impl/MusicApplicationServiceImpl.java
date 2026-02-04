@@ -42,6 +42,7 @@ import com.netease.music.api.autoconfigure.configuration.pojo.result.AlbumResult
 import com.netease.music.api.autoconfigure.configuration.pojo.result.AuthorDetailResult;
 import com.netease.music.api.autoconfigure.configuration.pojo.result.ChorusResult;
 import com.netease.music.api.autoconfigure.configuration.pojo.result.MusicDetailResult;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -61,56 +62,24 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @Validated
+@RequiredArgsConstructor
 public class MusicApplicationServiceImpl implements MusicApplicationService {
 
-    @Autowired
-    private MusicApiGateway musicApiGatewayImpl;
-
-    @Autowired
-    private MusicRepository musicRepository;
-
-    @Autowired
-    private MusicSupplyService musicSupplyService;
-
-
-    @Autowired
-    private MusicQueryService musicQueryService;
-    @Autowired
-    private MusicApi music;
-
-
-    @Autowired
-    private AuthorConverter authorConverter;
-
-    @Autowired
-    private AuthorRepository authorRepository;
-
-    @Autowired
-    private AuthorQueryService authorQueryService;
-
-    @Autowired
-    private MusicConverter musicConverter;
-
-    @Autowired
-    private AlbumConverter albumConverter;
-
-    @Autowired
-    private MusicLyricConverter musicLyricConverter;
-
-
-    @Autowired
-    private AlbumQueryService albumQueryService;
-
-
-    @Autowired
-    private AuthorApplicationService authorApplicationService;
-
-    @Autowired
-    private AlbumApplicationService albumApplicationService;
-
-    @Autowired
-    private MusicApiGateway musicApiGateway;
-
+    private final MusicApiGateway musicApiGatewayImpl;
+    private final MusicRepository musicRepository;
+    private final MusicSupplyService musicSupplyService;
+    private final MusicQueryService musicQueryService;
+    private final MusicApi music;
+    private final AuthorConverter authorConverter;
+    private final AuthorRepository authorRepository;
+    private final AuthorQueryService authorQueryService;
+    private final MusicConverter musicConverter;
+    private final AlbumConverter albumConverter;
+    private final MusicLyricConverter musicLyricConverter;
+    private final AlbumQueryService albumQueryService;
+    private final AuthorApplicationService authorApplicationService;
+    private final AlbumApplicationService albumApplicationService;
+    private final MusicApiGateway musicApiGateway;
 
     @Override
     public List<MusicUrlVO> elicitMusicUrl(@Validated ElicitMusicUrlCommand command) {
