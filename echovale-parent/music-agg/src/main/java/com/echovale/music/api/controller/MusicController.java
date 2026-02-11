@@ -1,6 +1,9 @@
 package com.echovale.music.api.controller;
 
 
+import com.echovale.music.appliaction.command.FetchMusicCommand;
+import com.echovale.music.domain.strategy.MusicFetchAssembleStrategy;
+import com.echovale.music.domain.strategy.MusicFetchContext;
 import com.echovale.shared.infrastructure.presistence.Result;
 import com.echovale.music.api.dto.MusicLyricRequest;
 import com.echovale.music.api.dto.MusicPlayRequest;
@@ -16,7 +19,8 @@ import com.echovale.music.appliaction.service.MusicApplicationService;
 import com.echovale.music.infrastructure.converter.MusicCommandConverter;
 import com.echovale.music.infrastructure.converter.PlayMusicCommandConverter;
 import com.echovale.music.infrastructure.converter.ElicitMusicUrlCommandConverter;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,18 +36,14 @@ import java.util.List;
 @CrossOrigin
 @RestController
 @RequestMapping("/music")
+@RequiredArgsConstructor
 public class MusicController {
 
 
-    @Autowired
-    private MusicApplicationService musicApplicationService;
-    @Autowired
-    private ElicitMusicUrlCommandConverter elicitMusicUrlCommandConverter;
-    @Autowired
-    private PlayMusicCommandConverter playMusicCommandConverter;
-
-    @Autowired
-    private MusicCommandConverter musicCommandConverter;
+    private final MusicApplicationService musicApplicationService;
+    private final ElicitMusicUrlCommandConverter elicitMusicUrlCommandConverter;
+    private final PlayMusicCommandConverter playMusicCommandConverter;
+    private final MusicCommandConverter musicCommandConverter;
 
 
     @GetMapping("/url")
@@ -87,6 +87,14 @@ public class MusicController {
 
         return ResponseEntity.ok(Result.success(res));
     }
+
+
+    private final MusicFetchContext musicFetchContext;
+    @GetMapping("/test")
+    public ResponseEntity<?> test(FetchMusicCommand command) {
+        return ResponseEntity.ok(Result.success(musicFetchContext.execute(command)));
+    }
+
 
 
 

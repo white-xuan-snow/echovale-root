@@ -8,6 +8,7 @@ import com.echovale.music.appliaction.command.ElicitMusicLyricCommand;
 import com.echovale.music.appliaction.command.PlayMusicCommand;
 import com.echovale.music.appliaction.command.ElicitMusicUrlCommand;
 import com.echovale.music.appliaction.dto.MusicDTO;
+import com.echovale.music.domain.strategy.MusicFetchKeywords;
 import com.netease.music.api.autoconfigure.configuration.pojo.result.MusicDetailResult;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
@@ -30,4 +31,5 @@ public interface MusicApplicationService {
 
     List<MusicVO> saveAndQueryMusicsByExternalTracks(List<MusicDetailResult> tracks);
 
+    List<MusicVO> loadMusicList(MusicFetchKeywords musicFetchKeywords);
 }

@@ -1,23 +1,22 @@
 package com.echovale.music.appliaction.command;
 
-import com.echovale.music.domain.strategy.MusicFetchSource;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Value;
+import lombok.experimental.SuperBuilder;
+
+import java.util.List;
 
 /**
  * @author 30531
  * @version 1.0
  * @description: TODO
- * @date 2026/2/5 02:32
+ * @date 2026/2/11 22:37
  */
 
 @Value
-@Builder
+@SuperBuilder
 @AllArgsConstructor
-public class FetchMusicCommand {
-    MusicFetchSource musicFetchSource;
-    Object identifier;
-    int limit;
-    int offset;
+public class FetchMusicCommand extends BaseFetchMusicCommand{
+    List<Long> musicIds;
+    List<Long> neteaseIds;
 }

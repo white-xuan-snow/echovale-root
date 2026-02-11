@@ -1,5 +1,6 @@
 package com.echovale.music.appliaction.service.impl;
 
+import com.echovale.music.domain.strategy.MusicFetchKeywords;
 import com.echovale.shared.infrastructure.utils.StreamUtils;
 import com.echovale.music.api.vo.LyricVO;
 import com.echovale.music.api.vo.MusicUrlDetailVO;
@@ -381,6 +382,10 @@ public class MusicApplicationServiceImpl implements MusicApplicationService {
         return List.of();
     }
 
+    @Override
+    public List<MusicVO> loadMusicList(MusicFetchKeywords musicFetchKeywords) {
+        return List.of();
+    }
 
 
     public List<MusicVO> assembleMusicsNativeByNetease(List<NeteaseId> existentNeteaseIds) {

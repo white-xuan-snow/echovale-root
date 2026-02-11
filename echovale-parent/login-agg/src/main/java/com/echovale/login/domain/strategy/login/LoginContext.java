@@ -1,12 +1,10 @@
-package com.echovale.login.domain.service.impl;
+package com.echovale.login.domain.strategy.login;
 
 import com.echovale.shared.domain.exception.NotImplementedException;
 import com.echovale.login.api.vo.LoginResult;
 import com.echovale.login.application.command.LoginCommand;
 import com.echovale.login.domain.entity.LoginType;
-import com.echovale.login.domain.strategy.login.LoginStrategy;
 import jakarta.annotation.PostConstruct;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

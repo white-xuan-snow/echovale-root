@@ -3,7 +3,7 @@ package com.echovale.login.application.service.impl;
 import com.echovale.login.api.vo.LoginResult;
 import com.echovale.login.application.command.LoginCommand;
 import com.echovale.login.application.service.LoginApplicationService;
-import com.echovale.login.domain.service.impl.LoginContext;
+import com.echovale.login.domain.strategy.login.LoginContext;
 import com.echovale.login.infrastructure.properties.JwtAuthProperties;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
